@@ -1,0 +1,44 @@
+html, body {
+    height: 100%;
+    margin: 0; padding: 0;
+}
+body {
+    display : table;
+    width: 100%;
+}
+footer {
+    display : table-row;
+    height: 30px; /* à titre d'exemple */
+}
+
+.notification {
+
+    color: white;
+    text-decoration: none;
+    padding: 5px 5px;
+    position: relative;
+    display: inline-block;
+    border-radius: 2px;
+    height:40px;
+}
+
+.notification:hover {
+    background: #9497ff;
+}
+
+.notification .badge {
+    position: absolute;
+    top: 0px;
+    right: -10px;
+    padding: 5px 10px;
+    border-radius: 50%;
+    background: red;
+    color: white;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 2.5rem;            /* Footer height */
+}

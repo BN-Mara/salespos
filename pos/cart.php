@@ -17,7 +17,15 @@ require_once('../TCPDF-master/tcpdf.php');
 $response=new Dao_Carte();
 $produits = $response->getAll();
 
+if(isset($_POST['idRef'])){
+$data = $response->detailSalesPOS($_POST['idRef']);
+$arr = array();
 
+$data = json_encode($data);
+//die(var_dump($data));
+echo $data;
+
+}
 
 if(isset($_POST['new_cust']) || isset($_POST['new_cust_pl'])){
 

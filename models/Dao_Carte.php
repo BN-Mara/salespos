@@ -1052,9 +1052,10 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         try {
 
             $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales
-            WHERE id_ref=:id");
+            INNER JOIN bn_sale_extra ON bn_sales.id_sale = bn_sale_extra.id_sale
+            WHERE bn_sales.id_ref=:id");
             $query->execute(array('id'=>$idRef));
-            return $row = $query->fetchAll();
+            return $row = $query->fetchAll(PDO::FETCH_ASSOC);
 
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());

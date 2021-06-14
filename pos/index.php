@@ -449,6 +449,7 @@ if(isset($_SESSION["cart_item"])){
 
         $(document).ready( function () {
             $('#productList').dataTable();
+            
         } );
 
 

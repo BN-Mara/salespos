@@ -18,7 +18,7 @@ $row=$response->salesPOS($pos);
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <table class="table display nowrap" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                 <tr>
                     <th>Client</th>
@@ -143,10 +143,10 @@ for (var i = 0; i < data.length; i++) {
     }
 }
 $(table).attr({
-    'id':'detaitbl',
+    'id':'detailtbl',
     'class': 'table table-striped table-hover'
 });
-$('#detaitbl').dataTable();
+$('#detailtbl').DataTable();
 // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
 var divContainer = document.getElementById("modalbd");
 divContainer.innerHTML = "";

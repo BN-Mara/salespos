@@ -200,7 +200,7 @@ if($products){
                 <!-- Card Header - Dropdown -->
                 
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Mes Ventes</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Produits vendus</h6>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
@@ -210,6 +210,7 @@ if($products){
                         <th>Produit</th>
                         <th>Quantité</th>
                         <th>Prix total</th>
+                        <th>Client</th>
                       </tr>
                       </thead>
                       <tbody>
@@ -233,6 +234,10 @@ if($products){
                               $t = $response->totalPriceSalesByProductPOS($item['id_product'],$pos);
                               echo $t;
                               ?></td>
+                              <td><?php
+                              $p = $response->getOneProductById($item['id_product']);
+                              echo $p['designation'];
+                              ?></td>
 
 
                           </tr>
@@ -244,6 +249,7 @@ if($products){
                         <th>Produit</th>
                         <th>Quantité</th>
                         <th>Prix total</th>
+                        <th>Client</th>
                       </tr>
                       </tfoot>
                     </table>

@@ -177,6 +177,7 @@ if(isset($_SESSION["cart_item"])){
               <!--<a class="collapse-item" href="index.php?page=sim">SIM</a>-->
               <a class="collapse-item" href="index.php?page=sales">Sale</a>
               <a class="collapse-item" href="index.php?page=exchange">Exchange</a>
+              <a class="collapse-item" href="index.php?page=orders">All Sales</a>
             </div>
           </div>
         </li>

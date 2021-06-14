@@ -16,9 +16,10 @@
 
             <div class="col-6">
                 <label>
-                    Noms
+                    Noms 
                     <input class="form-control" type="text" value="<?php if(isset($_SESSION['client_name'])){echo $_SESSION['client_name'];}
                     if(isset($_SESSION['newclient_name'])){echo $_SESSION['newclient_name'];}?>" placeholder="nom complet du client" id="cust_name" style="width:100%">
+                (nom postnom prenom)
                 </label>
             </div>
             <div class="col-6">

@@ -61,7 +61,7 @@ $row=$response->getAllCustomer();
                         ?>
                         <tr>
                             <td><?php echo $item['id_client']; ?></td>
-                            <td><?php echo $item['lastname'].' '.$item['midlename'].' '.$item['firstname']; ?></td>
+                            <td><?php echo $item['lastname'].' '.$item['middlename'].' '.$item['firstname']; ?></td>
                             <td><?php echo $item['address']; ?></td>
                             <td><?php echo $item['phone']; ?></td>
 

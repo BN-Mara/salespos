@@ -527,13 +527,13 @@ class Dao_Carte extends Connexion
     {
         try
         {
-            $sql = "INSERT INTO bn_client(firstname,midlename,lastname,address,idcard,phone,addedBy)
-			VALUES (:firstname,:midlename,:lastname,:address,:idcard,:phone,:addedBy)";
+            $sql = "INSERT INTO bn_client(firstname,middlename,lastname,address,idcard,phone,addedBy)
+			VALUES (:firstname,:middlename,:lastname,:address,:idcard,:phone,:addedBy)";
 
             $query = $this->getConnexion()->prepare($sql);
             $query->execute(array(
                 'firstname'=>$client->getPrenom(),
-                'midlename'=>$client->getPostom(),
+                'middlename'=>$client->getPostom(),
                 'lastname'=>$client->getNom(),
                 'address'=>$client->getAdresse(),
                 'phone'=>$client->getTel(),
@@ -585,7 +585,7 @@ class Dao_Carte extends Connexion
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_client WHERE firstname LIKE CONCAT(:search,'%') OR lastname LIKE CONCAT(:search1,'%') OR midlename LIKE CONCAT(:search2,'%')");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_client WHERE firstname LIKE CONCAT(:search,'%') OR lastname LIKE CONCAT(:search1,'%') OR middlename LIKE CONCAT(:search2,'%')");
             $query->execute(array(
                 'search'=>$search,
                 'search1'=>$search,
@@ -1030,6 +1030,36 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         }
 
         
+    }
+    public function salesPOS($pos){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales_reference 
+            INNER JOIN bn_user ON bn_sales_reference.addedBy = bn_user.username WHERE bn_user.id_pos=:id");
+            $query->execute(array('id'=>$pos));
+
+            return $row = $query->fetchAll();
+
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+        
+    }
+    public function detailSalesPOS($idRef){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales
+            WHERE id_ref=:id");
+            $query->execute(array('id'=>$idRef));
+            return $row = $query->fetchAll();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
     }
     public function todaySalesPOS($pos){
         try {

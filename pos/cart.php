@@ -52,7 +52,7 @@ if(isset($_POST['getname'])){
     if($row){
     foreach ($row as $item) {
         $fname = $item['firstname'];
-        $mname = $item['midlename'];
+        $mname = $item['middlename'];
         $lname = $item['lastname'];
         $id = $item['id_client'];
         $func = "valid_client(".$id.")";
@@ -72,7 +72,7 @@ if(isset($_POST['getphone'])){
     if($row)
         foreach ($row as $item) {
             $fname = $item['firstname'];
-            $mname = $item['midlename'];
+            $mname = $item['middlename'];
             $lname = $item['lastname'];
             $id = $item['id_client'];
             $func = "valid_client(".$id.")";
@@ -170,9 +170,22 @@ if(isset($_POST['valider']) ){
     if(isset($_SESSION['newclient_name'])){
         $name = explode(" ",$_SESSION['newclient_name']);
         $client = new Client();
-        $client->setNom($name[0]);
+        if(count($name) > 2){
+            $client->setNom($name[0]);
         $client->setPostom($name[1]);
         $client->setPrenom($name[2]);
+
+        }
+        else if(count($name) == 2){
+            $client->setNom($name[0]);
+            $client->setPrenom($name[1]);
+
+        }else{
+            $client->setNom($name[0]);
+            $client->setPrenom($name[0]);
+
+        }
+        
         $client->setTel($_SESSION['newclient_phone']);
         $client->setAddedBy($_SESSION['user']['username']);
         $res = $response->addClient($client);
@@ -542,7 +555,7 @@ function downloadForm($cart,$client,$order){
     $html = '<h1 align="center">FACTURE N<sup>o</sup> '.$order_ref['reference'].' </h1>';
     $html .= '<table border="0">';
     $html .= "<tr><td>Nom: </td><td>".$result['lastname']."</td></tr>";
-    $html .="<tr><td>Post-nom: </td><td>".$result['midlename']."</td></tr>";
+    $html .="<tr><td>Post-nom: </td><td>".$result['middlename']."</td></tr>";
     $html .="<tr><td>Prenom: </td><td>".$result['firstname']."</td></tr>";
     $html .="<tr><td>Telephone: </td><td>".$result['phone']."</td></tr>";
     $html .= "</table>";

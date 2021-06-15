@@ -88,7 +88,33 @@ $row=$response->salesPOS($pos);
       </div>
       <div class="modal-body" >
       <div class="table-responsive" id="modalbd">
-        ...
+        <table class="table display nowrap" id="ordersdataTable">
+        <thead>
+        <tr>
+        <th>Product</th>
+        <th>unit price</th>
+        <th>imei</th>
+        <th>iccid</th>
+        <th>msisdn</th>
+        <th>serial</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+        <th>Product</th>
+        <th>unit price</th>
+        <th>imei</th>
+        <th>iccid</th>
+        <th>msisdn</th>
+        <th>serial</th>
+        </tr>
+        </tfoot>
+        <tbody>
+        
+        </tbody>
+
+        
+        </table>
       </div>
       </div>
       <div class="modal-footer">
@@ -99,60 +125,43 @@ $row=$response->salesPOS($pos);
   </div>
 </div>
 <script>
+
  function getdetails(idref){
+   
         //alert(idref);
         $.ajax({
             type: "post",
             url: "cart.php",
             data: "idRef=" + idref,
-            success: function (data) {
-                //alert(data);
-                data = JSON.parse(data);
-                var col = [];
-        for (var i = 0; i < data.length; i++) {
-            for (var key in data[i]) {
-                if (col.indexOf(key) === -1) {
-                    col.push(key);
-                }
-            }
-        }
-        // CREATE DYNAMIC TABLE.
-        var table = document.createElement("table");
-        //table.setAttribute('class','table table-striped table-hover');
-        //table.setAttribute('id','dataTable');
-        //$('#detailsTable').dataTable();
+            success: function (datas) {
+                
+                datas = JSON.parse(datas);
+                //console.log(datas);
+                $('#ordersdataTable tbody').html('');
+                datas.forEach((data,index)=>{
+                    var tr  = '<tr><td>'+data['designation']+'</td><td>'+data['unit_price']+'</td><td>'+data['imei']+'</td><td>'+data['iccid']+'</td><td>'+data['msisdn']+'</td><td>'+data['serial']+'</td></tr>'
+                    
+                    $('#ordersdataTable tbody').append(tr);
 
-// CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-
-var tr = table.insertRow(-1);                   // TABLE ROW.
-
-for (var i = 0; i < col.length; i++) {
-    var th = document.createElement("th");      // TABLE HEADER.
-    th.innerHTML = col[i];
-    tr.appendChild(th);
+                })
+      
+ 
+                $('#ordersdataTable').DataTable(
+  {
+  dom: 'Blfrtip',
+  buttons: [
+  'copy', 'csv', 'excel', 'pdf', 'print'
+  ]
 }
+);
 
-// ADD JSON DATA TO THE TABLE AS ROWS.
-for (var i = 0; i < data.length; i++) {
-
-    tr = table.insertRow(-1);
-
-    for (var j = 0; j < col.length; j++) {
-        var tabCell = tr.insertCell(-1);
-        tabCell.innerHTML = data[i][col[j]];
-    }
-}
-$(table).attr({
-    'id':'detailtbl',
-    'class': 'table table-striped table-hover'
-});
-$('#detailtbl').DataTable();
 // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
-var divContainer = document.getElementById("modalbd");
-divContainer.innerHTML = "";
-divContainer.appendChild(table);
+//var divContainer = document.getElementById("modalbd");
+//divContainer.innerHTML = "";
+//divContainer.appendChild(table);
                 
             }
         });
     }
+
 </script>

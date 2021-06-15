@@ -1057,10 +1057,13 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
     public function detailSalesPOS($idRef){
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales
-            INNER JOIN bn_sale_extra ON bn_sales.id_sale = bn_sale_extra.id_sale
-            INNER JOIN bn_product ON bn_sales.id_product = bn_product.id_product
-            WHERE bn_sales.id_ref=:id");
+            $query = $this->getConnexion()->prepare("SELECT br.reference,br.total_price,bl.firstname, bl.lastname,bp.designation,bse.imei,bse.iccid,bse.msisdn, bse.serial, 
+            bc.unit_price, br.creation_date, br.addedBy FROM bn_sales As bc
+                        INNER JOIN bn_sale_extra As bse ON bc.id_sale = bse.id_sale
+                        INNER JOIN bn_product As bp ON bc.id_product = bp.id_product
+                        INNER JOIN bn_sales_reference As br ON br.id_ref = bc.id_ref
+                        INNER JOIN bn_client As bl ON bc.id_client  = bl.id_client
+                        WHERE bc.id_ref=:id");
             $query->execute(array('id'=>$idRef));
             return $row = $query->fetchAll(PDO::FETCH_ASSOC);
 

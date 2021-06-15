@@ -7,4 +7,8 @@ $(document).ready(function() {
     'copy', 'csv', 'excel', 'pdf', 'print'
     ]
 });
+
+
+
+
 });

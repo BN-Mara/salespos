@@ -41,6 +41,8 @@ $count_plainte0 = $response->countPlainteByStatus(0);
   <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   <!-- DataTables -->
   <link rel="stylesheet" href="bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link href="bower_components/datatables.net-bs/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="bower_components/datatables.net-bs/css/buttons.dataTables.min.css" rel="stylesheet">
     <!-- Select2 -->
   <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css">
   <!-- iCheck for checkboxes and radio inputs -->
@@ -384,7 +386,7 @@ $count_plainte0 = $response->countPlainteByStatus(0);
 <!-- ./wrapper -->
 
 <!-- jQuery 3 -->
-<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -421,8 +423,17 @@ $count_plainte0 = $response->countPlainteByStatus(0);
 <!-- AdminLTE for demo purposes -->
 <script src="dist/js/demo.js"></script>
 <!-- DataTables -->
-<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="bower_components/datatables.net-bs/js/jquery.dataTables.min.js"></script>
+
+
+  <!-- Page level custom scripts -->
+  <script type="text/javascript" charset="utf8" src="bower_components/datatables.net-bs/js/dataTables.buttons.min.js"></script>
+
+  <script src="bower_components/datatables.net-bs/js/jszip.min.js"></script>
+  <script src="bower_components/datatables.net-bs/js/pdfmake.min.js"></script>
+  <script src="bower_components/datatables.net-bs/js/vfs_fonts.js"></script>
+  <script src="bower_components/datatables.net-bs/js/buttons.html5.min.js"></script>
+  <script src="bower_components/datatables.net-bs/js/buttons.print.min.js"></script>
 <!-- ChartJS -->
 <script src="bower_components/chart.js/Chart.js"></script>
 <!-- FLOT CHARTS -->
@@ -441,12 +452,10 @@ $count_plainte0 = $response->countPlainteByStatus(0);
  //$('#test').hide('fast');
  
     $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': true,
-      'searching'   : true,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : true
+      dom: 'Blfrtip',
+    buttons: [
+    'copy', 'csv', 'excel', 'pdf', 'print'
+    ]
     });
 </script>
 <script>

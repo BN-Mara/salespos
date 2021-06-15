@@ -71,7 +71,7 @@
 			  <input type="hidden" id="myid" name="bnid" value="<?php echo $item['id']; ?>" >
                 <div class="form-group" >
                   <label for="exampleInputEmail1">Noms</label>
-                  <input type="text" class="form-control form-control" id="nom" name="noms" placeholder="Nom complet"  value="<?php echo $item['nom']; ?>">
+                  <input type="text" class="form-control form-control" id="nom" name="noms" placeholder="Nom complet"  value="<?php echo $item['names']; ?>">
                 </div>
 				<div class="form-group">
                   <label for="exampleInputEmail1">Nom d'utilisateur </label>
@@ -93,6 +93,28 @@
                     <option <?php if($item['status'] == "ACTIVE" ){echo 'selected';}  ?>>ACTIVE</option>
                     </select>
                 </div>
+                <div class="form-group">
+                      <label>POS</label>
+                      <select class="form-control" name="pos" style="width: 100%;">
+                      <option value="">-- Choisir --</option>
+                      <option value="0">ADMIN</option>
+                          <?php
+
+                          $response=new Dao_Carte();
+                          $rows=$response->getAllPOS();
+                          if($rows){
+                              foreach ($rows as $row) {
+                                  ?>
+                                  <option value="<?php echo $row['id_pos'];?>" <?php if($item['id_pos'] == $row['id_pos'] ){echo 'selected';} ?> ><?php echo $row['designation']; ?> </option>
+                                  <?php
+                              }
+                          }
+                          else {
+                              //die("no data");
+                          }
+                          ?>
+                      </select>
+                  </div>
         <div class="form-group">
                 <label>Pages à acceder</label>
                 <select class="form-control select2" name="pages[]" multiple="multiple" data-placeholder="Selectionner les pages de l'utilisateur"

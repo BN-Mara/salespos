@@ -79,6 +79,8 @@
                   <div class="form-group">
                       <label>POS</label>
                       <select class="form-control" name="pos" style="width: 100%;">
+                      <option value="">-- Choisir --</option>
+                      <option value="0">ADMIN</option>
                           <?php
 
                           $response=new Dao_Carte();

@@ -4,7 +4,8 @@
 $response=new Dao_Carte();
 
 if(isset($_GET['delete'])){
-    $response->deleteOneProduct($_GET['delete']);
+    $response->deleteOneProduct($_GET['delete'] , $_SESSION['current_user']);
+    
 }
 $row=$response->getAll();
 ?>
@@ -82,7 +83,6 @@ $row=$response->getAll();
                     <th>Code</th>
                     <th>Designation</th>
                     <th>Prix</th>
-                    <th>Quantité</th>
                     <th>date Ajouter</th>
                     <th>Ajouter Par</th>
                     <th>Action</th>

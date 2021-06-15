@@ -4,7 +4,7 @@
 $response=new Dao_Carte();
 
 if(isset($_GET['delete'])){
-    $response->deleteOneProduct($_GET['delete']);
+   // $response->deleteOneProduct($_GET['delete']);
 }
 $row=$response->getAllPOS();
 ?>
@@ -67,7 +67,7 @@ $row=$response->getAllPOS();
                             <td><?php echo $item['city']; ?></td>
                             <td><?php echo $item['province']; ?></td>
                             <td>
-                                <a href="layout.php?page=pos&delete=<?php echo $item['id_pos']; ?>">Supprimer</a></td>
+                                <a href="layout.php?page=pos&delete=<?php echo $item['id_pos']; ?>">Modifier</a></td>
 
                         </tr>
 

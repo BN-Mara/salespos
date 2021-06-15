@@ -40,6 +40,7 @@ class UserController
     //$phone = $fm->validation($_POST['phone']);
     $status = $fm->validation($_POST['status']);
 	$action = $fm->validation($_POST['action']);
+  $pos = $fm->validation($_POST['pos']);
       //$fonction = $fm->validation($_POST['fonction']);
       //$direction = $fm->validation($_POST['direction']);
     $pages = $_POST['pages'];
@@ -60,6 +61,7 @@ class UserController
     $myuser->setStatus($status);
     $myuser->setPages($pages1);
     $myuser->setAddedBy($addedBy);
+    $myuser->setIdPos($pos);
      // $myuser->setMatricule($matricule);
      // $myuser->setFonction($fonction);
      // $myuser->setDirection($direction);

@@ -22,7 +22,7 @@ class Dao_Carte extends Connexion
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product WHERE isDeleted <> 1");
             $query->execute();
             return $row = $query->fetchAll();
 
@@ -37,7 +37,7 @@ class Dao_Carte extends Connexion
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product WHERE id_category = :produit_type");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product WHERE id_category = :produit_type AND isDeleted <> 1");
             $query->execute(array('produit_type'=>$type));
             return $row = $query->fetchAll();
 
@@ -52,7 +52,7 @@ class Dao_Carte extends Connexion
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product WHERE id_category NOT IN (3,4)");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product WHERE id_category NOT IN (3,4) AND isDeleted <> 1");
             $query->execute();
             return $row = $query->fetchAll();
 
@@ -67,7 +67,7 @@ class Dao_Carte extends Connexion
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product WHERE name LIKE CONCAT('%', :search, '%')");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product WHERE name LIKE CONCAT('%', :search, '%') AND isDeleted <> 1");
             $query->execute(array('search'=>$search));
             return $row = $query->fetchAll();
 
@@ -179,8 +179,12 @@ class Dao_Carte extends Connexion
         try
         {
             //die($fichier->getCode());
+            $sql1 = "INSERT INTO bn_product_hist SELECT * FROM bn_product WHERE id_product = :id_product";
+            $query = $this->getConnexion()->prepare($sql1);
+            $query->execute(["id_product"=>$id]);
 
-            $sql = "UPDATE bn_product SET code=:code,designation=:designation,price=:price,id_category=:id_category WHERE id_product = :id_produit";
+            $sql = "UPDATE bn_product SET code=:code,designation=:designation,price=:price,id_category=:id_category, 
+            modifyBy=:modifyBy, modificationTime = GETDATE() WHERE id_product = :id_produit";
 
             $query = $this->getConnexion()->prepare($sql);
             $query->execute(array(
@@ -188,7 +192,8 @@ class Dao_Carte extends Connexion
                 'price'=>$product->getPrice(),
                 'code'=>$product->getCode(),
                 'id_category'=>$product->getIdCategory(),
-                'id_produit'=>$id
+                'id_produit'=>$id,
+                'modifyBy'=>$product->getAddedBy()
 
             ));
             return 'success';
@@ -377,15 +382,16 @@ class Dao_Carte extends Connexion
 
     }
 
-    public function deleteOneProduct($id){
+    public function deleteOneProduct($id,$deletedBy){
 
 
         try {
 
-            $query = $this->getConnexion()->prepare("DELETE FROM bn_product WHERE id_produit=:id");
-            $query->execute(array('id'=>$id));
+            $query = $this->getConnexion()->prepare("UPDATE bn_product SET isDeleted = 1, 
+            deletedTime = GETDATE(), deletedBy=:deletedBy WHERE id_product=:id");
+            $query->execute(array('deletedBy'=>$deletedBy,'id'=>$id));
 
-            return $row = $query->fetchAll();
+            return "success";
 
 
 
@@ -1053,6 +1059,7 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
             $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales
             INNER JOIN bn_sale_extra ON bn_sales.id_sale = bn_sale_extra.id_sale
+            INNER JOIN bn_product ON bn_sales.id_product = bn_product.id_product
             WHERE bn_sales.id_ref=:id");
             $query->execute(array('id'=>$idRef));
             return $row = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -2446,8 +2453,10 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_user");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_user 
+            LEFT JOIN bn_pos ON bn_user.id_pos = bn_pos.id_pos");
             $query->execute();
+        
             return $row = $query->fetchAll();
 
 
@@ -2494,8 +2503,8 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         try
         {
             $pw = password_hash($user->getPassword(),PASSWORD_DEFAULT);
-            $query = $this->getConnexion()->prepare("INSERT INTO bn_user(username,password,role,status,names,pages,addedBy)
-			VALUES (:username,:password,:role,:status,:nom,:pages,:addedBy)");
+            $query = $this->getConnexion()->prepare("INSERT INTO bn_user(username,password,role,status,names,pages,addedBy,id_pos)
+			VALUES (:username,:password,:role,:status,:nom,:pages,:addedBy,:id_pos)");
             $query->execute(array(
                 'username'=>$user->getUsername(),
                 'password'=>$pw,
@@ -2503,7 +2512,8 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
                 'status'=>$user->getStatus(),
                 'nom'=>$user->getNoms(),
                 'pages'=>$user->getPages(),
-                'addedBy'=>$user->getAddedBy()
+                'addedBy'=>$user->getAddedBy(),
+                'id_pos'=>$user->getIdPos()
             ));
             return 'success';
 
@@ -2523,13 +2533,14 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         {
 
             $query = $this->getConnexion()->prepare("UPDATE bn_user SET username=:username,role=:role,
-			status=:status,nom=:nom,pages=:pages WHERE id=:id");
+			status=:status,names=:nom,pages=:pages, id_pos=:id_pos WHERE id=:id");
             $query->execute(array(
                 'username'=>$user->getUsername(),
                 'role'=>$user->getRole(),
                 'status'=>$user->getStatus(),
                 'nom'=>$user->getNoms(),
                 'pages'=>$user->getPages(),
+                'id_pos'=>$user->getIdPos(),
                 'id'=>$id));
             return 'success';
 

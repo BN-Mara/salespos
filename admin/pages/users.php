@@ -47,6 +47,7 @@
                   <th>Username</th>
                   <th>statut</th>
                   <th>Role</th>
+                  <th>POS</th>
 				  <th>Action</th>
                 </tr>
                 </thead>
@@ -65,6 +66,7 @@
                   <td><?php echo $item['username']; ?></td>
                   <td><?php echo $item['status']; ?></td>
                   <td><?php echo $item['role']; ?></td>
+                  <td><?php echo $item['designation']; ?></td>
 				  <td><a href="layout.php?page=editUser&id=<?php echo $item['id']; ?>">Modifier</a><br>
 				  <a href="layout.php?page=deleteUser&id=<?php echo $item['id']; ?>">Supprimer</a></td>
 
@@ -78,6 +80,7 @@
                   <th>Username</th>
                   <th>statut</th>
                   <th>Role</th>
+                  <th>POS</th>
 				  <th>Action</th>
                 </tr>
                 </tfoot>

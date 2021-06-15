@@ -97,7 +97,7 @@ if(isset($_GET['when'])){
                             <td><?php echo $item['reference']; ?></td>
                             <td><?php
                                 $c = $response->getOneClientById($item['id_client']);
-                                echo $c['firstname'];
+                                echo $c['firstname'].' '.$c['lastname'];
                                 ?></td>
                             <td><?php echo $item['nbre_article']; ?></td>
                             <td> <?php echo $item['total_price']; ?> CDF</td>
@@ -107,7 +107,11 @@ if(isset($_GET['when'])){
                                 echo $pos['designation'];
                                 ?></td>
                             <td><?php echo $item['creation_date']; ?></td>
-                            <td><!--<a href="orderdetails.php?&id=<?php //echo $item['id_ref']; ?>">detail</a>--></td>
+                            <td>
+                            <button type="button" class="btn btn-primary" onclick="getdetails(<?php echo $item['id_ref'];?>)" data-toggle="modal" data-target="#exampleModal">
+                            View
+                            </button>
+                            </td>
 
                         </tr>
 
@@ -132,3 +136,92 @@ if(isset($_GET['when'])){
 
     </div>
 </section>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width:70%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sales details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" >
+      <div class="table-responsive" id="modalbd">
+        <table class="table display nowrap" id="ordersdataTable">
+        <thead>
+        <tr>
+        <th>Product</th>
+        <th>unit price</th>
+        <th>imei</th>
+        <th>iccid</th>
+        <th>msisdn</th>
+        <th>serial</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+        <th>Product</th>
+        <th>unit price</th>
+        <th>imei</th>
+        <th>iccid</th>
+        <th>msisdn</th>
+        <th>serial</th>
+        </tr>
+        </tfoot>
+        <tbody>
+        
+        </tbody>
+
+        
+        </table>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+ function getdetails(idref){
+   
+        //alert(idref);
+        $.ajax({
+            type: "post",
+            url: "../controllers/CommonController.php",
+            data: "idRef=" + idref,
+            success: function (datas) {
+                
+                console.log(datas);
+                datas = JSON.parse(datas);
+                
+              $('#ordersdataTable tbody').html('');
+                datas.forEach((data,index)=>{
+                    var tr  = '<tr><td>'+data['designation']+'</td><td>'+data['unit_price']+'</td><td>'+data['imei']+'</td><td>'+data['iccid']+'</td><td>'+data['msisdn']+'</td><td>'+data['serial']+'</td></tr>'
+                    
+                    $('#ordersdataTable tbody').append(tr);
+
+                });
+ 
+$('#ordersdataTable').DataTable(
+  {
+  dom: 'Blfrtip',
+  buttons: [
+  'copy', 'csv', 'excel', 'pdf', 'print'
+  ]
+}
+);
+
+// FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+//var divContainer = document.getElementById("modalbd");
+//divContainer.innerHTML = "";
+//divContainer.appendChild(table);
+                
+            }
+        });
+    }
+
+</script>

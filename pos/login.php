@@ -50,9 +50,12 @@ session_start();
             top: 50%;
             margin-top: -160px;
         }
+		.bgColor{
+			background-color: #A01775;
+		}
     </style>
 </head>
-<body class="h-vh-100 bg-brandColor2">
+<body class="h-vh-100 bgColor">
 
 <form class="login-form bg-white p-6 mx-auto border bd-default win-shadow"
       data-role="validator"
@@ -75,8 +78,9 @@ session_start();
     }
 
     ?>
+	<center><img src="images/Logoafricell.png" height="80"></center>
     <span class="mif-vpn-lock mif-4x place-right" style="margin-top: -10px;"></span>
-    <h2 class="text-light">...Authentification...</h2>
+    <h3 class="text-light">...Authentification...</h3>
     <hr class="thin mt-4 mb-4 bg-white">
     <div class="form-group">
         <input type="text" data-role="input" data-prepend="<span class='mif-envelop'>" name="usrname" placeholder="username" required>

@@ -5,7 +5,7 @@ include "user/session.php";
 include_once '../models/Dao_Carte.php';
 $response=new Dao_Carte();
 
-$count_plainte0 = $response->countPlainteByStatus(0);
+$count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteByStatus(0) : 0  ;
 
 ?>
 
@@ -65,13 +65,13 @@ $count_plainte0 = $response->countPlainteByStatus(0);
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-  <header class="main-header">
+  <header class="main-header" style="background-color:#A01775">
     <!-- Logo -->
     <a href="layout.php?page=dashboard" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><img src="../public/mctrl1.png" alt="logo"></span>
+      <span class="logo-mini"><img src="dist/img/Logoafricell.png"  width="50" alt="logo"></span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>VENTES</b></span>
+      <span class="logo-lg"><img src="dist/img/Logoafricell.png"  width="100" alt="logo"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -311,7 +311,7 @@ $count_plainte0 = $response->countPlainteByStatus(0);
             </ul>
           </li>-->
           <li class="treeview">
-            <a href="#">
+            <a href="layout.php?page=clients">
               <i class="fa fa-edit"></i> <span>Client</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>

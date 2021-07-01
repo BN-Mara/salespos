@@ -27,19 +27,29 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <style>
+  .bgColor{
+			background-color: #A01775;
+		}
+	.bgWhite{
+		background-color: #DAA01775;
+	}
+  </style>
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page bgColor">
 <div class="login-box">
-  <div class="login-logo">
-    <!--<img src="../public/dgm3.jpg"><br>-->
-    <a href="../../index2.html"><b>Admin</b></a>
-  </div>
+  
   <!-- /.login-logo -->
   <div class="login-box-body">
+  
+  
    <?php if(isset($_GET['error'])){
 	   echo '<p class="login-box-msg" style="color:red">'.$_GET['error'].'</p>';
    }
    ?>
+   <center>
+    <img src="dist/img/Logoafricell.png" height="100">
+	</center>
     
     <p class="login-box-msg">Connectez-vous pour commencer</p>
 

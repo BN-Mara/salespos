@@ -5,7 +5,7 @@ abstract class  Connexion
     private $host='localhost'; //nom du serveur
     private $dataBase = 'sales_pos'; // nom de la base
     private $User1 = 'sa'; //nom d\'utilisateur
-    private $Password1 = 'Benjamin1'; // mot de passe
+    private $Password1 = 'SalesPos3'; // mot de passe
     // private $port = '5432'; // port
     private $url;
 

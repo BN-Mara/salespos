@@ -9,12 +9,12 @@ $row=$response->getAllPlainte();
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Liste des Utilisateurs
+        Liste des Plaintes
         <small>Preview</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Liste des utilisateurs</a></li>
+        <li><a href="#">Plaintes</a></li>
     </ol>
 </section>
 <section class="content">

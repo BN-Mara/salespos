@@ -373,7 +373,7 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
     <div class="pull-right hidden-xs">
       <b>Version</b> 2.4.1
     </div>
-    <strong>BN-Mara &copy; 2020</strong>
+    <strong>Africell &copy; 2020</strong>
   </footer>
 
   <!-- Control Sidebar -->

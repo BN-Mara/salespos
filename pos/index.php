@@ -14,11 +14,13 @@ require_once("../models/Client.php");
 
 
 $response=new Dao_Carte();
-$produits = $response->getAll();
+$username = $_SESSION['user']['username'];
+$pos = $response->getPOSByUsername($username);
+$produits = $response->getPOSProducts($pos);
 $showing = "Produits";
 $clients = $response->getAllCustomer();
 $taux = $response->getRate();
-
+$loginCount = $response->checkFirstLogin($_SESSION['user']['username']);
 $pages="sales.php&saletype=phone";
 if(isset($_GET['page'])){
     $page = $_GET['page'];
@@ -130,6 +132,9 @@ if(isset($_SESSION["cart_item"])){
         input.invalid {
             background-color: #ffdddd;
         }
+        .bg-sidebar{
+          background-color: #A01775;
+        }
     </style>
 
 </head>
@@ -140,11 +145,11 @@ if(isset($_SESSION["cart_item"])){
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-sidebar sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-        <img src="images/Logoafricell.png" width="100">
+        <img src="images/wlogo.png" width="100">
       </a>
 
       <!-- Divider -->
@@ -176,9 +181,10 @@ if(isset($_SESSION["cart_item"])){
             <h6 class="collapse-header">Custom Components:</h6>
 
               <!--<a class="collapse-item" href="index.php?page=sim">SIM</a>-->
-              <a class="collapse-item" href="index.php?page=sales">Sale</a>
+              <a class="collapse-item" href="index.php?page=sales">Add Sale</a>
               <a class="collapse-item" href="index.php?page=exchange">Exchange</a>
               <a class="collapse-item" href="index.php?page=orders">All Sales</a>
+              
             </div>
           </div>
         </li>
@@ -202,10 +208,19 @@ if(isset($_SESSION["cart_item"])){
 
       <!-- Divider -->
       <hr class="sidebar-divider">
-        <li class="nav-item active">
-            <a class="nav-link" href="index.php?page=mystock">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>Mon stock</span></a>
+      <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseStock" aria-expanded="true" aria-controls="collapseUtilities">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Stock</span>
+            </a>
+            <div id="collapseStock" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Stock:</h6>
+                    <a class="collapse-item" href="index.php?page=mystock">mon stock</a>
+                    <a class="collapse-item" href="index.php?page=stockTransfert">Transferer stock</a>
+
+                </div>
+            </div>
         </li>
 
       <!-- Heading -->
@@ -268,7 +283,7 @@ if(isset($_SESSION["cart_item"])){
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="index.php?page=profile">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   Profile
                 </a>
@@ -319,7 +334,7 @@ if(isset($_SESSION["cart_item"])){
                     <input class="w3-input w3-border w3-margin-bottom w3-round" type="text" placeholder="Numero e telephone" name="tel">
                     <label><b>Piece d'itentité</b></label>
                     <input class="w3-input w3-border w3-margin-bottom w3-round" type="text" placeholder="Numero de la carte" name="idcard">
-                    <input class="w3-button w3-block w3-green w3-section w3-padding w3-round" type="submit" name="<?php if($_GET['page'] == "plainte"){echo "new_cust_pl";}else{echo "new_cust";}?>" value="AJOUTER">
+                    <input class="w3-button w3-block w3-green w3-section w3-padding w3-round" type="submit" name="new_cust_pl" value="AJOUTER">
 
                 </div>
             </form>
@@ -335,9 +350,10 @@ if(isset($_SESSION["cart_item"])){
     <?php
     if(isset($_SESSION['info_success'])){
         ?>
-        <div class="w3-panel w3-pale-green w3-leftbar w3-border-green">
-            <span class="w3-button w3-right" onclick="this.parentElement.style.display='none'">&times;</span>
-            <?php
+        <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-check"></i> Alert!</h4>
+                <?php
             echo $_SESSION['info_success'];
 
             ?>
@@ -352,9 +368,9 @@ if(isset($_SESSION["cart_item"])){
     <?php
     if(isset($_SESSION['info'])){
         ?>
-        <div class="w3-panel w3-pale-red w3-leftbar w3-border-red">
-            <span class="w3-button w3-right" onclick="this.parentElement.style.display='none'">&times;</span>
-            <?php
+        <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-check"></i> Alert!</h4><?php
             echo $_SESSION['info'];
 
             ?>
@@ -367,11 +383,17 @@ if(isset($_SESSION["cart_item"])){
     ?>
     </div>
     <?php
-    if(isset($_GET['page'])){
+    if($loginCount >= 1){
+      if(isset($_GET['page'])){
         include $page.'.php';
     }else{
         include "dashboard.php";
     }
+    }else{
+      $_SESSION['info'] = "Modifier votre mot de passe svp!";
+      include "profile.php";
+    }
+    
 
     ?>
     <p></p>
@@ -441,17 +463,17 @@ if(isset($_SESSION["cart_item"])){
   <script src="js/demo/chart-area-demo.js"></script>
   <script src="js/demo/chart-pie-demo.js"></script>
   <!-- Page level plugins -->
-  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
 
 
   <!-- Page level custom scripts -->
   <script type="text/javascript" charset="utf8" src="vendor/datatables/dataTables.buttons.min.js"></script>
   <script src="js/demo/datatables-demo.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-  <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-  <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+  <script src="js/jszip.min.js"></script>
+  <script src="js/pdfmake.min.js"></script>
+  <script src="js/vfs_fonts.js"></script>
+  <script src="js/buttons.html5.min.js"></script>
+  <script src="js/buttons.print.min.js"></script>
   <script>
 
 

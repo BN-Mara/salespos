@@ -1,40 +1,5 @@
 
-<?php 
- 
-      //$response=new Dao_Carte();
-      $total=$response->countAllCommande();
-	  $today = $response->countTodayCommande();
-	  $thismonth = $response->countThisMonthCommande();
-	  $thisyear = $response->countThisWeekCommande();
-	  //port d'entree
-      //$prov = $response->getProvenance();
-$products = $response->getAll();
-$arr_label = array();
-$arr_dt = array();
-if($products){
-  $count = 0;
-  foreach($products as $item){
-    $arr_label[$count] = $item['designation'];
-    $arr_dt[$count] = $response->getQuantityProduitCommande($item['id_product']);
-    if($arr_dt[$count] == null)
-      $arr_dt[$count]=0;
 
-    $count++;
-
-  }
- // var_dump($arr_dt);
-}
-
-	  //mois de l'annee courrante
-	  $month = array();
-	  for($i=0; $i<12; $i++){
-		  $month[$i]=$response->countThisYearMonthCommande($i+1);
-	  }
-	  
-	  
-	  
-	
-?>
 
  <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -636,3 +601,4 @@ if($products){
       <!-- /.row (main row) -->
 
     </section>
+    

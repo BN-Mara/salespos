@@ -3,19 +3,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Ajouter Stock
+        Ajouter ICCID
 
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Ajouter Stock</a></li>
+        <li><a href="#">Ajouter ICCID</a></li>
         <li class="active">General Elements</li>
     </ol>
 </section>
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Stock pour POS</h3> <a href="layout.php?page=produits"><button class="btn btn-primary pull-right" >retour à la liste</button></a>
+            <h3 class="box-title">Product ICCID</h3> <a href="layout.php?page=produits"><button class="btn btn-primary pull-right" >retour à la liste</button></a>
         </div>
         <!-- /.box-header -->
         <?php
@@ -45,7 +45,7 @@
         }
         ?>
         <!-- form start -->
-        <form role="form" method="post" action="../controllers/StockController.php" enctype="multipart/form-data">
+        <form role="form" method="post" action="../controllers/IccidController.php" enctype="multipart/form-data">
             <center>
                 <div class="box-body" style="width:50%">
                     <input type="hidden" id="action" name="action" value="ajouter" >
@@ -70,12 +70,24 @@
                         </select>
                     </div>
                     <div class="form-group" >
-                        <label for="exampleInputEmail1">Quantité</label>
-                        <input type="number" class="form-control form-control" id="nom" name="qte" min="1" >
+                        <label for="iccid">ICCID</label>
+                        <input type="number" class="form-control" id="iccid" name="iccid" min="1"  onKeyDown="if(this.value.length==20) return false;">
                     </div>
                     <div class="form-group" >
-                        <label for="exampleInputEmail1">POS</label>
-                        <select class="form-control" name="id_pos" required>
+                        <label for="emsisdn">MSISDN</label>
+                        <input type="number" class="form-control" id="msisdn" name="msisdn" min="1"  onKeyDown="if(this.value.length==10) return false;">
+                    </div>
+                    <div class="form-group" >
+                        <label for="type">Type</label>
+                        <input type="text" class="form-control" id="type" name="type" min="1" maxlength="10">
+                    </div>
+                    <div class="form-group" >
+                        <label for="profile">Profile</label>
+                        <input type="text" class="form-control" id="profile" name="profile" min="1" >
+                    </div>
+                    <div class="form-group" >
+                        <label for="id_pos">POS</label>
+                        <select class="form-control"  id="id_pos" name="id_pos">
                             <?php
 
                             $response=new Dao_Carte();

@@ -73,13 +73,15 @@
                         <div class="w3-section tab" id="tab">
                             <?php
                            
-                            if($item["name"] == "100 unite"){
+                            if($item["category"] == 3){
                                 
                                 ?>
                             <label><b>Serial pour scratch <?php echo $item['name']." (".($i+1).")"; ?> </b></label>
                             <input class="w3-input w3-border w3-margin-bottom" type="text"
                                    placeholder="scratch serial"
-                                   name="<?php echo "serial_" . $item['id_produit'] . $i; ?>" required>
+                                   id="<?php echo "serial_" . $item['id_produit'] . $i; ?>"
+                                   name="<?php echo "serial_" . $item['id_produit'] . $i; ?>" required
+                                   ?>)">
 
                             <?php
                             }
@@ -88,17 +90,28 @@
                                 ?>
                                 
                                 <label><b>IMEI pour <?php echo $item['name']." (".($i+1).")"; ?></b></label>
-                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                <input class="w3-input w3-border w3-margin-bottom" type="number"
                                        placeholder="IMEI de produit"
-                                       name="<?php echo "imei_" . $item['id_produit'] . $i; ?>" required>
+                                       id="<?php echo "imei_" . $item['id_produit'] . $i; ?>"
+                                       name="<?php echo "imei_" . $item['id_produit'] . $i; ?>" required 
+                                       onKeyDown="if(this.value.length==15) return false;"
+                                       onKeyUp="removeAfterImei(this.id)"
+                                       onBlur="checkImeiPOS(this.value,this.id,<?php echo $item['id_produit'];?>)">
                                 <label><b>Numero SIM </b></label>
-                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                <input class="w3-input w3-border w3-margin-bottom" type="number"
                                        placeholder="Numero de la SIM remise au client"
-                                       name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required>
+                                       id="<?php echo "num_" . $item['id_produit'] . $i; ?>"
+                                       name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required 
+                                       onKeyDown="if(this.value.length==10) return false;"
+                                       >
                                 <label><b>ICCID </b></label>
-                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                <input class="w3-input w3-border w3-margin-bottom" type="number"
                                        placeholder="Numero de la SIM remise au client"
-                                       name="<?php echo "iccid_" . $item['id_produit'] . $i; ?>" required>
+                                       id="<?php echo "iccid_" . $item['id_produit'] . $i; ?>"
+                                       name="<?php echo "iccid_" . $item['id_produit'] . $i; ?>" required 
+                                       onKeyDown="if(this.value.length==10) return false;"
+                                       onKeyUp="removeAfterIccid(this.id)"
+                                       onBlur="checkIccidPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
 
                             <?php
                             }
@@ -333,6 +346,99 @@
             }
         });
     }
+    function removeAfterImei(fieldId){
+        $(".validationImei").remove();
+    }
+    function removeAfterIccid(fieldId){
+        $(".validationIccid").remove();
+    }
+    function removeAfterMsisdn(fieldId){
+        $(".validationMsisdn").remove();
+    }
+    function removeAfterSerial(fieldId){
+        $(".validationSerial").remove();
+    }
+
+    
+    function checkImeiPOS(value,fieldId,id){
+        //alert(fieldId);
+        var formData = {
+            check_extra_imei:"check_extra_imei",
+            id_product: id,
+            imei:value
+        };
+        $.ajax({
+            type: "post",
+            url: "cart.php",
+            data: formData,
+            success: (data) =>{
+                data = $.parseJSON(data);
+               console.log(data);
+               if(data.imei == 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationImei' style='color:red; padding-bottom:10px'> IMEI n\'est pas dans votre stock.<br></span>");
+                   //$('#nextBtn').prop("disabled", true )
+                   document.getElementById('nextBtn').disabled = true;
+               }else{
+                    document.getElementById('nextBtn').disabled = false;
+               }
+            }
+        });
+
+    }
+    function checkIccidPOS(value,fieldId,id){
+        //alert(value+id);
+        var formData = {
+            check_extra_iccid:"check_extra_iccid",
+            id_product: id,
+            iccid: value
+        };
+        $.ajax({
+            type: "post",
+            url: "cart.php",
+            data: formData,
+            success: (data) =>{
+                data = $.parseJSON(data);
+               console.log(data);
+               if(data.iccid == 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationIccid' style='color:red; padding-bottom:10px'> ICCID n\'est pas dans votre stock.<br></span>");
+                   //$('#nextBtn').prop("disabled", true )
+                   document.getElementById('nextBtn').disabled = true;
+               }else{
+                    document.getElementById('nextBtn').disabled = false;
+               }
+            }
+        });
+
+    }
+    function checkMsisdnPOS(value,fieldId,id){
+        //alert(value+id);
+        var formData = {
+            check_extra_msisdn:"check_extra_msisdn",
+            id_product: id,
+            msisdn:value
+        };
+        $.ajax({
+            type: "post",
+            url: "cart.php",
+            data: formData,
+            success: (data) =>{
+                data = $.parseJSON(data);
+               console.log(data);                              
+               if(data.msisdn == 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationMsisdn' style='color:red; padding-bottom:10px'> MSISDN n'est pas dans votre stock.<br></span>");
+                   //$('#nextBtn').prop("disabled", true )
+                   document.getElementById('nextBtn').disabled = true;
+               }else{
+                    document.getElementById('nextBtn').disabled = false;
+               }
+            }
+        });
+
+    }
+
 
 </script>
 <script>

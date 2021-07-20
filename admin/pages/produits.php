@@ -2,11 +2,16 @@
 <?php
 
 $response=new Dao_Carte();
-
-if(isset($_GET['delete'])){
-    $response->deleteOneProduct($_GET['delete'] , $_SESSION['current_user']);
-    
+$chkPg = $response->checkPagesByUsername($_SESSION['current_user'], "deleteProduct");
+if($chkPg){
+    if(isset($_GET['delete'])){
+        $response->deleteOneProduct($_GET['delete'] , $_SESSION['current_user']);
+        
+    }
+}else{
+    $_SESSION['info'] = "Vous n\'etes pas autorise pour cette tache!";
 }
+
 $row=$response->getAll();
 ?>
 
@@ -24,7 +29,18 @@ $row=$response->getAll();
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Produits</h3>
+            <h3 class="box-title">Produits</h3><form method="post" action="../controllers/ProduitController.php" enctype="multipart/form-data">
+            <table class="pull-right">
+                <tr>
+                    <td>
+                    <input  type="file" name="csv" id="csv" accept=".csv" onChange="validateAndUpload(this);" >
+                    </td>
+                    <td>
+                    <button class="btn btn-secondary " type="submit" name="uploadcsv" id="uploadcsv" disabled>Import</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
         </div>
         <!-- /.box-header -->
         <?php
@@ -71,8 +87,22 @@ $row=$response->getAll();
                             <td><?php echo $item['price']; ?></td>
                             <td><?php echo $item['creation_date']; ?></td>
                             <td><?php echo $item['addedBy']; ?></td>
-                            <td><a href="layout.php?page=editProduit&id=<?php echo $item['id_product']; ?>">Modifier</a><br>
-                                <a href="layout.php?page=produits&delete=<?php echo $item['id_product']; ?>">Supprimer</a></td>
+                            <td>
+                                <?php
+                                if($response->checkPagesByUsername($_SESSION['current_user'], "editProduit")){
+                                    ?>
+                                    <a href="layout.php?page=editProduit&id=<?php  echo $item['id_product']; ?>">Modifier</a><br>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if($response->checkPagesByUsername($_SESSION['current_user'], "deleteProduct")){
+                                    ?>
+                                    <a href="layout.php?page=produits&delete=<?php echo $item['id_product']; ?>">Supprimer</a></td>
+                                    <?php
+                                }
+                                ?>
+                                
 
                         </tr>
 
@@ -96,3 +126,16 @@ $row=$response->getAll();
 
     </div>
 </section>
+<script>
+function validateAndUpload(input){
+    var file = input.files[0];
+    var nme = document.getElementById("csv");
+    var impbtn = document.getElementById("uploadcsv");
+    
+    if(nme.value.length < 4){
+        impbtn.disabled = true;
+    }else{
+        impbtn.disabled = false;
+    }
+}
+</script>

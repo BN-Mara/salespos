@@ -11,17 +11,20 @@ include_once '../models/Dao_Carte.php';
 require_once("../models/Plainte.php");
 require_once("../models/PlainteExtra.php");
 require_once('../TCPDF-master/tcpdf.php');
+require_once('../helper/Format.php');
 $response =new Dao_Carte();
+$fm = new Format();
 
 
 
 if(isset($_POST['send'])){
     //die("sent");
-    $client = $_POST['client'];
-    $desc = $_POST['description'];
-    $consern = $_POST['plainte_type'];
+    $client = $fm->validation($_POST['client']);
+    $desc = $fm->validation($_POST['description']);
+    $consern = $fm->validation($_POST['plainte_type']);
     $addedby = $_SESSION['user']['username'];
-    $pl_subtype = $_POST['plainte_subtype'];
+    $pl_subtype = $fm->validation($_POST['plainte_subtype']);
+    $pl_status = $fm->validation($_POST['status']);
 
     $pl_num = issetValue('pl_numero');
     if($pl_num == "")
@@ -39,6 +42,7 @@ if(isset($_POST['send'])){
     $plainte->setDescription($desc);
     $plainte->setAddedBy($addedby);
     $plainte->setSolution($pl_solution);
+    $plainte->setStatus($pl_status);
 
     $plExtra = new PlainteExtra();
     $plExtra->setImei($pl_imei);
@@ -48,12 +52,15 @@ if(isset($_POST['send'])){
     $plExtra->setEvc($pl_evc);
 
     $res = $response->addPlainte($plainte);
+    $idPl = $res;
     $plainte->setIdPlainte($res);
     $plExtra->setIdPlainte($res);
     $res = $response->addPlainteExtra($plExtra);
     if($res === "success"){
 		//downloadForm($plainte);
-		echo "success";
+        $json = ['num'=>$idPl,"msg"=>"success"];
+        $json = json_encode($json);
+		echo $json;
         //$_SESSION['info_success'] = "<p>Plainte à été envoyée avec succès<p>";
        // echo "<script>window.location.href='index.php?page=plainte';</script>";
     }
@@ -65,6 +72,7 @@ if(isset($_POST['send'])){
 }
 
 function issetValue($index){
+    
     if(isset($_POST[$index])){
         return $_POST[$index];
     }else{

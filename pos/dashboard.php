@@ -22,7 +22,7 @@ $thisweek_qt = $response->countThisWeekSalesQtePOS($pos);
 	  $thisyear = $response->countThisWeekCommande();
 	  //port d'entree
       //$prov = $response->getProvenance();
-$products = $response->getAll();
+$products = $response->getPOSProducts($pos);
 $arr_label = array();
 $arr_dt = array();
 if($products){
@@ -210,7 +210,6 @@ if($products){
                         <th>Produit</th>
                         <th>Quantité</th>
                         <th>Prix total</th>
-                        <th>Client</th>
                       </tr>
                       </thead>
                       <tbody>
@@ -234,12 +233,6 @@ if($products){
                               $t = $response->totalPriceSalesByProductPOS($item['id_product'],$pos);
                               echo $t;
                               ?></td>
-                              <td><?php
-                              $p = $response->getOneProductById($item['id_product']);
-                              echo $p['designation'];
-                              ?></td>
-
-
                           </tr>
 
                         <?php }}?>
@@ -249,7 +242,6 @@ if($products){
                         <th>Produit</th>
                         <th>Quantité</th>
                         <th>Prix total</th>
-                        <th>Client</th>
                       </tr>
                       </tfoot>
                     </table>

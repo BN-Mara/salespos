@@ -12,7 +12,48 @@ class Pos
     private $designation;
     private $city;
     private $province;
+    private $isDeleted;
+    private $deletedBy;
+    private $addedBy;
+    private $deletedTime;
 
+    public function setDeletedTime($deletedTime)
+    {
+        $this->deletedTime = $deletedTime;
+    }
+
+    public function getDeletedTime()
+    {
+        return $this->deletedTime;
+    }
+
+    public function setDeletedBy($deletedBy)
+    {
+        $this->deletedBy = $deletedBy;
+    }
+
+    public function getDeletedBy()
+    {
+        return $this->deletedBy;
+    }
+    public function setIsDeleted($isDeleted)
+    {
+        $this->isDeleted = $isDeleted;
+    }
+
+    public function getIsDeleted()
+    {
+        return $this->isDeleted;
+    }
+    public function setAddedBy($addedBy)
+    {
+        $this->addedBy = $addedBy;
+    }
+
+    public function getAddedBy()
+    {
+        return $this->addedBy;
+    }
     public function setIdPos($id_pos)
     {
         $this->id_pos = $id_pos;

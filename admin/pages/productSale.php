@@ -76,7 +76,7 @@ if(isset($_GET['when'])){
 
                     <th>Item</th>
                     <th>Quantity</th>
-                    <th>CDF</th>
+                    <th>Total Price (CDF)</th>
 
                 </tr>
                 </thead>
@@ -93,12 +93,23 @@ if(isset($_GET['when'])){
                         <tr>
                             <td><?php echo $item['designation']; ?></td>
                             <td><?php
+                                
                                 $qte = $response->getProductSaleQteById($item['id_product']);
-                                echo $qte;
+                                if($qte){
+                                    echo $qte;
+
+                                }else
+                                echo "0";
+                                
                                 ?></td>
                             <td><?php
+                                
                                 $t = $response->getTotalPriceProductSaleById($item['id_product']);
-                                echo $t;
+                                if($t){
+                                    echo $t;
+
+                                }else
+                                echo "0";
                                 ?></td>
 
                         </tr>
@@ -109,7 +120,7 @@ if(isset($_GET['when'])){
                 <tr>
                     <th>Item</th>
                     <th>Quantity</th>
-                    <th>CDF</th>
+                    <th>Total Price (CDF)</th>
                 </tr>
                 </tfoot>
             </table>

@@ -61,7 +61,7 @@ session_start();
       data-role="validator"
       data-clear-invalid="2000"
       data-on-error-form="invalidForm"
-      data-on-validate-form="validateForm" method="post" action="auth.php">
+      data-on-validate-form="validateForm" method="post" action="../controllers/auth.php">
     <?php
     if(isset($_SESSION['info'])){
         ?>
@@ -80,7 +80,7 @@ session_start();
     ?>
 	<center><img src="images/Logoafricell.png" height="80"></center>
     <span class="mif-vpn-lock mif-4x place-right" style="margin-top: -10px;"></span>
-    <h3 class="text-light">...Authentification...</h3>
+    <h3 class="text-light">Authentification</h3>
     <hr class="thin mt-4 mb-4 bg-white">
     <div class="form-group">
         <input type="text" data-role="input" data-prepend="<span class='mif-envelop'>" name="usrname" placeholder="username" required>

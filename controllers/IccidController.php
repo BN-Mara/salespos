@@ -11,19 +11,16 @@ spl_autoload_register(function($classe){
 
 if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 {
-    
-    $userC= new ImeiController();
+    $userC= new IccidController();
     if(isset($_POST['uploadcsv'])){
         $userC->uploadFromCSV();
 
-    }else{
-        $userC->makeImei();
-
     }
-    
+    else
+    $userC->makeIccid();
 
 }
-class ImeiController
+class IccidController
 {
     public function __construct()
     {
@@ -41,49 +38,56 @@ class ImeiController
             $hd[0] = trim($hd[0]);
             $hd[1]  = trim($hd[1]);
             $hd[2] = trim($hd[2]);
+            $hd[3] = trim($hd[3]);
+            $hd[4] = trim($hd[4]);
+            $hd[5] = trim($hd[5]);
             //die("this");
             foreach($csvAsArray as  $csv){
             
                 $newcsv = explode(";", $csv[0]);
                 //die(var_dump($newcsv));
 
-                if($hd[0] == "product_code" && $hd[1] == "imei" && $hd[2] == "pos" ){
+                if($hd[0] == "product_code" && $hd[1] == "iccid" && $hd[2] == "msisdn" && $hd[3] == "type" && $hd[4] == "profile" && $hd[5] == "pos" ){
                     
                     if($ct > 0){
                         $dao = new Dao_Carte();
-                        $p = new Imei();
+                        $p = new Iccid();
                         $idP = $dao->getProductByCode($newcsv[0]);
                         if($idP){
-                            $p->setIdProduct($idP);
-                            $p->setImei($newcsv[1]);
-                            $p->setIdPos($newcsv[2]);
-                            $p->setAddedBy($_SESSION['current_user']);
-                            $this->createImei($p);
+                        $p->setIdProduct($idP);
+                        $p->setIccid($newcsv[1]);
+                        $p->setMsisdn($newcsv[2]);
+                        $p->setType($newcsv[3]);
+                        $p->setProfile($newcsv[4]);
+                        $p->setIdPos($newcsv[5]);
+                        $p->setAddedBy($_SESSION['current_user']);
+                        $this->createImei($p);
+
                         }
                         
                     }
                     $ct +=1;
                 }
                 else{
-                    header("location:../admin/layout.php?page=imeis");
+                    header("location:../admin/layout.php?page=iccids");
                     return false;
                     exit;
                 }
             }
-            header("location:../admin/layout.php?page=produits");
+            header("location:../admin/layout.php?page=iccids");
 
 
         }
 
     }
-    public function createImei(Imei $imei){
+    public function createImei(Iccid $iccid){
         //die(var_dump($imei));
         $dao = new Dao_Carte();
-        $response = $dao->addImei($imei);
+        $response = $dao->addIccid($iccid);
     }
-    public function makeImei()
+    public function makeIccid()
     {
-        $iemi = new Imei();
+        $iccidEnt = new Iccid();
         ///
         $dao = new Dao_Carte();
         //
@@ -92,30 +96,40 @@ class ImeiController
 
 //end bn-mara
         $id_product = $fm->validation($_POST['id_product']);
-        $imei = $fm->validation($_POST['imei']);
+        $iccid = $fm->validation($_POST['iccid']);
         $id_pos = $fm->validation($_POST['id_pos']);
         $action = $fm->validation($_POST['action']);
 
         $addedBy = $_SESSION['current_user'];
+        $msisdn = $fm->validation($_POST['msisdn']);
+        $type = $fm->validation($_POST['type']);
+        $profile = $fm->validation($_POST['profile']);
 
 
         //*****************************************
 
-        $iemi->setIdProduct($id_product);
-        $iemi->setImei($imei);
-        $iemi->setIdPos($id_pos);
+       // $iemi->setIdProduct($id_product);
+        //$iemi->setImei($imei);
+        //$iemi->setIdPos($id_pos);
         // $myuser->setMatricule($matricule);
         // $myuser->setFonction($fonction);
         // $myuser->setDirection($direction);
+        $iccidEnt->setIdProduct($id_product);
+        $iccidEnt->setIdPos($id_pos);
+        $iccidEnt->setIccid($iccid);
+        $iccidEnt->setMsisdn($msisdn);
+        $iccidEnt->setType($type);
+        $iccidEnt->setProfile($profile);
+        $iccidEnt->setAddedBy($addedBy);
 
-        if($action == "ajouter"){
 
-            //$row = $dao->getImeiByIdProductAndIdPOS($iemi->getIdProduct(),$iemi->getIdPos());
-            //$ro
-            /*if ($row) {
+        //if($action == "ajouter"){
+
+           // $row = $dao->getIccidByIdProductAndIdPOS($iemi->getIdProduct(),$iemi->getIdPos());
+            if ($action == "modifier") {
 
                 //$id = $fm->validation($_POST['bnid']);
-                $response = $dao->editImei($iemi);
+                $response = $dao->editIccid($iccidEnt);
                 //$dao->addStockTransaction($stock, $addedBy);
                 $info = "La Modification a été effectuée avec succès";
 
@@ -123,15 +137,15 @@ class ImeiController
                     //die($action);
                     $_SESSION['info'] = $info;
 
-                    header("location:../admin/layout.php?page=addImei");
+                    header("location:../admin/layout.php?page=addIccid");
                 }
 
 
-            } else {
-                */
+            }
+            if($action == "ajouter"){
 
 
-                $response = $dao->addImei($iemi);
+                $response = $dao->addIccid($iccidEnt);
                 //$dao->addStockTransaction($stock, $addedBy);
                 $info = "Les Information ont été ajoutées avec succès";
                 $_SESSION['info'] = $info;
@@ -139,25 +153,12 @@ class ImeiController
                 if ($response == "success") {
                     //die($action);
 
-                    header("location:../admin/layout.php?page=addImei");
+                    header("location:../admin/layout.php?page=addIccid");
                 }
 
 
-            //}
-        }
-        if($action == "modifier"){
-            $id = $fm->validation($_POST['bnid']);
-            $response = $dao->editImei($iemi);
-            //$dao->addStockTransaction($stock, $addedBy);
-            $info = "La Modification a été effectuée avec succès";
-
-            if ($response == "success") {
-                //die($action);
-                $_SESSION['info'] = $info;
-
-                header("location:../admin/layout.php?page=addImei");
-            }
-        }
+           }
+       // }
 
 
 

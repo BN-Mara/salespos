@@ -49,18 +49,21 @@
             <center>
                 <div class="box-body" style="width:50%">
                     <input type="hidden" id="action" name="action" value="ajouter" >
-                    <div class="form-group" >
+                   <!-- <div class="form-group" >
                         <label for="exampleInputEmail1">Code</label>
                         <input type="text" class="form-control form-control" id="nom" name="code" placeholder="Code du produit" >
-                    </div>
+                    </div>-->
 
                     <div class="form-group" >
                         <label for="exampleInputEmail1">Designation</label>
-                        <input type="text" class="form-control form-control" id="nom" name="name" placeholder="Nom du produit" >
+                        <input type="text" class="form-control" id="nom" name="name" placeholder="Nom du produit" >
                     </div>
-                    <div class="form-group" >
-                        <label for="exampleInputEmail1">Prix</label>
-                        <input type="text" class="form-control form-control" id="nom" name="price" placeholder="Prix du produit" >
+                    <label for="price">Prix</label> 
+                    <div class="input-group md-3" >
+                        
+                            <span class="input-group-addon">USD</span> 
+                                         
+                        <input id="price" type="number" class="form-control" name="price" placeholder="Prix du produit" >
                     </div>
 
                     <div class="form-group" >

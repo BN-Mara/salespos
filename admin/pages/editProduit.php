@@ -78,16 +78,19 @@ else{
                     <input type="hidden" id="bid" name="bid" value="<?php echo $id; ?>" >
                     <div class="form-group" >
                         <label for="exampleInputEmail1">Code</label>
-                        <input type="text" class="form-control form-control" value="<?php echo $item['code']; ?>" name="code" placeholder="Code du produit" >
+                        <input type="text" class="form-control" value="<?php echo $item['code']; ?>" name="code" placeholder="Code du produit" disabled>
                     </div>
 
                     <div class="form-group" >
                         <label for="exampleInputEmail1">Designation</label>
-                        <input type="text" class="form-control form-control" value="<?php echo $item['designation']; ?>" name="name" placeholder="Nom du produit" >
+                        <input type="text" class="form-control " value="<?php echo $item['designation']; ?>" name="name" placeholder="Nom du produit" >
                     </div>
-                    <div class="form-group" >
-                        <label for="exampleInputEmail1">Prix</label>
-                        <input type="text" class="form-control form-control" value="<?php echo $item['price']; ?>" name="price" placeholder="Prix du produit" >
+                    <label for="price">Prix</label> 
+                    <div class="input-group md-3" >
+                        
+                            <span class="input-group-addon">USD</span> 
+                                         
+                        <input id="price" type="text" class="form-control" value="<?php echo $item['price']; ?>" name="price" placeholder="Prix du produit" >
                     </div>
 
                     <div class="form-group" >
@@ -114,7 +117,7 @@ else{
                     <!--   <div class="form-group">
                         <label for="exampleInputEmail1">Description</label>
                         <textarea type="text" class="form-control"  name="description" placeholder="description du produit">
-                            <?php echo $item['description']; ?>
+                            <?php //echo $item['description']; ?>
                     </textarea>
                     </div>-->
 

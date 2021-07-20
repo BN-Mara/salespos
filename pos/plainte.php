@@ -231,7 +231,7 @@
 
     var plainte_type = $("#plainte_type").val();
     var plainte_subtype = $("#plainte_subtype").val();
-    var status = $("#status").val();
+    var status = $( "#status option:selected" ).text();
     var pl_facture = $("#pl_facture").val();
     var pl_imei = $("#pl_imei").val();
     var pl_numero = $("#pl_numero").val();
@@ -241,6 +241,10 @@
     var description = $("#description").val();
     var solution = $("#solution").val();
     //alert(plainte_type);
+    if(status == ""){
+        status = "PENDING";
+
+    }
 
     var formData = {
         client: customer,
@@ -264,13 +268,13 @@
       data: formData,
       success: function (data) {                        
             console.log(data);
-            if(data == "success")
-                alert("Complaint sent successfully")       
-        },
-        
-    });
-    
-    var divContents = "<h1 align='center'>Complait No</h1>";
+            const data2 = $.parseJSON(data);
+            if(data2.msg == "success"){
+                alert("Complaint sent successfully");
+
+                const num_pl = FormatNumberLength(data2.num,4)  
+
+                var divContents = "<h1 align='center'>Complaint No  "+num_pl+"</h1>";
         divContents+="<table>";
 
         divContents+="<tr><td><b>Client</b></td><td>:"+$( "#client option:selected" ).text()+"</td></tr>";
@@ -296,8 +300,22 @@
             printWindow.focus();
             printWindow.print();
             $('#form_id').trigger("reset");
+            }
+                       
+        },
+        
+    });
+    
+   
     //event.preventDefault();
 });
+function FormatNumberLength(num, length) {
+    var r = "" + num;
+    while (r.length < length) {
+        r = "0" + r;
+    }
+    return r;
+}
 
         $("#plainte_type").on("change", function() {
 

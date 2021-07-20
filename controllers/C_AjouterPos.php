@@ -33,6 +33,7 @@ class POSController
         $noms = $fm->validation($_POST['nom']);
         $city = $fm->validation($_POST['city']);
         $province = $fm->validation($_POST['province']);
+        $addedBy = $_SESSION['current_user'];
         $action = $fm->validation($_POST['action']);
 
 
@@ -42,6 +43,8 @@ class POSController
         $pos->setDesignation($noms);
         $pos->setCity($city);
         $pos->setProvince($province);
+        $pos->setAddedBy($addedBy);
+        $pos->setIsDeleted(0);
         // $myuser->setMatricule($matricule);
         // $myuser->setFonction($fonction);
         // $myuser->setDirection($direction);

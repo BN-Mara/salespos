@@ -11,14 +11,53 @@ spl_autoload_register(function($classe){
 
 if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 {
- $userC= new UserController();
- $userC->makeUser();
+  $userC= new UserController();
+  if(isset($_POST['modifpw'])){
+    $userC->changePassword();
+
+  }else if(isset($_POST['modifpwpos'])){
+    $userC->changePasswordPOS();
+  }
+  else{
+    $userC->makeUser();
+
+  }
+
 
 }
 class UserController
 {
   public function __construct()
     {
+    }
+
+    public function changePassword(){
+      $dao=new Dao_Carte();
+      $fm=new Format();
+      $pw = $fm->validation($_POST['modifpw']);
+      $username = $_POST['username'];
+      $res = $dao->changePassword($username,$pw,$_SESSION['current_user']);
+      if($res=="success")
+    {
+        //die($action);
+        $_SESSION['info'] = "le Mot de passe a ete modifie avec success";
+        
+        header("location:../admin/layout.php?page=userProfile");
+    }
+    }
+    public function changePasswordPOS(){
+      $dao=new Dao_Carte();
+      $fm=new Format();
+      $pw = $fm->validation($_POST['modifpwpos']);
+      $username = $_POST['username'];
+      $res = $dao->changePassword($username,$pw,$_SESSION['current_user']);
+      if($res=="success")
+    {
+        //die($action);
+        $_SESSION['info_success'] = "le Mot de passe a ete modifie avec success";
+        
+        header("location:../pos/index.php?page=profile");
+    }
     }
   public function makeUser()
   {
@@ -35,7 +74,7 @@ class UserController
       $chk_username = $dao->findUsername($username);
 
     $role = $fm->validation($_POST['role']);
-    $password = $fm->validation($_POST['password']);
+    
      // $matricule = $fm->validation($_POST['matricule']);
     //$phone = $fm->validation($_POST['phone']);
     $status = $fm->validation($_POST['status']);
@@ -43,11 +82,16 @@ class UserController
   $pos = $fm->validation($_POST['pos']);
       //$fonction = $fm->validation($_POST['fonction']);
       //$direction = $fm->validation($_POST['direction']);
-    $pages = $_POST['pages'];
-    $pages1 = "";
-    foreach ($pages as $key) {
-        $pages1 .= $key.";";
-    }
+      $pages1 = '';
+      if(isset($_POST['pages'])){
+        $pages = $_POST['pages'];
+        $pages1 = "";
+        foreach ($pages as $key) {
+            $pages1 .= $key.";";
+        }
+
+      }
+    
     $addedBy = $_SESSION['current_user'];
     
 	
@@ -56,7 +100,7 @@ class UserController
 	$myuser->setNoms($noms);
     $myuser->setUsername($username);
     $myuser->setRole($role);
-    $myuser->setPassword($password);
+    
     //$myuser->setPhone($phone);
     $myuser->setStatus($status);
     $myuser->setPages($pages1);
@@ -68,12 +112,14 @@ class UserController
 	
 	if($action == "ajouter"){
         if($chk_username){
-
+          
             $error = "Nom d'utilisateur ".$username." existe deja, trouver un autre";
             $_SESSION['infoerror'] = $error;
             header("location:../admin/layout.php?page=addUser");
             return;
         }else{
+          $password = $fm->validation($_POST['password']);
+          $myuser->setPassword($password);
             $response=$dao->AddUser($myuser);
             $info = "Les Information ont été ajoutées avec succès";
             $_SESSION['info'] = $info;

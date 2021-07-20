@@ -11,14 +11,66 @@ spl_autoload_register(function($classe){
 
 if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 {
+
     $fichierC= new FichierController();
-    $fichierC->makeFichier();
+    if(isset($_POST["uploadcsv"])){
+        $fichierC->uploadFromCSV();
+    }else{
+        $fichierC->makeFichier();
+
+    }
+    
 
 }
 class FichierController
 {
     public function __construct()
     {
+    }
+
+    public function uploadFromCSV(){
+        if ($_FILES["csv"]["error"] > 0) {
+            echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
+
+        }else{
+            $tmpName = $_FILES['csv']['tmp_name'];
+            $csvAsArray = array_map('str_getcsv', file($tmpName));
+            //die(var_dump($csvAsArray));
+            $ct = 0;
+            foreach($csvAsArray as  $csv){
+            
+                $newcsv = explode(";", $csv[0]);
+                if($newcsv[0] !="designation" && $newcsv[1] == "price" && $newcsv[2] != "category" ){
+                    header("location:../admin/layout.php?page=produits");
+                    return false;
+                    exit;
+                }
+                else{
+                    if($ct > 0){
+                        $p = new Product();
+                        $p->setDesignation($newcsv[0]);
+                        $p->setPrice($newcsv[1]);
+                        $p->setIdCategory($newcsv[2]);
+                        $this->createProduct($p);
+                    }
+                    $ct +=1;
+                }
+            }
+            header("location:../admin/layout.php?page=produits");
+
+
+        }
+
+    }
+    public function createProduct(Product $product){
+        $dao = new Dao_Carte();
+        $produit_type1 = $dao->getProductTypeById($product->getIdCategory());
+        $code = $dao->generateProductCode($produit_type1['designation']);
+
+        $product->setCode($code);
+        $product->setAddedBy($_SESSION['current_user']);
+        $response = $dao->addProduit($product);
+
     }
     public function makeFichier()
     {
@@ -30,11 +82,9 @@ class FichierController
 
 
 //end bn-mara
-        $code = $fm->validation($_POST['code']);
-        $find = $dao->findCodeProduit($code);
+        //$code = $fm->validation($_POST['code']);
 
-
-
+        //$find = $dao->findCodeProduit($code);
             //$descr = $fm->validation($_POST['description']);
             $addBy = $_SESSION['current_user'];
             $action = $fm->validation($_POST['action']);
@@ -44,17 +94,16 @@ class FichierController
             //$qt = $fm->validation($_POST['qt']);
             $produit_type = $fm->validation($_POST['produit_type']);
 
-
-
             //*****************************************
-
+        $produit_type1 = $dao->getProductTypeById($produit_type);
+        $code = $dao->generateProductCode($produit_type1['designation']);
         $product->setDesignation($name);
             //$product->setDescription($descr);
         $product->setPrice($price);
         $product->setAddedBy($addBy);
             //$product->setModifierPar($addBy);
             //$product->setQuantity($qt);
-        $product->setCode($code);
+            $product->setCode($code);
         $product->setIdCategory($produit_type);
 
 
@@ -63,11 +112,10 @@ class FichierController
             $info = "";
 
             if ($action == "ajouter") {
-                if($find  > 0){
-                    $_SESSION['infoerror'] = "Code produit existe deja";
+                
+                   /* $_SESSION['infoerror'] = "Code produit existe deja";
                    header("location:../admin/layout.php?page=ajoutProduit");
-
-                }else{
+                    */
 
                     $response = $dao->addProduit($product);
                     //$resp = $dao->addProduitStock($product->getCode(),$product->getQuantity(),$addBy);
@@ -79,7 +127,7 @@ class FichierController
                     else
                         echo "error";
 
-                }
+                
 
             }
 

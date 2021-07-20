@@ -21,6 +21,19 @@ $row=$response->getAllImei();
     <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title">POS</h3>
+            <form method="post" action="../controllers/ImeiController.php" enctype="multipart/form-data">
+            <table class="pull-right">
+                <tr>
+                    <td>
+                    <input  type="file" name="csv" id="csv" accept=".csv" onChange="validateAndUpload(this);" >
+                    </td>
+                    <td>
+                    <button class="btn btn-secondary " type="submit" name="uploadcsv" id="uploadcsv" disabled>Import</button>
+                    </td>
+                </tr>
+            </table>
+            </form>
+            
         </div>
         <!-- /.box-header -->
         <?php
@@ -89,3 +102,18 @@ $row=$response->getAllImei();
 
     </div>
 </section>
+<script>
+    
+function validateAndUpload(input){
+    var file = input.files[0];
+    var nme = document.getElementById("csv");
+    var impbtn = document.getElementById("uploadcsv");
+    
+    if(nme.value.length < 4){
+        impbtn.disabled = true;
+    }else{
+        impbtn.disabled = false;
+    }
+}
+    
+</script>

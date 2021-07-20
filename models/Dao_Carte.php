@@ -106,6 +106,68 @@ class Dao_Carte extends Connexion
         }
 
     }
+    public function getPOSProducts($pos){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_product INNER JOIN bn_stock ON bn_product.id_product = bn_stock.id_product
+             WHERE bn_stock.id_pos =:pos");
+            $query->execute(array('pos'=>$pos));
+            return $row = $query->fetchAll();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+
+    public function transfertStockToPOS(StockTransfer $stransfer){
+        try
+        {
+            $sql = "INSERT INTO bn_stocktransfer(id_product,id_pos_from,id_pos_to,quantity,addedBy)
+			VALUES (:id_product,:id_pos_from,:id_pos_to,:quantity,:addedBy)";
+
+            $query = $this->getConnexion()->prepare($sql);
+            $query->execute(array(
+                'id_product'=>$stransfer->getIdProduct(),
+                'id_pos_from'=>$stransfer->getIdPosFrom(),
+                'id_pos_to'=>$stransfer->getIdPosTo(),
+                'quantity,'=>$stransfer->getQuantity(),
+                'addedBy'=>$stransfer->getAddedBy()
+            ));
+            return 'success';
+
+        }
+        catch (Exception $e)
+        {
+            //return $e->getMessage();
+            die('Erreur : ' . $e->getMessage());
+        }
+
+
+    }
+
+    public function approveStockTransfer($id,$approvedBy){
+        try
+        {
+
+
+            $sql = "UPDATE bn_stocktransfer SET status =:status, approvedBy =:approvedBy, approvedTime=GETDATE()
+              WHERE id_transfer = :id_transfer";
+
+            $query = $this->getConnexion()->prepare($sql);
+            $query->execute(array(
+                'status'=>'APPROVED',
+                'id_transfer'=>$id,
+                'approvedBy'=>$approvedBy
+                ));
+            return 'success';
+
+        } catch (Exception $e) {
+            return $e->getMessage();
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+
 
 
 
@@ -116,8 +178,7 @@ class Dao_Carte extends Connexion
     {
         try
         {
-            $sql = "INSERT INTO bn_product(code,designation,price,id_category,addedBy)
-			VALUES (:code,:designation,:price,:id_category,:addedBy)";
+            $sql = "INSERT INTO bn_product(code,designation,price,id_category,addedBy) VALUES (:code,:designation,:price,:id_category,:addedBy)";
 
             $query = $this->getConnexion()->prepare($sql);
             $query->execute(array(
@@ -183,14 +244,13 @@ class Dao_Carte extends Connexion
             $query = $this->getConnexion()->prepare($sql1);
             $query->execute(["id_product"=>$id]);
 
-            $sql = "UPDATE bn_product SET code=:code,designation=:designation,price=:price,id_category=:id_category, 
+            $sql = "UPDATE bn_product SET designation=:designation,price=:price,id_category=:id_category, 
             modifyBy=:modifyBy, modificationTime = GETDATE() WHERE id_product = :id_produit";
 
             $query = $this->getConnexion()->prepare($sql);
             $query->execute(array(
                 'designation'=>$product->getDesignation(),
                 'price'=>$product->getPrice(),
-                'code'=>$product->getCode(),
                 'id_category'=>$product->getIdCategory(),
                 'id_produit'=>$id,
                 'modifyBy'=>$product->getAddedBy()
@@ -464,6 +524,18 @@ class Dao_Carte extends Connexion
         try{
             $query = $this->getConnexion()->prepare("SELECT price FROM bn_product WHERE id_product=?");
             $query->execute([$id]);
+            $count_rows = $query->fetchColumn();
+            return $count_rows;
+        }catch(Exception $e){
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+
+    public function getProductByCode($code){
+        try{
+            $query = $this->getConnexion()->prepare("SELECT id_product FROM bn_product WHERE code=?");
+            $query->execute([$code]);
             $count_rows = $query->fetchColumn();
             return $count_rows;
         }catch(Exception $e){
@@ -794,6 +866,35 @@ class Dao_Carte extends Connexion
         }
 
 
+    }
+
+    public function generateProductCode($product_type){
+        $chk = true;
+        $code = "";
+        while($chk){
+
+            $code = substr($product_type,0,2).substr(md5(mt_rand()), 0, 8);
+            //$date = date('d-m-Y H:i:s');
+            $code =  strtoupper($code);
+            $find = $this->findCodeProduit($code);
+            if($find < 1 ){
+                $chk = false;
+            }
+
+        }
+        return $code;
+    }
+
+    public function getProductTypeById($id){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_category WHERE id_category=:id");
+            $query->execute(['id'=>$id]);
+            return $row = $query->fetch();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
     }
     
 
@@ -1876,7 +1977,7 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_pos");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_pos WHERE isDeleted = 0");
             $query->execute();
             return $row = $query->fetchAll();
 
@@ -1891,7 +1992,7 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_pos WHERE id_pos =:id");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_pos WHERE id_pos =:id AND isDeleted = 0");
             $query->execute(array('id'=>$id));
             return $row = $query->fetch();
 
@@ -1906,7 +2007,7 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT id_pos FROM bn_user WHERE username =:username");
+            $query = $this->getConnexion()->prepare("SELECT id_pos FROM bn_user WHERE username =:username AND isDeleted = 0");
             $query->execute(array('username'=>$username));
             return $row = $query->fetchColumn();
 
@@ -1920,12 +2021,14 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
     {
         try
         {
-            $query = $this->getConnexion()->prepare("INSERT INTO bn_pos(designation,city,province)
-			VALUES (:designation,:city,:province)");
+            $query = $this->getConnexion()->prepare("INSERT INTO bn_pos(designation,city,province,isDeleted,addedBy)
+			VALUES (:designation,:city,:province,:isDeleted,:addedBy)");
             $query->execute(array(
                 'designation'=>$pos->getDesignation(),
                 'city'=>$pos->getCity(),
                 'province'=>$pos->getProvince(),
+                'isDeleted'=>$pos->getIsdeleted(),
+                'addedBy'=>$pos->getAddedBy()
             ));
             return 'success';
 
@@ -1964,6 +2067,25 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
 
     }
+    public function deletePOS($id,$deletedBy)
+    {
+        try
+        {
+            $query = $this->getConnexion()->prepare("UPDATE bn_pos SET isDeleted=1, deletedBy=:deletedBy, deletedTime=GETDATE()");
+            $query->execute(['deletedBy'=>$deletedBy]);
+            return 'success';
+
+        }
+
+        catch (Exception $e)
+        {
+            //return 'failed';
+            die('Erreur : ' . $e->getMessage());
+        }
+
+
+    }
+
 
     /************** IMEI ************ */
 
@@ -2085,6 +2207,166 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
             die('Erreur : ' . $e->getMessage());
         }
 
+    }
+    public function checkProductImeiPOS($id_product,$id_pos,$imei){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_imei WHERE id_product=:id AND id_pos=:id_pos AND imei =:imei");
+            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos, 'imei'=>$imei));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    /***************** ICCID **************************/
+    public function addIccid(Iccid $iccid)
+    {
+        try
+        {
+            $query = $this->getConnexion()->prepare("INSERT INTO bn_iccid(id_product,iccid,msisdn,type,profile,id_pos,addedBy)
+			VALUES (:id_product,:iccid,:msisdn,:type,:profile,:id_pos,:addedBy)");
+            $query->execute(array(
+                'id_product'=>$iccid->getIdProduct(),
+                'iccid'=>$iccid->getIccid(),
+                'msisdn'=>$iccid->getMsisdn(),
+                'type'=>$iccid->getType(),
+                'profile'=>$iccid->getProfile(),
+                'id_pos'=>$iccid->getIdPos(),
+                'addedBy'=>$iccid->getAddedBy(),
+            ));
+            return 'success';
+
+        }
+
+        catch (Exception $e)
+        {
+            //return 'failed';
+            die('Erreur : ' . $e->getMessage());
+        }
+
+
+    }
+
+    public function editIccid(Iccid $iccid)
+    {
+        try
+        {
+            //$row = $this->getStockByIdProductAndIdPOS($stock->getIdProduct(),$stock->getIdPos());
+            //$qt = (int)$row['quantity'] + (int)$stock->getQuantity();
+
+
+            $sql = "UPDATE bn_iccid SET iccid =:iccid, msisdn =:msisdn, type =:type, profile =:profile WHERE id_product=:id_product AND id_pos=:id_pos";
+
+            $query = $this->getConnexion()->prepare($sql);
+            $query->execute(array(
+                'id_product'=>$iccid->getIdProduct(),
+                'id_pos'=>$iccid->getIdPos(),
+                'iccid'=>$iccid->getIccid(),
+                'msisdn'=>$iccid->getMsisdn(),
+                'type'=>$iccid->getType(),
+                'profile'=>$iccid->getProfile()
+            ));
+            return 'success';
+
+        }
+
+        catch (Exception $e)
+        {
+            return $e->getMessage();
+            die('Erreur : ' . $e->getMessage());
+        }
+
+
+    }
+
+    public function getAllIccid()
+    {
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_iccid");
+            $query->execute();
+            return $row = $query->fetchAll();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function getIccidByIdProuct($id)
+    {
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_iccid WHERE id_product =:id");
+            $query->execute(array('id'=>$id));
+            return $row = $query->fetchAll();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+
+    public function getIccidByIdPos($id)
+    {
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_iccid WHERE id_pos =:id");
+            $query->execute(array('id'=>$id));
+            return $row = $query->fetchAll();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+
+    public function getIccidByIdProductAndIdPOS($id_product,$id_pos){
+
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_iccid WHERE id_product=:id AND id_pos=:id_pos");
+            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos));
+
+            return $row = $query->fetch();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function checkProductIccidPOS($id_product,$id_pos,$iccid){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_iccid WHERE id_product=:id AND id_pos=:id_pos AND iccid =:iccid");
+            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos, 'iccid'=>$iccid));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+
+    public function checkProductMsisdnPOS($id_product,$id_pos,$msisdn){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_iccid WHERE id_product=:id AND id_pos=:id_pos AND msisdn =:msisdn");
+            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos, 'msisdn'=>$msisdn));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
     }
 
     /*************** SALE IMEI *******************/
@@ -2557,6 +2839,28 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         }
 
     }
+    public function changePassword($username,$pw,$modifiedBy){
+        try
+        {
+            $pw_h = password_hash($pw,PASSWORD_DEFAULT);
+
+            $query = $this->getConnexion()->prepare("UPDATE bn_user SET password=:password, pswdModified = 1, pswdModifiedTime = GETDATE(), pswdModifiedBy =:modifiedBy WHERE username=:username");
+            $query->execute(array(
+                'username'=>$username,
+                'password'=>$pw_h,
+                'modifiedBy'=>$modifiedBy));
+            return 'success';
+
+        }
+
+        catch (Exception $e)
+        {
+            die('Erreur : ' . $e->getMessage());
+            return 'failed';
+
+        }
+
+    }
 
     public function getOneUserById($id){
 
@@ -2712,7 +3016,34 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT id FROM bn_login WHERE username=:username ORDER BY id DESC ");
+            $query = $this->getConnexion()->prepare("SELECT TOP 1 id FROM bn_login WHERE username=:username ORDER BY id DESC ");
+            $query->execute(array('username'=>$username));
+            $id = $query->fetchColumn();
+            return $id;
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function countLoginByUserName($username){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_login WHERE username=:username");
+            $query->execute(array('username'=>$username));
+            $id = $query->fetchColumn();
+            return $id;
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkFirstLogin($username){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_user WHERE username=:username AND pswdModified = 1");
             $query->execute(array('username'=>$username));
             $id = $query->fetchColumn();
             return $id;
@@ -2773,7 +3104,7 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         try
         {
             //$logout = date("Y-m-d h:i:s");
-            $query = $this->getConnexion()->prepare("UPDATE bn_login SET logout= NOW() WHERE id=:id");
+            $query = $this->getConnexion()->prepare("UPDATE bn_login SET logout= GETDATE() WHERE id=:id");
             $query->execute(array('id'=>$id));
             return 'success';
 

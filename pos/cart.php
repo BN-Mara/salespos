@@ -1,11 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: shelton
- * Date: 25/06/2020
- * Time: 20:05
- */
 session_start();
+ob_start();
 include_once '../models/Dao_Carte.php';
 require_once("../models/Client.php");
 require_once("../models/Commande.php");
@@ -45,11 +40,46 @@ if(isset($_POST['new_cust']) || isset($_POST['new_cust_pl'])){
     $client->setAddedBy($_SESSION['user']['username']);
     $res = $response->addClient($client);
     $clients = $response->getAllCustomer();
-    if(isset($_POST['new_cust'])){
+    if(isset($_POST['new_cust_pl'])){
         header("location: index.php?page=plainte");
     }else{
         header("location: index.php?page=sales");
     }
+
+}
+
+if(isset($_POST['check_extra_imei'])){
+    $pdt_id =  $_POST['id_product'];
+    $imei_c = $_POST['imei'] ;
+    $pos_c = $response->getPOSByUsername($_SESSION['user']['username']);
+    //die($pdt_id.$pos_c.$imei_c);
+    $imei =  $response->checkProductImeiPOS($pdt_id,$pos_c,$imei_c);
+    
+        $dataR = ['imei'=>$imei];
+        echo json_encode($dataR);
+    
+   
+}
+if(isset($_POST['check_extra_iccid'])){
+    $pdt_id =  $_POST['id_product'];
+    $iccid_c = $_POST['iccid'];
+    //die($pdt_id.$pos_c.$iccid_c);
+    $pos_c = $response->getPOSByUsername($_SESSION['user']['username']);
+    $iccid = $response->checkProductIccidPOS($pdt_id,$pos_c,$iccid_c);
+    $dataR = ['iccid'=>$iccid];
+    echo json_encode($dataR);
+}
+if(isset($_POST['check_extra_msisdn'])){
+    $pdt_id =  $_POST['id_product'];
+    $msisdn_c = $_POST['msisdn'];
+    $pos_c = $response->getPOSByUsername($_SESSION['user']['username']);
+    $msisdn = $response->checkProductMsisdnPOS($pdt_id,$pos_c,$msisdn_c);
+    $dataR = ['msisdn'=>$msisdn];
+    echo json_encode($dataR);
+    
+}
+
+if(isset($_POST['check_extra_serial'])){
 
 }
 
@@ -126,7 +156,7 @@ if(isset($_POST['addtocart'])){
         //var_dump($productByCode);
         $taux = $response->getRate();
         $price_taux = $productByCode["price"] * $taux[0]['rate'];
-        $itemArray = array($productByCode["code"]=>array('id_produit'=>$productByCode["id_product"],'name'=>$productByCode["designation"], 'code'=>$productByCode["code"], 'quantity'=>$_POST["qt"], 'price'=>$price_taux));
+        $itemArray = array($productByCode["code"]=>array('id_produit'=>$productByCode["id_product"],'name'=>$productByCode["designation"], 'code'=>$productByCode["code"], 'quantity'=>$_POST["qt"], 'price'=>$price_taux,'category'=>$productByCode["id_category"]));
         $id_pos = $response->getOnePOSByUser($_SESSION['user']['username']);
         $_SESSION['pos'] = $id_pos;
         $product_stock = $response->getStockByIdProductAndIdPOS($_POST['produit'],$id_pos);
@@ -492,7 +522,7 @@ function addOrder($id_client){
 }
 
 function downloadForm($cart,$client,$order){
-
+    error_reporting(0);
     //Include the main TCPDF library (search for installation path).
 
 // create new PDF document
@@ -624,3 +654,4 @@ ob_end_clean();
 //============================================================+
 
 }
+?>

@@ -2,10 +2,18 @@
 <?php
 
 $response=new Dao_Carte();
-
+$chkPg = $response->checkPagesByUsername($_SESSION['current_user'], "deletePos");
 if(isset($_GET['delete'])){
-   // $response->deleteOneProduct($_GET['delete']);
+    if($chkPg){
+        // $response->deleteOneProduct($_GET['delete']);
+        $response->deletePOS($_GET['delete'],$_SESSION['current_user']);
+     }
+     else{
+        $_SESSION['info'] = "Vous n'etes pas autorise pour cette tache";
+    }
+
 }
+
 $row=$response->getAllPOS();
 ?>
 
@@ -46,6 +54,7 @@ $row=$response->getAllPOS();
             <table id="example2" class="table table-bordered table-striped">
                 <thead>
                 <tr>
+                <th>POS</th>
                     <th>Designation</th>
                     <th>Ville</th>
                     <th>Province</th>
@@ -63,11 +72,14 @@ $row=$response->getAllPOS();
                         $count++;
                         ?>
                         <tr>
+                        <td><?php echo $item['id_pos']; ?></td>
                             <td><?php echo $item['designation']; ?></td>
                             <td><?php echo $item['city']; ?></td>
                             <td><?php echo $item['province']; ?></td>
-                            <td>
-                                <a href="layout.php?page=pos&delete=<?php echo $item['id_pos']; ?>">Modifier</a></td>
+                           <td>
+                               <a href="layout.php?page=pos&delete=<?php echo $item['id_pos']; ?>">Suprimer</a>
+                            
+                            </td>
 
                         </tr>
 
@@ -75,6 +87,7 @@ $row=$response->getAllPOS();
                 </tbody>
                 <tfoot>
                 <tr>
+                <th>POS</th>
                     <th>Designation</th>
                     <th>Ville</th>
                     <th>Province</th>

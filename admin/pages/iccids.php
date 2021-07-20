@@ -2,25 +2,36 @@
 <?php
 
 $response=new Dao_Carte();
-$row=$response->getAllPlainte();
 
+$row=$response->getAllIccid();
 ?>
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Liste des Plaintes
-        <small>Preview</small>
+        Tous les ICCID
+
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Plaintes</a></li>
+        <li><a href="#">Tous les iccid</a></li>
     </ol>
 </section>
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Plaintes</h3>
+            <h3 class="box-title">ICCID</h3><form method="post" action="../controllers/IccidController.php" enctype="multipart/form-data">
+            <table class="pull-right">
+                <tr>
+                    <td>
+                    <input  type="file" name="csv" id="csv" accept=".csv" onChange="validateAndUpload(this);" >
+                    </td>
+                    <td>
+                    <button class="btn btn-secondary " type="submit" name="uploadcsv" id="uploadcsv" disabled>Import</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
         </div>
         <!-- /.box-header -->
         <?php
@@ -43,13 +54,12 @@ $row=$response->getAllPlainte();
             <table id="example2" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th>Numero</th>
-                    <th>Client</th>
+                    <th>Produit</th>
+                    <th>ICCID</th>
+                    <th>MSISDN</th>
                     <th>Type</th>
-                    <th>Description</th>
-                    <th>Date d'ajout</th>
-                    <th>statut</th>
-                    <th>Action</th>
+                    <th>Profile</th>
+                    <th>POS</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,32 +73,19 @@ $row=$response->getAllPlainte();
                         $count++;
                         ?>
                         <tr>
-                            <td><?php echo $item['id_plainte'];  ?></td>
                             <td><?php
-                                $cl = $response->getOneClientById($item['id_client']);
-                                echo $cl['firstname']." ".$cl['lastname'];
-
+                                $p = $response->getOneProductById($item['id_product']);
+                                echo $p['designation'];
                                 ?></td>
+                            <td><?php echo $item['iccid']; ?></td>
+                            <td><?php echo $item['msisdn']; ?></td>
+                            <td><?php echo $item['type']; ?></td>
+                            <td><?php echo $item['profile']; ?></td>
                             <td><?php
-                                $pl = $response->getOnePlainteTypeById($item['id_type']) ;
-                                echo $pl['designation'];
-                                ?></td>
-                            <td><?php echo $item['description']; ?></td>
-                            <td><?php echo $item['creation_date']; ?></td>
-                            <td><?php
-                               echo $item['status'];
-                                ?></td>
-                            <td>
-                            <?php
-                                if($response->checkPagesByUsername($_SESSION['current_user'], "setPlaintesolution")){
-                                    ?>
-                                    <a href="layout.php?page=setPlaintesolution&id=<?php echo $item['id_plainte']; ?>">Completer</a>
-                                    <?php
-                                }
+                                $pos = $response->getOnePOSById($item['id_pos']);
+                                echo $pos['designation'];
                                 ?>
-                                
                             </td>
-
 
                         </tr>
 
@@ -96,13 +93,12 @@ $row=$response->getAllPlainte();
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th>Numero</th>
-                    <th>Client</th>
+                <th>Produit</th>
+                    <th>ICCID</th>
+                    <th>MSISDN</th>
                     <th>Type</th>
-                    <th>Description</th>
-                    <th>Date d'ajout</th>
-                    <th>statut</th>
-                    <th>Action</th>
+                    <th>Profile</th>
+                    <th>POS</th>
                 </tr>
                 </tfoot>
             </table>
@@ -113,3 +109,18 @@ $row=$response->getAllPlainte();
 
     </div>
 </section>
+<script>
+    
+function validateAndUpload(input){
+    var file = input.files[0];
+    var nme = document.getElementById("csv");
+    var impbtn = document.getElementById("uploadcsv");
+    
+    if(nme.value.length < 4){
+        impbtn.disabled = true;
+    }else{
+        impbtn.disabled = false;
+    }
+}
+    
+</script>

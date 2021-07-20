@@ -6,6 +6,42 @@ include_once '../models/Dao_Carte.php';
 $response=new Dao_Carte();
 
 $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteByStatus(0) : 0  ;
+$loginCount = $response->checkFirstLogin($_SESSION['current_user']);
+?>
+<?php 
+ 
+ //$response=new Dao_Carte();
+ $total=$response->countAllCommande();
+$today = $response->countTodayCommande();
+$thismonth = $response->countThisMonthCommande();
+$thisyear = $response->countThisWeekCommande();
+//port d'entree
+ //$prov = $response->getProvenance();
+$products = $response->getAll();
+$arr_label = array();
+$arr_dt = array();
+if($products){
+$count = 0;
+foreach($products as $item){
+$arr_label[$count] = $item['designation'];
+$arr_dt[$count] = $response->getQuantityProduitCommande($item['id_product']);
+if($arr_dt[$count] == null)
+ $arr_dt[$count]=0;
+
+$count++;
+
+}
+// var_dump($arr_dt);
+}
+
+//mois de l'annee courrante
+$month = array();
+for($i=0; $i<12; $i++){
+ $month[$i]=$response->countThisYearMonthCommande($i+1);
+}
+
+
+
 
 ?>
 
@@ -15,7 +51,7 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>VENTES | BN-Mara</title>
+  <title>AFRICELL | SALESPOS</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -46,7 +82,7 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
     <!-- Select2 -->
   <link rel="stylesheet" href="bower_components/select2/dist/css/select2.min.css">
   <!-- iCheck for checkboxes and radio inputs -->
-  <link rel="stylesheet" href="../../plugins/iCheck/all.css">
+  <link rel="stylesheet" href="plugins/iCheck/all.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -63,18 +99,18 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+<div class="wrapper" >  
 
   <header class="main-header" style="background-color:#A01775">
     <!-- Logo -->
-    <a href="layout.php?page=dashboard" class="logo">
+    <a href="layout.php?page=dashboard" class="logo" style="background-color:#A01775;">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><img src="dist/img/Logoafricell.png"  width="50" alt="logo"></span>
+      <span class="logo-mini"><img src="dist/img/wlogo.png"  width="50" alt="logo"></span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><img src="dist/img/Logoafricell.png"  width="100" alt="logo"></span>
+      <span class="logo-lg"><img src="dist/img/wlogo.png"  width="100" alt="logo"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
+    <nav class="navbar navbar-static-top"  style="background-color:#A01775;">
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
         <span class="sr-only">Toggle navigation</span>
@@ -129,16 +165,16 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/avatar_man.png" class="user-image" alt="User Image">
-              <span class="hidden-xs"><?php echo $_SESSION['current_user'];?></span>
+              <span class="hidden-xs"><?php if(isset($_SESSION['current_user'])){echo $_SESSION['current_user'];}?></span>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" >
               <!-- User image -->
-              <li class="user-header">
+              <li class="user-header"  style="background-color:#A01775">
                 <img src="dist/img/avatar_man.png" class="img-circle" alt="User Image">
 
                 <p>
-                  <?php echo $_SESSION['current_user'] ?>
-                  <small><?php echo $_SESSION['current_user_role'] ?></small>
+                  <?php if(isset($_SESSION['current_user'])){echo $_SESSION['current_user'];} ?>
+                  <small><?php if(isset($_SESSION['current_user'])){echo $_SESSION['current_user_role'];} ?></small>
                 </p>
               </li>
               <!-- Menu Body -->
@@ -176,16 +212,16 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
     </nav>
   </header>
   <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
+  <aside class="main-sidebar" style="background-color:#A01775">
     <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
+    <section class="sidebar" >
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
           <img src="dist/img/avatar_man.png" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p><?php echo $_SESSION['current_user'] ?></p>
+          <p><?php if(isset($_SESSION['current_user'])){echo $_SESSION['current_user'];} ?></p>
           <a href="#"><i class="fa fa-circle text-success"></i> En ligne</a>
         </div>
       </div>
@@ -201,8 +237,8 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
   </form>-->
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MENU</li>
+      <ul class="sidebar-menu" data-widget="tree"  >
+        <li class="header" style="background-color:white">MENU</li>
         <li>
           <a href="layout.php?page=dashboard">
             <i class="fa fa-dashboard"></i> <span>Tableau de board</span>
@@ -243,6 +279,8 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
             <li><a href="layout.php?page=addStock"><i class="fa fa-book"></i> Ajouter Stock</a></li>
             <li><a href="layout.php?page=imeis"><i class="fa fa-book"></i>IMEI</a></li>
             <li><a href="layout.php?page=addImei"><i class="fa fa-book"></i> Ajouter IMEI</a></li>
+            <li><a href="layout.php?page=iccids"><i class="fa fa-book"></i>ICCID</a></li>
+            <li><a href="layout.php?page=addIccid"><i class="fa fa-book"></i> Ajouter ICCID</a></li>
 
           </ul>
         </li>
@@ -293,6 +331,7 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
             <li><a href="layout.php?page=orders&when=today"><i class="fa fa-book"></i> AUJOURD'HUI</a></li>
             <li><a href="layout.php?page=orders&when=thisweek"><i class="fa fa-book"></i> CETTE SEMAINE</a></li>
             <li><a href="layout.php?page=orders&when=thismonth"><i class="fa fa-book"></i> CE MOIS</a></li>
+            <li><a href="layout.php?page=productSale"><i class="fa fa-book"></i> PRODUITS VENDUS </a></li>
 
           </ul>
         </li>
@@ -344,17 +383,28 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
   <div class="content-wrapper">
         <!-- /.content -->
 		<?php
+    $username = "";
+
+    if($loginCount >= 1){
+      if(isset($_SESSION['current_user']))
         $username = $_SESSION['current_user'];
+        
         $dao = new Dao_Carte();
 
 	if(isset($_GET['page'])){
 		$page = $_GET['page'];
       $check_user_page = $dao->checkPagesByUsername($username,$page);
-    /*if($check_user_page){*/
-       include "pages/".$page.".php";
-     /*}else
-      include "pages/notallowed.php";
-	*/
+      if($page != "userProfile"){
+        if($check_user_page){
+          include "pages/".$page.".php";
+        }else
+         include "pages/notallowed.php";
+
+      }else{
+        include "pages/".$page.".php";
+      }
+   
+	
 	
 	}else{
 
@@ -366,12 +416,18 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
       }else
         include "pages/notallowed.php";
 	}
+
+  }else{
+    $_SESSION['info_error']="Modifier votre mot de passe svp!";
+    include "pages/userProfile.php";
+  }
+    
 	?>
   </div>
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 2.4.1
+     <!-- <b>Version</b> 2.4.1-->
     </div>
     <strong>Africell &copy; 2020</strong>
   </footer>
@@ -386,7 +442,7 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
 <!-- ./wrapper -->
 
 <!-- jQuery 3 -->
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -447,7 +503,7 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
 <script src="plugins/iCheck/icheck.min.js"></script>
 <script src="bower_components/select2/dist/js/select2.full.min.js"></script>
 <!-- SlimScroll -->
-<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <script>
  //$('#test').hide('fast');
  
@@ -727,12 +783,12 @@ $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteB
 
      ?>
    /* var donutData = [
-      { label: 'DANTIC', data: <?php echo $ndjili; ?>, color: '#3c8dbc' },
-      { label: lbl, data: <?php echo $ndolo; ?>, color: '#0073b7' },
-      { label: 'MATADI', data:<?php echo $port_matadi; ?>, color: '#00c0ef' },
-	  { label: 'BOMA', data: <?php echo $port_boma; ?>, color: '#00c0ef' },
-	  { label: 'MUANDA', data: <?php echo $port_muanda; ?>, color: '#00c0ef' },
-	  { label: 'LUFU', data: <?php echo $lufu; ?>, color: '#00c0ef' }
+      { label: 'DANTIC', data: <?php// echo $ndjili; ?>, color: '#3c8dbc' },
+      { label: lbl, data: <?php //echo $ndolo; ?>, color: '#0073b7' },
+      { label: 'MATADI', data:<?php //echo $port_matadi; ?>, color: '#00c0ef' },
+	  { label: 'BOMA', data: <?php //echo $port_boma; ?>, color: '#00c0ef' },
+	  { label: 'MUANDA', data: <?php //echo $port_muanda; ?>, color: '#00c0ef' },
+	  { label: 'LUFU', data: <?php //echo $lufu; ?>, color: '#00c0ef' }
     ]*/
     $.plot('#donut-chart', donutData, {
       series: {

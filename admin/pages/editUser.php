@@ -71,11 +71,23 @@
 			  <input type="hidden" id="myid" name="bnid" value="<?php echo $item['id']; ?>" >
                 <div class="form-group" >
                   <label for="exampleInputEmail1">Noms</label>
-                  <input type="text" class="form-control form-control" id="nom" name="noms" placeholder="Nom complet"  value="<?php echo $item['names']; ?>">
+                  <input type="text" class="form-control form-control" id="nom" name="noms" placeholder="Nom complet"  value="<?php echo $item['names']; ?>" required>
                 </div>
 				<div class="form-group">
                   <label for="exampleInputEmail1">Nom d'utilisateur </label>
-                  <input type="text" class="form-control" id="nom" name="username" placeholder="utilisateur" value="<?php echo $item['username']; ?>">
+                  <input type="text" class="form-control" id="nom" name="username" placeholder="utilisateur" value="<?php echo $item['username']; ?>" required>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">email </label>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="adresse email" value="<?php echo $item['email']; ?>"  required>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Phone </label>
+                  <input type="text" class="form-control" id="email" name="phone" placeholder="Numero de telephone" value="<?php echo $item['phone']; ?>">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Adresse</label>
+                  <input type="text" class="form-control" id="address" name="address" placeholder="adresse" value="<?php echo $item['address']; ?>">
                 </div>
 
 				<div class="form-group">

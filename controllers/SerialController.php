@@ -12,18 +12,18 @@ spl_autoload_register(function($classe){
 if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 {
     
-    $userC= new ImeiController();
+    $userC= new SerialController();
     if(isset($_POST['uploadcsv'])){
         $userC->uploadFromCSV();
 
     }else{
-        $userC->makeImei();
+        $userC->makeSerial();
 
     }
     
 
 }
-class ImeiController
+class SerialController
 {
     public function __construct()
     {
@@ -47,21 +47,20 @@ class ImeiController
                 $newcsv = $csv;// explode(",", $csv[0]);
                 //die(var_dump($newcsv));
 
-                if($hd[0] == "product_code" && $hd[1] == "imei" && $hd[2] == "pos" ){
+                if($hd[0] == "product_code" && $hd[1] == "serial" && $hd[2] == "pos" ){
                     
                     if($ct > 0){
                         $dao = new Dao_Carte();
-                        $p = new Imei();
+                        $p = new Serial();
                         $idP = $dao->getProductByCode($newcsv[0]);
-                        $chkPos = $dao->getOnePOSById($newcsv[5]);
                         $chkExist = $dao->checkProductImeiPOS($idP,$newcsv[2],$newcsv[1]);
-                        if($idP && $chkPos){
+                        if($idP){
                         if($chkExist < 1){                          
                                 $p->setIdProduct($idP);
-                                $p->setImei($newcsv[1]);
+                                $p->setSerial($newcsv[1]);
                                 $p->setIdPos($newcsv[2]);
                                 $p->setAddedBy($_SESSION['current_user']);
-                                $this->createImei($p);
+                                $this->createSerial($p);
                             }else{
                                 //die("product not found");
                             }
@@ -86,14 +85,14 @@ class ImeiController
         }
 
     }
-    public function createImei(Imei $imei){
+    public function createSerial(Serial $serial){
         //die(var_dump($imei));
         $dao = new Dao_Carte();
-        $response = $dao->addImei($imei);
+        $response = $dao->addSerial($serial);
     }
-    public function makeImei()
+    public function makeSerial()
     {
-        $iemi = new Imei();
+        $serial = new Serial();
         ///
         $dao = new Dao_Carte();
         //
@@ -102,7 +101,7 @@ class ImeiController
 
 //end bn-mara
         $id_product = $fm->validation($_POST['id_product']);
-        $imei = $fm->validation($_POST['imei']);
+        $seriald = $fm->validation($_POST['serial']);
         $id_pos = $fm->validation($_POST['id_pos']);
         $action = $fm->validation($_POST['action']);
 
@@ -111,9 +110,9 @@ class ImeiController
 
         //*****************************************
 
-        $iemi->setIdProduct($id_product);
-        $iemi->setImei($imei);
-        $iemi->setIdPos($id_pos);
+        $serial->setIdProduct($id_product);
+        $serial->setSerial($seriald);
+        $serial->setIdPos($id_pos);
         // $myuser->setMatricule($matricule);
         // $myuser->setFonction($fonction);
         // $myuser->setDirection($direction);
@@ -141,7 +140,7 @@ class ImeiController
                 */
 
 
-                $response = $dao->addImei($iemi);
+                $response = $dao->addSerial($serial);
                 //$dao->addStockTransaction($stock, $addedBy);
                 $info = "Les Information ont été ajoutées avec succès";
                 $_SESSION['info'] = $info;
@@ -149,7 +148,7 @@ class ImeiController
                 if ($response == "success") {
                     //die($action);
 
-                    header("location:../admin/layout.php?page=addImei");
+                    header("location:../admin/layout.php?page=addSerial");
                 }
 
 
@@ -157,7 +156,7 @@ class ImeiController
         }
         if($action == "modifier"){
             $id = $fm->validation($_POST['bnid']);
-            $response = $dao->editImei($iemi);
+            $response = $dao->editSerial($serial);
             //$dao->addStockTransaction($stock, $addedBy);
             $info = "La Modification a été effectuée avec succès";
 
@@ -165,7 +164,7 @@ class ImeiController
                 //die($action);
                 $_SESSION['info'] = $info;
 
-                header("location:../admin/layout.php?page=addImei");
+                header("location:../admin/layout.php?page=addSerial");
             }
         }
 

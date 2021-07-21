@@ -56,7 +56,7 @@ $row=$response->getUserByUsername($username);
                                 <form action="../controllers/C_AjouterUser.php" method="post">
                                 <input type="hidden" name="username" value="<?php echo $item['username']; ?>">
                                     <div class="form-group">
-                                     <input class="form-control" type="password" placeholder="new password" name="modifpwpos" style="width:50%">
+                                     <input class="form-control" type="password" placeholder="new password" name="modifpwpos" style="width:50%" minlength="6">
                                      <button class="btn btn-primary" type="submit" style="margin-top:10px">Modifier</button>
                                     </div>
                                 </form>

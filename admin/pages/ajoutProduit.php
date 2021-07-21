@@ -63,7 +63,7 @@
                         
                             <span class="input-group-addon">USD</span> 
                                          
-                        <input id="price" type="number" class="form-control" name="price" placeholder="Prix du produit" >
+                        <input id="price" type="number" class="form-control" name="price" placeholder="Prix du produit" min="0" step="0.000001">
                     </div>
 
                     <div class="form-group" >

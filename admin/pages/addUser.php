@@ -51,15 +51,27 @@
 			  <input type="hidden" id="action" name="action" value="ajouter" >
                 <div class="form-group" >
                   <label for="exampleInputEmail1">Noms</label>
-                  <input type="text" class="form-control form-control" id="nom" name="noms" placeholder="Nom complet" >
+                  <input type="text" class="form-control form-control" id="nom" name="noms" placeholder="Nom complet" required>
                 </div>
 				<div class="form-group">
                   <label for="exampleInputEmail1">Nom d'utilisateur </label>
-                  <input type="text" class="form-control" id="nom" name="username" placeholder="utilisateur">
+                  <input type="text" class="form-control" id="nom" name="username" placeholder="utilisateur" required>
                 </div>
 				<div class="form-group">
                   <label for="exampleInputEmail1">Mot de passe </label>
-                  <input type="password" class="form-control" id="nom" name="password" placeholder="Mot de passe">
+                  <input type="password" class="form-control" id="nom" name="password" placeholder="Mot de passe" minlength="6" required>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">email </label>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="adresse email" required>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Phone </label>
+                  <input type="text" class="form-control" id="email" name="phone" placeholder="Numero de telephone" required>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Adresse</label>
+                  <input type="text" class="form-control" id="address" name="address" placeholder="adresse" required>
                 </div>
 				<div class="form-group">
                   <label for="exampleInputEmail1">Role</label>

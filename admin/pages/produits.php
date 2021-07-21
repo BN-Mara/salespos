@@ -29,7 +29,8 @@ $row=$response->getAll();
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Produits</h3><form method="post" action="../controllers/ProduitController.php" enctype="multipart/form-data">
+            <h3 class="box-title">Produits</h3>
+           <!-- <form method="post" action="../controllers/ProduitController.php" enctype="multipart/form-data">
             <table class="pull-right">
                 <tr>
                     <td>
@@ -40,7 +41,7 @@ $row=$response->getAll();
                     </td>
                 </tr>
             </table>
-        </form>
+        </form>-->
         </div>
         <!-- /.box-header -->
         <?php

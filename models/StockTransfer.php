@@ -1,96 +1,14 @@
 <?php
 
-class stockTransfer{
+class StockTransfer{
     private $id_transfer;
-    private $id_pos_from;
-    private $id_pos_to;
-    private $id_product;
     private $quantity;
     private $creation_date;
-    private $addedBy;
-    private $approvedBy;
-    private $approvedTime;
-    private $status;
+    private $id_trens_reference;
+    private $id_product;
+    
 
-    /**
-     * Get the value of id_transfer
-     */
-    public function getIdTransfer()
-    {
-        return $this->id_transfer;
-    }
-
-    /**
-     * Set the value of id_transfer
-     *
-     * @return  self
-     */
-    public function setIdTransfer($id_transfer)
-    {
-        $this->id_transfer = $id_transfer;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of id_pos_from
-     */
-    public function getIdPosFrom()
-    {
-        return $this->id_pos_from;
-    }
-
-    /**
-     * Set the value of id_pos_from
-     *
-     * @return  self
-     */
-    public function setIdPosFrom($id_pos_from)
-    {
-        $this->id_pos_from = $id_pos_from;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of id_pos_to
-     */
-    public function getIdPosTo()
-    {
-        return $this->id_pos_to;
-    }
-
-    /**
-     * Set the value of id_pos_to
-     *
-     * @return  self
-     */
-    public function setIdPosTo($id_pos_to)
-    {
-        $this->id_pos_to = $id_pos_to;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of id_product
-     */
-    public function getIdProduct()
-    {
-        return $this->id_product;
-    }
-
-    /**
-     * Set the value of id_product
-     *
-     * @return  self
-     */
-    public function setIdProduct($id_product)
-    {
-        $this->id_product = $id_product;
-
-        return $this;
-    }
+   
 
     /**
      * Get the value of quantity
@@ -133,81 +51,61 @@ class stockTransfer{
     }
 
     /**
-     * Get the value of addedBy
+     * Get the value of id_trens_reference
      */
-    public function getAddedBy()
+    public function getIdTrensReference()
     {
-        return $this->addedBy;
+        return $this->id_trens_reference;
     }
 
     /**
-     * Set the value of addedBy
+     * Set the value of id_trens_reference
      *
      * @return  self
      */
-    public function setAddedBy($addedBy)
+    public function setIdTrensReference($id_trens_reference)
     {
-        $this->addedBy = $addedBy;
+        $this->id_trens_reference = $id_trens_reference;
 
         return $this;
     }
 
     /**
-     * Get the value of approvedBy
+     * Get the value of id_product
      */
-    public function getApprovedBy()
+    public function getIdProduct()
     {
-        return $this->approvedBy;
+        return $this->id_product;
     }
 
     /**
-     * Set the value of approvedBy
+     * Set the value of id_product
      *
      * @return  self
      */
-    public function setApprovedBy($approvedBy)
+    public function setIdProduct($id_product)
     {
-        $this->approvedBy = $approvedBy;
+        $this->id_product = $id_product;
 
         return $this;
     }
 
     /**
-     * Get the value of approvedTime
+     * Get the value of id_transfer
      */
-    public function getApprovedTime()
+    public function getIdTransfer()
     {
-        return $this->approvedTime;
+        return $this->id_transfer;
     }
 
     /**
-     * Set the value of approvedTime
+     * Set the value of id_transfer
      *
      * @return  self
      */
-    public function setApprovedTime($approvedTime)
+    public function setIdTransfer($id_transfer)
     {
-        $this->approvedTime = $approvedTime;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of status
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * Set the value of status
-     *
-     * @return  self
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
+        $this->id_transfer = $id_transfer;
 
         return $this;
     }

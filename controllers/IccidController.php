@@ -34,17 +34,17 @@ class IccidController
             $csvAsArray = array_map('str_getcsv', file($tmpName));
             //die(var_dump($csvAsArray));
             $ct = 0;
-            $hd = explode(";", $csvAsArray[0][0]);
-            $hd[0] = trim($hd[0]);
-            $hd[1]  = trim($hd[1]);
-            $hd[2] = trim($hd[2]);
-            $hd[3] = trim($hd[3]);
-            $hd[4] = trim($hd[4]);
-            $hd[5] = trim($hd[5]);
+            //$hd = explode(";", $csvAsArray[0][0]);
+            $hd[0] = trim($csvAsArray[0][0]);
+            $hd[1]  = trim($csvAsArray[0][1]);
+            $hd[2] = trim($csvAsArray[0][2]);
+            $hd[3] = trim($csvAsArray[0][3]);
+            $hd[4] = trim($csvAsArray[0][4]);
+            $hd[5] = trim($csvAsArray[0][5]);
             //die("this");
             foreach($csvAsArray as  $csv){
             
-                $newcsv = explode(";", $csv[0]);
+                $newcsv = $csv;//explode(",", $csv[0]);
                 //die(var_dump($newcsv));
 
                 if($hd[0] == "product_code" && $hd[1] == "iccid" && $hd[2] == "msisdn" && $hd[3] == "type" && $hd[4] == "profile" && $hd[5] == "pos" ){
@@ -53,18 +53,24 @@ class IccidController
                         $dao = new Dao_Carte();
                         $p = new Iccid();
                         $idP = $dao->getProductByCode($newcsv[0]);
-                        if($idP){
-                        $p->setIdProduct($idP);
-                        $p->setIccid($newcsv[1]);
-                        $p->setMsisdn($newcsv[2]);
-                        $p->setType($newcsv[3]);
-                        $p->setProfile($newcsv[4]);
-                        $p->setIdPos($newcsv[5]);
-                        $p->setAddedBy($_SESSION['current_user']);
-                        $this->createImei($p);
+                        $chkPos = $dao->getOnePOSById($newcsv[5]);
+                        $chkExist = $dao->checkProductIccidPOS($idP,$newcsv[5],$newcsv[1]);
+                        $chkExistMsisdn = $dao->checkProductMsisdnPOS($idP,$newcsv[5],$newcsv[2]);
+                        if($idP && $chkPos){
+                            if($chkExist < 1 && $chkExistMsisdn  < 1){                            
+                                $p->setIdProduct($idP);
+                                $p->setIccid($newcsv[1]);
+                                $p->setMsisdn($newcsv[2]);
+                                $p->setType($newcsv[3]);
+                                $p->setProfile($newcsv[4]);
+                                $p->setIdPos($newcsv[5]);
+                                $p->setAddedBy($_SESSION['current_user']);
+                                $this->createImei($p);
+        
+                                }
 
                         }
-                        
+                                              
                     }
                     $ct +=1;
                 }

@@ -13,7 +13,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 {
     $userC= new TransferController();
     if($_POST['action'] == "add"){
-        $userC->createTransfer();
+        
 
     }
     else if($_POST['action'] == "approve"){
@@ -26,16 +26,21 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 class TransferController{
     private $dao;
     private $fm;
+
     public function __construct()
     {
         $this->dao = new Dao_Carte();
         $this->fm = new Format();
         
     }
-    public function createTransfer(){
+    public function createTransfer(stockTransfer $stockTransfer){
+        $this->dao->transferStockToPOS($stockTransfer);
 
     }
     public function approveTransfer(){
+
+    }
+    public function addToTransferCart(){
 
     }
 }

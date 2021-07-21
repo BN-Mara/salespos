@@ -72,16 +72,19 @@ class UserController
     $noms = $fm->validation($_POST['noms']);
     $username = $fm->validation($_POST['username']);
       $chk_username = $dao->findUsername($username);
+      $email = $fm->validation($_POST['email']);
+      
+
 
     $role = $fm->validation($_POST['role']);
     
      // $matricule = $fm->validation($_POST['matricule']);
-    //$phone = $fm->validation($_POST['phone']);
+    $phone = $fm->validation($_POST['phone']);
     $status = $fm->validation($_POST['status']);
 	$action = $fm->validation($_POST['action']);
   $pos = $fm->validation($_POST['pos']);
-      //$fonction = $fm->validation($_POST['fonction']);
-      //$direction = $fm->validation($_POST['direction']);
+  
+    $address = $fm->validation($_POST['address']);
       $pages1 = '';
       if(isset($_POST['pages'])){
         $pages = $_POST['pages'];
@@ -100,16 +103,15 @@ class UserController
 	$myuser->setNoms($noms);
     $myuser->setUsername($username);
     $myuser->setRole($role);
+    $myuser->setAddress($address);
+    $myuser->setEmail($email);
     
-    //$myuser->setPhone($phone);
+    $myuser->setPhone($phone);
     $myuser->setStatus($status);
     $myuser->setPages($pages1);
     $myuser->setAddedBy($addedBy);
     $myuser->setIdPos($pos);
-     // $myuser->setMatricule($matricule);
-     // $myuser->setFonction($fonction);
-     // $myuser->setDirection($direction);
-	
+
 	if($action == "ajouter"){
         if($chk_username){
           
@@ -117,7 +119,17 @@ class UserController
             $_SESSION['infoerror'] = $error;
             header("location:../admin/layout.php?page=addUser");
             return;
-        }else{
+        }else if($email != "" && $email != null){
+          $chk_email = $dao->findEmail($email);
+          if($chk_email){
+            $error = "l'adresse email ".$email." existe deja, trouver un autre";
+            $_SESSION['infoerror'] = $error;
+            header("location:../admin/layout.php?page=addUser");
+            return;
+            exit;
+          }
+        }
+        else{
           $password = $fm->validation($_POST['password']);
           $myuser->setPassword($password);
             $response=$dao->AddUser($myuser);

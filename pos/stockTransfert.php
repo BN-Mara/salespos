@@ -16,14 +16,14 @@ $allpos = $response->getAllPOs();
 
             <div class="col-6">
             <label for="product">Select POS</label>
-                <select class="form-control" id="pos" name="pos">
-
+                <select class="form-control" id="pos" name="id_pos" onchange="setPOS(this.value)">
+                    <option value="">-- Choisir --</option>
                     <?php
 
                     if($allpos){
                         foreach ($allpos as $row) {
                             ?>
-                            <option value="<?php echo($row['id_pos']); ?>" ><?php echo $row['designation']." | ".$row['city']; ?> </option>
+                            <option value="<?php echo($row['id_pos']); ?>" <?php if(isset($_SESSION['id_pos_to']) && $_SESSION['id_pos_to'] == $row['id_pos']) {echo 'selected';} ?> ><?php echo $row['designation']." | ".$row['city']; ?> </option>
 
                             <?php
                         }
@@ -72,7 +72,7 @@ $allpos = $response->getAllPOs();
                         //$item["quantity"];
                             for($i=0; $i < $item["quantity"]; $i++) {
                                 
-                                if($item["name"] != "Evoucher"){
+                                if($item["category"] != 4){
                                     
                                 ?>
 
@@ -120,7 +120,8 @@ $allpos = $response->getAllPOs();
                                        id="<?php echo "num_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required 
                                        onKeyDown="if(this.value.length==10) return false;"
-                                       >
+                                       onKeyUp="removeAfterMsisdn(this.id)"
+                                       onBlur="checkMsisdnPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
                                 <label><b>ICCID </b></label>
                                 <input class="w3-input w3-border w3-margin-bottom" type="number"
                                        placeholder="Numero de la SIM remise au client"
@@ -348,18 +349,17 @@ $allpos = $response->getAllPOs();
         
 
     });
-    function valid_client(client){
-        //alert(client);
+    function setPOS(pos){
+        alert(pos);
         $.ajax({
             type: "post",
             url: "transfer.php",
-            data: "setclient=" + client,
+            data: "setpos=" + pos,
             success: function (data) {
+                console.log(data);
                 data = $.parseJSON(data);
-                $("#cust_name").val(data['lastname']+' '+data['firstname']);
-                $("#cust_phone").val(data['phone']);
-                $("#checkphone").html('');
-                $("#checkname").html('');
+                $("#pos").val(data['pos']);
+               
             }
         });
     }
@@ -377,7 +377,19 @@ $allpos = $response->getAllPOs();
     }
 
     
-    function checkImeiPOS1(value,fieldId,id){
+    var errorExtra = [false,false];
+    checkErrorExtra();
+    function checkErrorExtra(){
+        if(errorExtra[0] && errorExtra[1]){
+            document.getElementById('nextBtn').disabled = false;
+            
+        }else{
+            document.getElementById('nextBtn').disabled = true;
+        }
+    }
+
+    
+    function checkImeiPOS(value,fieldId,id){
         //alert(fieldId);
         var formData = {
             check_extra_imei:"check_extra_imei",
@@ -386,7 +398,7 @@ $allpos = $response->getAllPOs();
         };
         $.ajax({
             type: "post",
-            url: "transfer.php",
+            url: "cart.php",
             data: formData,
             success: (data) =>{
                 data = $.parseJSON(data);
@@ -395,15 +407,17 @@ $allpos = $response->getAllPOs();
                    //document.getElementById(fieldId). ="invalid";
                    $('#'+fieldId).after("<span class='validationImei' style='color:red; padding-bottom:10px'> IMEI n\'est pas dans votre stock.<br></span>");
                    //$('#nextBtn').prop("disabled", true )
-                   document.getElementById('nextBtn').disabled = true;
+                   errorExtra[0] = false;
+                   checkErrorExtra();
                }else{
-                    document.getElementById('nextBtn').disabled = false;
+                    errorExtra[0] = true;
+                    checkErrorExtra();
                }
             }
         });
 
     }
-    function checkIccidPOS1(value,fieldId,id){
+    function checkIccidPOS(value,fieldId,id){
         //alert(value+id);
         var formData = {
             check_extra_iccid:"check_extra_iccid",
@@ -412,7 +426,7 @@ $allpos = $response->getAllPOs();
         };
         $.ajax({
             type: "post",
-            url: "transfer.php",
+            url: "cart.php",
             data: formData,
             success: (data) =>{
                 data = $.parseJSON(data);
@@ -421,15 +435,17 @@ $allpos = $response->getAllPOs();
                    //document.getElementById(fieldId). ="invalid";
                    $('#'+fieldId).after("<span class='validationIccid' style='color:red; padding-bottom:10px'> ICCID n\'est pas dans votre stock.<br></span>");
                    //$('#nextBtn').prop("disabled", true )
-                   document.getElementById('nextBtn').disabled = true;
+                   errorExtra[1] = false;
+                   checkErrorExtra()
                }else{
-                    document.getElementById('nextBtn').disabled = false;
+                     errorExtra[1] = true;
+                     checkErrorExtra()
                }
             }
         });
 
     }
-    function checkMsisdnPOS1(value,fieldId,id){
+    function checkMsisdnPOS(value,fieldId,id){
         //alert(value+id);
         var formData = {
             check_extra_msisdn:"check_extra_msisdn",
@@ -438,7 +454,7 @@ $allpos = $response->getAllPOs();
         };
         $.ajax({
             type: "post",
-            url: "transfer.php",
+            url: "cart.php",
             data: formData,
             success: (data) =>{
                 data = $.parseJSON(data);
@@ -447,9 +463,11 @@ $allpos = $response->getAllPOs();
                    //document.getElementById(fieldId). ="invalid";
                    $('#'+fieldId).after("<span class='validationMsisdn' style='color:red; padding-bottom:10px'> MSISDN n'est pas dans votre stock.<br></span>");
                    //$('#nextBtn').prop("disabled", true )
-                   document.getElementById('nextBtn').disabled = true;
+                   errorExtra[2] = false;
+                   checkErrorExtra();
                }else{
-                    document.getElementById('nextBtn').disabled = false;
+                    errorExtra[2] = true;
+                   checkErrorExtra();
                }
             }
         });

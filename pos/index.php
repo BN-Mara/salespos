@@ -218,6 +218,7 @@ if(isset($_SESSION["cart_item"])){
                     <h6 class="collapse-header">Stock:</h6>
                     <a class="collapse-item" href="index.php?page=mystock">mon stock</a>
                     <a class="collapse-item" href="index.php?page=stockTransfert">Transferer stock</a>
+                    <a class="collapse-item" href="index.php?page=transfers">Mes transferts</a>
 
                 </div>
             </div>

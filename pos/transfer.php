@@ -139,17 +139,11 @@ if(isset($_POST['validerClient'])){
     header("location: index.php?page=stockTransfert");
 
 }
-if(isset($_POST['setclient'])){
-    $_SESSION['id_client'] = $_POST['setclient'];
-
-    $client_name = $response->getOneClientById($_POST['setclient']);
-    //var_dump($client_name);
-    $_SESSION['client_name'] = $client_name['lastname']." ".$client_name['firstname'];
-    $_SESSION['client_phone'] = $client_name['phone'];
-    unset($_SESSION['newclient_name']);
-    unset($_SESSION['newclient_phone']);
-    echo json_encode($client_name);
-    //header("location: index.php?page=stockTransfert");
+if(isset($_POST['setpos'])){
+    $_SESSION['id_pos_to'] = $_POST['setpos'];
+  
+    $data = ['pos'=>$_POST['setpos']];
+    echo json_encode($data);
 
 }
 
@@ -209,16 +203,16 @@ if(isset($_GET['action'])){
 }
 if(isset($_POST['valider']) ){
                       
-    if($_POST['id_pos']){
+    if($_SESSION['id_pos_to'] == ""){
 
         header("location: index.php?page=stockTransfert");
         return;
     }else{
         if(!empty($_SESSION["transfer_item"])){
-            $order_id = addOrder($_POST['id_pos']);
+            //$order_id = addOrder($_POST['id_pos']);
             $total_price = 0;
             $total_quantity = 0;
-            addImei();
+           
             foreach ($_SESSION["transfer_item"] as $item) {
                 $item_price = $item["quantity"] * $item["price"];
 
@@ -236,8 +230,9 @@ if(isset($_POST['valider']) ){
                         }
 
                     }*/
+                    $trans_ref_id = addTransferReference();
 
-                    validerCOmmande($item["id_produit"],$item["quantity"],$item["price"],$item_price, $_SESSION['id_client'], $imeis,$order_id);
+                    validerTransfer($item["id_produit"],$item["quantity"],$item["price"],$item_price, $imeis,$trans_ref_id);
 
                 //echo "$ " . number_format($item_price, 2);
                 $total_quantity += $item["quantity"];
@@ -245,11 +240,11 @@ if(isset($_POST['valider']) ){
             }
             $user = $_SESSION['user'];
             $cart = $_SESSION['transfer_item'];
-            $clienid = $_SESSION['id_client'];
+            $clienid = $_SESSION['id_pos_to'];
             session_unset();
             $_SESSION['user'] = $user;
 
-            $download = downloadForm($cart,$clienid,$order_id);
+            //$download = downloadForm($cart,$clienid,$order_id);
 
             $_SESSION['info_success']='<h3>Success!</h3>Commande effectuée avec succès<br><br>';
 
@@ -265,8 +260,8 @@ if(isset($_POST['valider']) ){
 
 }
 
-function addImei(){
-    $saleimeis = new SaleImei();
+function addImei($idTrans){
+    $saleimeis = new TransferExtra();
     $response = new Dao_Carte();
     if(isset($_SESSION["transfer_item"])){
         $total_quantity = 0;
@@ -286,10 +281,10 @@ function addImei(){
                 $saleimeis->setMsisdn(issetValue($index_s));
                 $saleimeis->setIccid(issetValue($index_ic));
                 $saleimeis->setSerial(issetValue($index_srl));
-                $saleimeis->setIdSale(0);
+                $saleimeis->setIdTranfer($idTrans);
                 $saleimeis->setIdProduct($item['id_produit']);
                 $saleimeis->setImei(issetValue($index_i));
-                $response->addSaleImei($saleimeis);
+                $response->addTransferExtra($saleimeis);
             }
         }
     }
@@ -304,23 +299,54 @@ function issetValue($index){
     }
 }
 
-function validerCommande($id_produit,$qt,$price,$total_price,$id_client,$imeis,$order_id){
-   //die($id_produit);
-   $commande = new Commande();
+
+function addTransExtra($idTrans,$id_product,$qte){
+    $saleimeis = new TransferExtra();
     $response = new Dao_Carte();
+ 
+        $total_quantity = 0;
+        $imeis = "";
 
+   
+            for($i=0; $i < $qte; $i++) {
 
-    $commande->setIdClient($id_client);
-    $commande->setIdProduct($id_produit);
+                $index_i = "imei_" . $id_product . $i;
+                $index_s  = "num_" . $id_product . $i;
+                $index_ic  = "iccid_" . $id_product . $i;
+                $index_srl = "serial_" . $id_product . $i;
+                //$imeis = $imeis.",".$_POST[$index_i];
+
+                $saleimeis->setMsisdn(issetValue($index_s));
+                $saleimeis->setIccid(issetValue($index_ic));
+                $saleimeis->setSerial(issetValue($index_srl));
+                $saleimeis->setIdTranfer($idTrans);
+                $saleimeis->setIdProduct($id_product);
+                $saleimeis->setImei(issetValue($index_i));
+                $response->addTransferExtra($saleimeis);
+            }
+}
+
+function validerTransfer($id_produit,$qt,$price,$total_price,$imeis,$id_trans_ref){
+   //die($id_produit);
+    $stockTransfer = new StockTransfer();
+    $response = new Dao_Carte();
+    $stockTransfer->setIdProduct($id_produit);
+    $stockTransfer->setIdTrensReference($id_trans_ref);
+    $stockTransfer->setQuantity($qt);
+    /*$commande->setIdProduct($id_produit);
     $commande->setQuantity($qt);
     $commande->setUnitPrice($price);
     $commande->setTotalPrice($total_price);
     $commande->setImeis($imeis);
     $commande->setIdRef($order_id);
-    $commande->setAddedBy($_SESSION['user']['username']);
-    $id = $response->addOrder($commande);
-    $response->updateSaleImeiIdSale($id,$id_produit);
-    $response->updateProduitQuantity($qt,$id_produit,$_SESSION['pos']);
+    $commande->setAddedBy($_SESSION['user']['username']);*/
+    $id = $response->addStockTransfer($stockTransfer);
+
+    addTransExtra($id,$id_produit,$qt);
+    
+    
+    //$response->updateSaleImeiIdSale($id,$id_produit);
+    //$response->updateProduitQuantity($qt,$id_produit,$_SESSION['pos']);
 
 
 }
@@ -333,179 +359,16 @@ function getStockAvailableQt($id_product){
 
     $qt = $product_stock['quantity'];
     return $qt;
-
-
 }
 
 function addTransferReference(){
     $ref = new StockTransferReference();
     $ref->setIdPosFrom($_SESSION['pos']);
-    $ref->setIdPosTo($_POST['id_pos']);
+    $ref->setIdPosTo($_SESSION['id_pos_to']);
     $ref->setStatus("PENDING");
     $ref->setAddedBy($_SESSION['user']['username']);
     $dao = new Dao_Carte();
     $ref_id = $dao->transferReference($ref);
-    return $ref_id;
-    
+    return $ref_id;  
 }
 
-function addOrder($id_client){
-    //die($id_produit);
-    $total_price = 0;
-    $total_quantity =0;
-    foreach ($_SESSION["transfer_item"] as $item){
-        //$item_price = $item["quantity"]*$item["price"];
-
-        $total_quantity += $item["quantity"];
-        $total_price += ($item["price"]*$item["quantity"]);
-    }
-
-    $order = new stockTransferReference();
-    $response = new Dao_Carte();
-
-    $order->setIdPosFrom($_SESSION['pos']);
-
-    
-    $order->setAddedBy($_SESSION['user']['username']);
-    //$res = $response->addOrderReference($order);
-
-   // return $res;
-    //$response->updateProduitQuantity($qt,$id_produit,$_SESSION['pos']);
-
-
-}
-
-function downloadForm($cart,$client,$order){
-    error_reporting(0);
-    //Include the main TCPDF library (search for installation path).
-
-// create new PDF document
-//$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-// set document information
-    $pdf->SetCreator(PDF_CREATOR);
-    $pdf->SetAuthor('Benjamin Nseye Mara');
-    $pdf->SetTitle('Formulaire Plainte');
-    $pdf->SetSubject('Plainte detail');
-    $pdf->SetKeywords('sale, mara, BN-Mara');
-
-// set default header data
-    $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, "Facture", 'by '.$_SESSION['user']['names'], array(0,64,255), array(0,64,128));
-    $pdf->setFooterData(array(0,64,0), array(0,64,128));
-
-// set header and footer fonts
-    $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-    $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-
-// set default monospaced font
-    $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-// set margins
-    $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-    $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-    $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-// set auto page breaks
-    $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
-// set image scale factor
-    $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-// set some language-dependent strings (optional)
-    if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-        require_once(dirname(__FILE__).'/lang/eng.php');
-        $pdf->setLanguageArray($l);
-    }
-
-// ---------------------------------------------------------
-
-// set default font subsetting mode
-    $pdf->setFontSubsetting(true);
-
-// Set font
-// dejavusans is a UTF-8 Unicode font, if you only need to
-// print standard ASCII chars, you can use core fonts like
-// helvetica or times to reduce file size.
-    $pdf->SetFont('dejavusans', '', 14, '', true);
-
-// Add a page
-// This method has several options, check the source code documentation for more information.
-    $pdf->AddPage();
-
-// set text shadow effect
-    $pdf->setTextShadow(array('enabled'=>true, 'depth_w'=>0.2, 'depth_h'=>0.2, 'color'=>array(196,196,196), 'opacity'=>1, 'blend_mode'=>'Normal'));
-
-// Set some content to print
-    $dao = new Dao_Carte();
-    $result = $dao->getOneClientById($client);
-    $order_ref = $dao->getSaleReferenceById($order);
-    
-
-
-    //$plainte_type = $dao->getOnePlainteTypeById($plainte->getIdType());
-    $html = '<h1 align="center">FACTURE N<sup>o</sup> '.$order_ref['reference'].' </h1>';
-    $html .= '<table border="0">';
-    $html .= "<tr><td>Nom: </td><td>".$result['lastname']."</td></tr>";
-    $html .="<tr><td>Post-nom: </td><td>".$result['middlename']."</td></tr>";
-    $html .="<tr><td>Prenom: </td><td>".$result['firstname']."</td></tr>";
-    $html .="<tr><td>Telephone: </td><td>".$result['phone']."</td></tr>";
-    $html .= "</table>";
-    $total_quantity=0;
-    $total_price=0;
-
-    $html .= "<br><br>";
-
-    $html .= '<table border="1">';
-    $html .= '<tr><th>Produit</th><th>Quantité</th><th>Prix</th><th>Prix total</th></tr>';
-    foreach ($cart as $item) {
-        $item_price = $item["quantity"] * $item["price"];
-
-        $imeis = "";
-        //$item_price = $item["quantity"]*$item["price"];
-        //$check_qt = $item["quantity"];
-        /*for($i=0; $i < $item["quantity"]; $i++) {
-
-            $index = "imei_" . $item['id_produit'] . $i;
-            if(($check_qt - 1) > 0){
-                $imeis = $imeis.$_POST[$index].",";
-                $check_qt = $check_qt - 1;
-            }else{
-                $imeis = $imeis.$_POST[$index];
-            }
-
-        }*/
-
-        $html .="<tr><td>".$item["name"]."</td>"."<td>".$item["quantity"]."</td> <td>".$item["price"]." CDF</td> <td>".$item_price." CDF</td> </tr>";
-
-        //validerCOmmande($item["id_produit"],$item["quantity"],$item["price"],$item_price, $_SESSION['id_client'], $imeis,$order_id);
-
-        //echo "$ " . number_format($item_price, 2);
-        $total_quantity += $item["quantity"];
-        $total_price += ($item["price"] * $item["quantity"]);
-    }
-
-
-    $html .='<tr><td colspan="2" style="background-color:#c9c2c1">Total payé</td><td colspan="2" style="background-color:#c9c2c1;text-align:right">'.$total_price." CDF</td></tr>";
-    $html .="<br><br>";
-    $html .='<table><tr><td>Signature du client</td><td><span style="text-align: right">'.date("d/m/yy")."</span></td></tr>"."</table>";
-    //$html .='<br><br><span>'.'Signature du client'."</span><br>"."<br>";
-    $html .= "</table>";
-
-// Print text using writeHTMLCell()
-    $pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
-    $file_name="Facture".$order.".pdf";
-// ---------------------------------------------------------
-ob_end_clean();
-// Close and output PDF document
-// This method has several options, check the source code documentation for more information.
-    $pdf->Output($file_name, 'I');
-    //$pdf->Output();
-    return true;
-
-//============================================================+
-// END OF FILE
-//============================================================+
-
-}
-?>

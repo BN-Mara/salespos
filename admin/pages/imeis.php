@@ -9,18 +9,18 @@ $row=$response->getAllImei();
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Tous les POS
+        Tous les IMEI
 
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Tous les POS</a></li>
+        <li><a href="#">Tous les IMEI</a></li>
     </ol>
 </section>
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">POS</h3>
+            <h3 class="box-title">IMEI</h3>
             <form method="post" action="../controllers/ImeiController.php" enctype="multipart/form-data">
             <table class="pull-right">
                 <tr>

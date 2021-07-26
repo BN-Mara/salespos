@@ -53,7 +53,7 @@ class ImeiController
                         $dao = new Dao_Carte();
                         $p = new Imei();
                         $idP = $dao->getProductByCode($newcsv[0]);
-                        $chkPos = $dao->getOnePOSById($newcsv[5]);
+                        $chkPos = $dao->getOnePOSById($newcsv[2]);
                         $chkExist = $dao->checkProductImeiPOS($idP,$newcsv[2],$newcsv[1]);
                         if($idP && $chkPos){
                         if($chkExist < 1){                          

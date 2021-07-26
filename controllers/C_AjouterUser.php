@@ -19,6 +19,7 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
     $userC->changePasswordPOS();
   }
   else{
+    
     $userC->makeUser();
 
   }
@@ -67,7 +68,7 @@ class UserController
     //
     $fm=new Format();
 
-
+    
 //end bn-mara	
     $noms = $fm->validation($_POST['noms']);
     $username = $fm->validation($_POST['username']);
@@ -111,8 +112,9 @@ class UserController
     $myuser->setPages($pages1);
     $myuser->setAddedBy($addedBy);
     $myuser->setIdPos($pos);
-
+    
 	if($action == "ajouter"){
+   
         if($chk_username){
           
             $error = "Nom d'utilisateur ".$username." existe deja, trouver un autre";
@@ -127,25 +129,30 @@ class UserController
             header("location:../admin/layout.php?page=addUser");
             return;
             exit;
+          }else{
+          
+            $password = $fm->validation($_POST['password']);
+            $myuser->setPassword($password);
+              $response=$dao->AddUser($myuser);
+              $info = "Les Information ont été ajoutées avec succès";
+              $_SESSION['info'] = $info;
+              //die("hello");
+              if($response=="success")
+              {
+              //die($action);
+              
+              header("location:../admin/layout.php?page=addUser");
+              }else{
+                die(var_dump($response));
+              }
           }
         }
-        else{
-          $password = $fm->validation($_POST['password']);
-          $myuser->setPassword($password);
-            $response=$dao->AddUser($myuser);
-            $info = "Les Information ont été ajoutées avec succès";
-            $_SESSION['info'] = $info;
-        }
-        if($response=="success")
-        {
-        //die($action);
         
-        header("location:../admin/layout.php?page=addUser");
-        }
+       
 	}
 
    
-    if($action == "modifier"){
+  if($action == "modifier"){
 	 $id = $fm->validation($_POST['bnid']);
 	 $response=$dao->editUser($myuser,$id);	
 	 $info = "La Modification a été effectuée avec succès";

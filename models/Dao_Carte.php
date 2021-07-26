@@ -124,15 +124,16 @@ class Dao_Carte extends Connexion
         {
             $sql = "INSERT INTO bn_trans_reference(id_pos_from,id_pos_to,status,addedBy)
 			VALUES (:id_pos_from,:id_pos_to,:status,:addedBy)";
+            $conn = $this->getConnexion();
 
-            $query = $this->getConnexion()->prepare($sql);
+            $query = $conn->prepare($sql);
             $query->execute(array(
                 'id_pos_from'=>$stransfer->getIdPosFrom(),
                 'id_pos_to'=>$stransfer->getIdPosTo(),
-                'status,'=>$stransfer->getStatus(),
+                'status'=>$stransfer->getStatus(),
                 'addedBy'=>$stransfer->getAddedBy()
             ));
-            return $this->getConnexion()->lastInsertId();
+            return $conn->lastInsertId();
 
         }
         catch (Exception $e)
@@ -143,20 +144,120 @@ class Dao_Carte extends Connexion
 
 
     }
+    public function getStockAndRefTransferByIdRef($id){
+        try {
 
-    public function approveStockTransfer($id,$approvedBy){
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_trans_reference tr INNER JOIN bn_stocktransfer sr ON tr.id_trans_reference = sr.id_trans_reference WHERE tr.id_trans_reference=:id");
+            $query->execute(['id'=>$id]);
+
+            return $row = $query->fetchAll();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function getStockTransferByIdRef($id){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM  bn_stocktransfer st INNER JOIN bn_product pd 
+            ON st.id_product = pd.id_product WHERE st.id_trans_reference =:id");
+            $query->execute(['id'=>$id]);
+
+            return $row = $query->fetchAll();
+
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function getTransferRefByIdPOSFrom($id){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM  bn_trans_reference WHERE id_pos_from =:id");
+            $query->execute(['id'=>$id]);
+
+            return $row = $query->fetchAll();
+
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function getAllTransferReferences(){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM  bn_trans_reference");
+            $query->execute();
+
+            return $row = $query->fetchAll();
+
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+
+    public function updateImeiPOS($id_pos_from,$id_pos_to,$imei){
         try
         {
 
 
-            $sql = "UPDATE bn_trans_reference SET status =:status, approvedBy =:approvedBy, approvedTime=GETDATE()
-              WHERE id_transfer = :id_transfer";
+            $sql = "UPDATE bn_imei SET id_pos =:id_posto WHERE id_pos =:id_posfrom AND imei=:imei";
+
+            $query = $this->getConnexion()->prepare($sql);
+            $query->execute(array(
+                'id_posto'=>$id_pos_to,
+                'id_posfrom'=>$id_pos_from,
+                'imei'=>$imei
+                ));
+                // make stock transaction 
+            return 'success';
+
+        } catch (Exception $e) {
+            return $e->getMessage();
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function updateIccidPOS($id_pos_from,$id_pos_to,$iccid){
+        try
+        {
+
+
+            $sql = "UPDATE bn_iccid SET id_pos =:id_posto WHERE id_pos =:id_posfrom AND iccid=:iccid";
+
+            $query = $this->getConnexion()->prepare($sql);
+            $query->execute(array(
+                'id_posto'=>$id_pos_to,
+                'id_posfrom'=>$id_pos_from,
+                'iccid'=>$iccid
+                ));
+                // make stock transaction 
+            return 'success';
+
+        } catch (Exception $e) {
+            return $e->getMessage();
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+
+
+    public function approveStockTransfer($id,$approvedBy,$msg){
+        try
+        {
+
+
+            $sql = "UPDATE bn_trans_reference SET status =:status, approvedBy =:approvedBy, approvedTime=GETDATE(), comment=:comment
+              WHERE id_trans_reference = :id_transfer";
 
             $query = $this->getConnexion()->prepare($sql);
             $query->execute(array(
                 'status'=>"APPROVED",
                 'id_transfer'=>$id,
-                'approvedBy'=>$approvedBy
+                'approvedBy'=>$approvedBy,
+                'comment'=>$msg
                 ));
                 // make stock transaction 
             return 'success';
@@ -172,8 +273,8 @@ class Dao_Carte extends Connexion
         {
 
 
-            $sql = "UPDATE bn_trans_reference SET status =:status, comment=:comment approvedBy =:approvedBy, approvedTime=GETDATE()
-              WHERE id_transfer = :id_transfer";
+            $sql = "UPDATE bn_trans_reference SET status =:status, comment=:comment, approvedBy =:approvedBy, approvedTime=GETDATE()
+              WHERE id_trans_reference = :id_transfer";
 
             $query = $this->getConnexion()->prepare($sql);
             $query->execute(array(
@@ -195,16 +296,17 @@ class Dao_Carte extends Connexion
     public function addStockTransfer(StockTransfer $stockTransfer){
         try
         {
-            $sql = "INSERT INTO bn_trans_reference(id_product,quantity,id_trans_reference)
+            $sql = "INSERT INTO bn_stocktransfer(id_product,quantity,id_trans_reference)
 			VALUES (:id_product,:quantity,:id_trans_reference)";
+            $conn = $this->getConnexion();
 
-            $query = $this->getConnexion()->prepare($sql);
+            $query = $conn->prepare($sql);
             $query->execute(array(
                 'id_product'=>$stockTransfer->getIdProduct(),
                 'quantity'=>$stockTransfer->getQuantity(),
-                'id_trans_reference,'=>$stockTransfer->getIdTrensReference()
+                'id_trans_reference'=>$stockTransfer->getIdTrensReference()
             ));
-            return $this->getConnexion()->lastInsertId();
+            return $conn->lastInsertId();
 
         }
         catch (Exception $e)
@@ -217,18 +319,19 @@ class Dao_Carte extends Connexion
     public function addTransferExtra(TransferExtra $transferExtra){
         try
         {
-            $sql = "INSERT INTO bn_trans_reference(id_transfer,imei,iccid,msisdn,serial,id_product)
+            $sql = "INSERT INTO bn_transfer_extra (id_transfer,imei,iccid,msisdn,serial,id_product)
 			VALUES (:id_transfer,:imei,:iccid,:msisdn,:serial,:id_product)";
-
-            $query = $this->getConnexion()->prepare($sql);
+            $conn = $this->getConnexion();
+            $query = $conn->prepare($sql);
             $query->execute(array(
                 'id_transfer'=>$transferExtra->getIdTranfer(),
                 'imei'=>$transferExtra->getImei(),
                 'iccid'=>$transferExtra->getIccid(),
-                'msisdn'=>$transferExtra->getSerial(),
+                'msisdn'=>$transferExtra->getMsisdn(),
+                'serial'=>$transferExtra->getSerial(),
                 'id_product'=>$transferExtra->getIdProduct()
             ));
-            return $this->getConnexion()->lastInsertId();
+            return $conn->lastInsertId();
 
         }
         catch (Exception $e)
@@ -237,6 +340,32 @@ class Dao_Carte extends Connexion
             die('Erreur : ' . $e->getMessage());
         }
 
+    }
+    public function getTransferExtraByIdTransfer($id_trans,$id_product){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_transfer_extra 
+            WHERE id_transfer =:id_trans AND id_product=:id_product");
+            $query->execute(['id_trans'=>$id_trans,'id_product'=>$id_product]);
+
+            return $row = $query->fetchAll();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function getTransferStatus($id_trans){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT status FROM bn_trans_reference
+            WHERE id_trans_reference =:id_trans");
+            $query->execute(['id_trans'=>$id_trans]);
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
     }
 
 
@@ -2276,6 +2405,36 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         }
 
     }
+    public function getOneImeiByIdProductAndIdPOS($id_product,$id_pos){
+
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT imei FROM bn_imei WHERE id_product=:id AND id_pos=:id_pos");
+            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function getOneIccidByIdProductAndIdPOS($id_product,$id_pos){
+
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT imei FROM bn_iccid WHERE id_product=:id AND id_pos=:id_pos");
+            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
     public function checkProductImeiPOS($id_product,$id_pos,$imei){
         try {
 
@@ -2985,6 +3144,8 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         }
 
     }
+  
+
 
     public function AddUser(User $user)
     {

@@ -281,6 +281,7 @@ for($i=0; $i<12; $i++){
             <li><a href="layout.php?page=addImei"><i class="fa fa-book"></i> Ajouter IMEI</a></li>
             <li><a href="layout.php?page=iccids"><i class="fa fa-book"></i>ICCID</a></li>
             <li><a href="layout.php?page=addIccid"><i class="fa fa-book"></i> Ajouter ICCID</a></li>
+            <li><a href="layout.php?page=stockTransfer"><i class="fa fa-book"></i>Stock Transfert</a></li>
 
           </ul>
         </li>
@@ -782,14 +783,7 @@ for($i=0; $i<12; $i++){
      }
 
      ?>
-   /* var donutData = [
-      { label: 'DANTIC', data: <?php// echo $ndjili; ?>, color: '#3c8dbc' },
-      { label: lbl, data: <?php //echo $ndolo; ?>, color: '#0073b7' },
-      { label: 'MATADI', data:<?php //echo $port_matadi; ?>, color: '#00c0ef' },
-	  { label: 'BOMA', data: <?php //echo $port_boma; ?>, color: '#00c0ef' },
-	  { label: 'MUANDA', data: <?php //echo $port_muanda; ?>, color: '#00c0ef' },
-	  { label: 'LUFU', data: <?php //echo $lufu; ?>, color: '#00c0ef' }
-    ]*/
+   
     $.plot('#donut-chart', donutData, {
       series: {
         pie: {

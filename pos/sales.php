@@ -66,7 +66,7 @@
                         //$item["quantity"];
                             for($i=0; $i < $item["quantity"]; $i++) {
                                 
-                                if($item["name"] != "Evoucher"){
+                                if($item["category"] != 4){
                                     
                                 ?>
 
@@ -86,7 +86,8 @@
                             <?php
                             }
                             else{
-                                
+                                if($item["category"] != 5)
+                                {
                                 ?>
                                 
                                 <label><b>IMEI pour <?php echo $item['name']." (".($i+1).")"; ?></b></label>
@@ -98,12 +99,21 @@
                                        onKeyUp="removeAfterImei(this.id)"
                                        onBlur="checkImeiPOS(this.value,this.id,<?php echo $item['id_produit'];?>)">
                                 <label><b>Numero SIM </b></label>
+                                <?php 
+                                       }else{
+                                           ?>
+                                           <label><b>MSISDN pour <?php echo $item['name']." (".($i+1).")"; ?></b></label>
+                                    <?php   
+                                    }
+                                       ?>
+                                
                                 <input class="w3-input w3-border w3-margin-bottom" type="number"
                                        placeholder="Numero de la SIM remise au client"
                                        id="<?php echo "num_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required 
                                        onKeyDown="if(this.value.length==10) return false;"
-                                       >
+                                       onKeyUp="removeAfterMsisdn(this.id)"
+                                       onBlur="checkMsisdnPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
                                 <label><b>ICCID </b></label>
                                 <input class="w3-input w3-border w3-margin-bottom" type="number"
                                        placeholder="Numero de la SIM remise au client"
@@ -359,6 +369,17 @@
         $(".validationSerial").remove();
     }
 
+    var errorExtra = [false,false];
+    checkErrorExtra();
+    function checkErrorExtra(){
+        if(errorExtra[0] && errorExtra[1]){
+            document.getElementById('nextBtn').disabled = false;
+            
+        }else{
+            document.getElementById('nextBtn').disabled = true;
+        }
+    }
+
     
     function checkImeiPOS(value,fieldId,id){
         //alert(fieldId);
@@ -378,9 +399,11 @@
                    //document.getElementById(fieldId). ="invalid";
                    $('#'+fieldId).after("<span class='validationImei' style='color:red; padding-bottom:10px'> IMEI n\'est pas dans votre stock.<br></span>");
                    //$('#nextBtn').prop("disabled", true )
-                   document.getElementById('nextBtn').disabled = true;
+                   errorExtra[0] = false;
+                   checkErrorExtra();
                }else{
-                    document.getElementById('nextBtn').disabled = false;
+                    errorExtra[0] = true;
+                    checkErrorExtra();
                }
             }
         });
@@ -404,9 +427,11 @@
                    //document.getElementById(fieldId). ="invalid";
                    $('#'+fieldId).after("<span class='validationIccid' style='color:red; padding-bottom:10px'> ICCID n\'est pas dans votre stock.<br></span>");
                    //$('#nextBtn').prop("disabled", true )
-                   document.getElementById('nextBtn').disabled = true;
+                   errorExtra[1] = false;
+                   checkErrorExtra()
                }else{
-                    document.getElementById('nextBtn').disabled = false;
+                     errorExtra[1] = true;
+                     checkErrorExtra()
                }
             }
         });
@@ -430,9 +455,11 @@
                    //document.getElementById(fieldId). ="invalid";
                    $('#'+fieldId).after("<span class='validationMsisdn' style='color:red; padding-bottom:10px'> MSISDN n'est pas dans votre stock.<br></span>");
                    //$('#nextBtn').prop("disabled", true )
-                   document.getElementById('nextBtn').disabled = true;
+                   errorExtra[2] = false;
+                   checkErrorExtra();
                }else{
-                    document.getElementById('nextBtn').disabled = false;
+                     errorExtra[2] = true;
+                     checkErrorExtra();
                }
             }
         });

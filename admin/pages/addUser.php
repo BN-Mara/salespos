@@ -71,7 +71,7 @@
                 </div>
                 <div class="form-group">
                   <label for="exampleInputEmail1">Adresse</label>
-                  <input type="text" class="form-control" id="address" name="address" placeholder="adresse" required>
+                  <input type="text" class="form-control" id="address" name="address" placeholder="adresse">
                 </div>
 				<div class="form-group">
                   <label for="exampleInputEmail1">Role</label>

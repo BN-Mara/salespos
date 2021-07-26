@@ -90,7 +90,7 @@ else{
                         
                             <span class="input-group-addon">USD</span> 
                                          
-                        <input id="price" type="text" class="form-control" value="<?php echo $item['price']; ?>" name="price" placeholder="Prix du produit" >
+                        <input id="price" type="number" class="form-control" value="<?php echo $item['price']; ?>" name="price" placeholder="Prix du produit" min="0" step="0.01">
                     </div>
 
                     <div class="form-group" >

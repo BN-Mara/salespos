@@ -96,7 +96,7 @@
                                        id="<?php echo "imei_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "imei_" . $item['id_produit'] . $i; ?>" required 
                                        onKeyDown="if(this.value.length==15) return false;"
-                                       onKeyUp="removeAfterImei(this.id)"
+                                       onclick="removeAfterImei(this.id)"
                                        onBlur="checkImeiPOS(this.value,this.id,<?php echo $item['id_produit'];?>)">
                                 <label><b>Numero SIM </b></label>
                                 <?php 
@@ -112,7 +112,7 @@
                                        id="<?php echo "num_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required 
                                        onKeyDown="if(this.value.length==10) return false;"
-                                       onKeyUp="removeAfterMsisdn(this.id)"
+                                       onclick="removeAfterMsisdn(this.id)"
                                        onBlur="checkMsisdnPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
                                 <label><b>ICCID </b></label>
                                 <input class="w3-input w3-border w3-margin-bottom" type="number"
@@ -120,7 +120,7 @@
                                        id="<?php echo "iccid_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "iccid_" . $item['id_produit'] . $i; ?>" required 
                                        onKeyDown="if(this.value.length==10) return false;"
-                                       onKeyUp="removeAfterIccid(this.id)"
+                                       onclick="removeAfterIccid(this.id)"
                                        onBlur="checkIccidPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
 
                             <?php

@@ -89,6 +89,7 @@ class FichierController
             $addBy = $_SESSION['current_user'];
             $action = $fm->validation($_POST['action']);
             $price = $fm->validation($_POST['price']);
+            //die($price);
             $name = $fm->validation($_POST['name']);
             //$nom_fichier = $dao->getTypeById($id_type_document);
             //$qt = $fm->validation($_POST['qt']);

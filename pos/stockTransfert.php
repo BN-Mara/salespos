@@ -5,7 +5,15 @@
  * Date: 27/06/2020
  * Time: 18:05
  */
+if($_SESSION['user']['role'] != "POS_SUPERVISOR")
+{
+    $info = "Vous n'etes pas permis. contactez l'admin.";
+    $_SESSION['info']=$info;
+    echo "<script> location.replace('index.php'); </script>";
+    return;
+}
 $allpos = $response->getAllPOs();
+
 ?>
 
 <div class="container" style="margin-top: 30px">
@@ -119,7 +127,7 @@ $allpos = $response->getAllPOs();
                                        placeholder="Numero de la SIM remise au client"
                                        id="<?php echo "num_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required 
-                                       onKeyDown="if(this.value.length==10) return false;"
+                                       onKeyDown="if(this.value.length==9) return false;"
                                        onclick="removeAfterMsisdn(this.id)"
                                        onBlur="checkMsisdnPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
                                 <label><b>ICCID </b></label>
@@ -350,7 +358,7 @@ $allpos = $response->getAllPOs();
 
     });
     function setPOS(pos){
-        alert(pos);
+        //alert(pos);
         $.ajax({
             type: "post",
             url: "transfer.php",

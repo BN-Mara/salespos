@@ -12,6 +12,15 @@ require_once('../TCPDF-master/tcpdf.php');
 require_once('../models/TransferExtra.php');
 require_once('../models/StockTransfer.php');
 require_once('../models/StockTransferReference.php');
+
+if($_SESSION['user']['role'] != "POS_SUPERVISOR"){
+    $info = "Vous n'etes pas Permis. contacter l'admin ";
+    $_SESSION['info'] = $info;
+
+    header("location: index.php");
+    return;  
+}
+ 
 $response=new Dao_Carte();
 $produits = $response->getAll();
 
@@ -202,6 +211,13 @@ if(isset($_GET['action'])){
     }
 }
 if(isset($_POST['valider']) ){
+    if($_SESSION['user']['role'] != "POS_SUPERVISOR"){
+        $info = "Vous n'etes pas Permis. contacter l'admin ";
+        $_SESSION['info'] = $info;
+
+        header("location: index.php");
+        return;  
+    }
                       
     if($_SESSION['id_pos_to'] == ""){
 

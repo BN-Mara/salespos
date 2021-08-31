@@ -395,6 +395,8 @@ if(isset($_POST['recharge'])){
 
 if(isset($_POST["exchange"]))
 {
+    if(isset($_POST["plainte"]) && isset($_POST["facture"]) && isset($_POST["product"]) && isset($_POST["newproduct"])
+    && isset($_POST["oldimei"]) && isset($_POST["newimei"])){
     $id_plainte = $_POST['plainte'];
     $id_ref = $_POST['facture'];
     $id_product = $_POST['product'];
@@ -417,6 +419,10 @@ if(isset($_POST["exchange"]))
     $dao = new Dao_Carte();
     $dao->addExchange($pexchange);
     $_SESSION['info_success']='<h3>Success!</h3>Echange effectué avec succès<br><br>';
+}
+else{
+    $_SESSION['info']='<h3>Saisissez toutes les informations requises svp</h3><br><br>';
+}
 
     echo "<script>window.location.href='index.php?page=exchange';</script>";
 

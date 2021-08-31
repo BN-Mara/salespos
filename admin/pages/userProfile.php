@@ -2,6 +2,7 @@
 <?php
 
 $response=new Dao_Carte();
+$row="";
 if(isset($_SESSION['current_user']))
     $row=$response->getUserByUsername($_SESSION['current_user']);
 

@@ -6,6 +6,8 @@ include_once '../models/Dao_Carte.php';
 $response=new Dao_Carte();
 
 $count_plainte0 = !$response->countPlainteByStatus(0) ? $response->countPlainteByStatus(0) : 0  ;
+$loginCount = 0;
+if(isset($_SESSION['current_user']))
 $loginCount = $response->checkFirstLogin($_SESSION['current_user']);
 ?>
 <?php 

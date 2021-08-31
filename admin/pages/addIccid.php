@@ -75,7 +75,7 @@
                     </div>
                     <div class="form-group" >
                         <label for="emsisdn">MSISDN</label>
-                        <input type="number" class="form-control" id="msisdn" name="msisdn" min="1"  onKeyDown="if(this.value.length==10) return false;">
+                        <input type="number" class="form-control" id="msisdn" name="msisdn" min="1"  onKeyDown="if(this.value.length==9) return false;">
                     </div>
                     <div class="form-group" >
                         <label for="type">Type</label>

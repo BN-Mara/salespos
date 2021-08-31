@@ -2268,8 +2268,8 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
     {
         try
         {
-            $query = $this->getConnexion()->prepare("UPDATE bn_pos SET isDeleted=1, deletedBy=:deletedBy, deletedTime=GETDATE()");
-            $query->execute(['deletedBy'=>$deletedBy]);
+            $query = $this->getConnexion()->prepare("UPDATE bn_pos SET isDeleted=1, deletedBy=:deletedBy, deletedTime=GETDATE() WHERE id_pos=:id_pos");
+            $query->execute(['deletedBy'=>$deletedBy,'id_pos'=>$id]);
             return 'success';
 
         }

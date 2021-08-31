@@ -371,7 +371,7 @@ if(isset($_SESSION["cart_item"])){
         ?>
         <div class="alert alert-danger alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h4><i class="icon fa fa-check"></i> Alert!</h4><?php
+                <h4><i class="icon fa fa-exclamation-triangle"></i> Alert!</h4><?php
             echo $_SESSION['info'];
 
             ?>

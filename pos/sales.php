@@ -111,7 +111,7 @@
                                        placeholder="Numero de la SIM remise au client"
                                        id="<?php echo "num_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required 
-                                       onKeyDown="if(this.value.length==10) return false;"
+                                       onKeyDown="if(this.value.length==9) return false;"
                                        onclick="removeAfterMsisdn(this.id)"
                                        onBlur="checkMsisdnPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
                                 <label><b>ICCID </b></label>

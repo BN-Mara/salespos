@@ -76,9 +76,10 @@
 				<div class="form-group">
                   <label for="exampleInputEmail1">Role</label>
                   <select class="form-control" name="role">
-                    <option>USER</option>
-                    <option>ADMIN</option>
-					 <option>SUPER_ADMIN</option>
+                    <option value="USER">USER</option>
+                    <option  value="POS_SUPERVISOR">POS_SUPERVISOR</option>
+                    <option value="ADMIN">ADMIN</option>
+					 <option value="SUPER_ADMIN">SUPER_ADMIN</option>
                     </select>
                 </div>
 				<div class="form-group">

@@ -8,6 +8,7 @@ class TransferExtra{
     private $iccid;
     private $serial;
     private $msisdn;
+    private $evcnumber;
     
 
 
@@ -147,6 +148,25 @@ class TransferExtra{
     public function setMsisdn($msisdn)
     {
         $this->msisdn = $msisdn;
+
+        return $this;
+    }
+      /**
+     * Get the value of evcnumber
+     */
+    public function getEvcnumber()
+    {
+        return $this->evcnumber;
+    }
+
+    /**
+     * Set the value of evcnumber
+     *
+     * @return  self
+     */
+    public function setEvcnumber($evcnumber)
+    {
+        $this->evcnumber = $evcnumber;
 
         return $this;
     }

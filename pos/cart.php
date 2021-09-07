@@ -205,7 +205,7 @@ if(isset($_GET['action'])){
     }
 }
 if(isset($_POST['valider']) ){
-    if(isset($_SESSION['newclient_name'])){
+    if(isset($_SESSION['newclient_name']) && isset($_SESSION['newclient_phone'])){
         $name = explode(" ",$_SESSION['newclient_name']);
         $client = new Client();
         if(count($name) > 2){
@@ -443,6 +443,7 @@ function addImei(){
                 $index_s  = "num_" . $item['id_produit'] . $i;
                 $index_ic  = "iccid_" . $item['id_produit'] . $i;
                 $index_srl = "serial_" . $item['id_produit'] . $i;
+                $index_evc = "evc_".$item['id_produit'].$i;
                 //$imeis = $imeis.",".$_POST[$index_i];
 
                 $saleimeis->setMsisdn(issetValue($index_s));
@@ -451,7 +452,11 @@ function addImei(){
                 $saleimeis->setIdSale(0);
                 $saleimeis->setIdProduct($item['id_produit']);
                 $saleimeis->setImei(issetValue($index_i));
+                $saleimeis->setEvcnumber(issetValue($index_evc));
                 $response->addSaleImei($saleimeis);
+                if($item['category'] == 4){
+                    break;
+                }
             }
         }
     }

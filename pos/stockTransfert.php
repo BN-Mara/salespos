@@ -62,29 +62,48 @@ $allpos = $response->getAllPOs();
 
                 <div class="w3-center"><br>
                     <span onclick="document.getElementById('product_imei').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
-                    <b>AJOUTER IMEI DES PRODUITS</b>
+                    <b>INFOS SUPPLEMENTAIRES DES PRODUITS</b>
                 </div>
+            <?php
+            //$keys = array_keys($_SESSION["cart_item"]);
+            //var_dump($keys[0]);
+            //foreach()
+            if(false/*isset($_SESSION["cart_item"]) && count($_SESSION["cart_item"])==1 && $_SESSION["cart_item"][(array_keys($_SESSION["cart_item"])[0])]["category"] == 4*/){
+                ?>
+                <form class="w3-container" method="post" action="transfer.php">
+                <button class="w3-btn w3-border-green w3-border" name="valider" type="submit">Valider</button>
+                <form>
+    <?php
+            }else{
 
+            
+            ?>
                 <form class="w3-container" method="post" action="transfer.php">
 
                         <?php
+                        //var_dump(count($_SESSION["cart_item"]));
 
                         if(isset($_SESSION["transfer_item"])){
-                            //die($_SESSION["transfer_item"]);
+                            //die($_SESSION["cart_item"]);
                            
                         $total_quantity = 0;
+                        $isevc = true;
 
                         foreach ($_SESSION["transfer_item"] as $item){
                         //$item_price = $item["quantity"]*$item["price"];
                         //var_dump($item["quantity"]);
                         //$item["quantity"];
+                        ?>
+
+                        <div class="w3-section tab" id="tab">
+                            <?php
                             for($i=0; $i < $item["quantity"]; $i++) {
                                 
                                 if($item["category"] != 4){
                                     
                                 ?>
 
-                        <div class="w3-section tab" id="tab">
+                        
                             <?php
                            
                             if($item["category"] == 3){
@@ -102,7 +121,6 @@ $allpos = $response->getAllPOs();
                             else{
                                 if($item["category"] != 5)
                                 {
-   
                                 ?>
                                 
                                 <label><b>IMEI pour <?php echo $item['name']." (".($i+1).")"; ?></b></label>
@@ -113,12 +131,11 @@ $allpos = $response->getAllPOs();
                                        onKeyDown="if(this.value.length==15) return false;"
                                        onclick="removeAfterImei(this.id)"
                                        onBlur="checkImeiPOS(this.value,this.id,<?php echo $item['id_produit'];?>)">
-                                       <label><b>Numero SIM </b></label>
-                                       <?php 
+                                <label><b>Numero SIM </b></label>
+                                <?php 
                                        }else{
                                            ?>
-
-                                        <label><b>MSISDN pour <?php echo $item['name']." (".($i+1).")"; ?></b></label>
+                                           <label><b>MSISDN pour <?php echo $item['name']." (".($i+1).")"; ?></b></label>
                                     <?php   
                                     }
                                        ?>
@@ -142,15 +159,34 @@ $allpos = $response->getAllPOs();
                             <?php
                             }
                             ?>
-                            </div>
+                            
                                     <?php
+                                }else{
+                                    $countevc = 0;
+                                    if($countevc == 0){
+
+                                    
+                                    ?>
+                                    <label><b>Numero</b></label>
+                                <input class="w3-input w3-border w3-margin-bottom" type="number"
+                                       placeholder="Numero a recharger"
+                                       id="<?php echo "evc_" . $item['id_produit'] . $i; ?>"
+                                       name="<?php echo "evc_" . $item['id_produit'] . $i; ?>"
+                                       onKeyDown="if(this.value.length==13) return false;"
+                                       onkeyup="evccheck(this.value,this.id)" required >
+                                    <?php
+                                    break;
+                                    $countevc +=1;
+                                    }
                                 }
+                                
                             }
+                            ?>
+                                </div>
+                                <?php
                         }
                         }
                         ?>
-
-
 
 
 
@@ -168,7 +204,9 @@ $allpos = $response->getAllPOs();
                         <span class="step"></span>
                     </div>
                 </form>
-
+                <?php
+            }
+            ?>
             </div>
         </div>
     </div>
@@ -190,21 +228,29 @@ $allpos = $response->getAllPOs();
                     <li class="list-group-item">
                         <form method="POST" action="transfer.php">
                             <input  type="hidden" name="produit" value="<?php echo $row1['id_product']; ?>" >
-                            <div class="table-responsive">
-                                <table>
-                                    <tbody>
-                                    <tr>
-                                        <td style="width: 60%"><?php echo $row1['designation']; ?></td>
-                                        <td style="width: 20%">
+                            <div class="row">
+                                
+                                        <div class="col-lg-4" ><?php echo $row1['designation']; ?></div>
+                                        <div class="col-lg">
                                             <?php $pr = ($row1['price'] * $taux[0]['rate']); echo $pr." CDF"; ?>
-                                        </td>
-                                        <td>
-                                            <input class="form-control" type="number" name="qt" min="1" value="1" required style="width:100px">
-                                        </td>
-                                        <td><input type="submit" class="btn btn-primary form-control" name="addtocart" value="ADD" style="margin-left: 5px"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                        </div>
+                                        <div class="col-lg">
+                                        <span class="text-primary"> Quantite</span> <input class="form-control" id="<?php echo "qt_".$row1['id_product'];  ?>" type="number" name="qt" min="1" step="any" value="1" required >
+                                        </div>
+                                       
+                                        <div class="col-lg">
+                                        <?php
+                                        if($row1['id_category']  == 4){
+
+                                       ?>
+                                            <span class="text-success">Montant CDF</span> <input class="form-control" id="amount" type="number" name="amount" min="1" value="" onkeyUp="setAmountQuantity(this.value,<?php echo $row1['id_product'] ?>,<?php echo $pr ?>)" >
+                                            <?php
+                                         }
+                                        ?>
+                                        </div>
+                                        
+                                        <div class="col-lg"><input type="submit" class="btn btn-primary form-control mx-auto" name="addtocart" value="ADD" style="margin-top: 1rem;width: 7rem"></div>
+                                    
                             </div>
                         </form>
                     </li>
@@ -221,8 +267,8 @@ $allpos = $response->getAllPOs();
 </div>
 
 <div id="cart" class="w3-row-padding ">
-    <div class="w3-col l8 w3-white" style="margin-bottom: 10px">
-        <div class="w3-card-2" >
+    <div class="w3-col l8" style="margin-bottom: 10px">
+        <div class="w3-card-2 rounded-lg w3-white" >
             <header class="w3-container w3-center">
                 <h3>COMMANDE</h3>
                 <hr>
@@ -267,20 +313,15 @@ $allpos = $response->getAllPOs();
                 <?php
             } else {
                 ?>
-                <div class="w3-container w3-center"><p style="color: green">AUCUN PRODUIT DANS LA COMMANDE</p></div>
+                <div class="w3-container w3-center"><p class="text-success">AUCUN PRODUIT DANS LA COMMANDE</p></div>
                 <?php
             }
             ?>
         </div>
     </div>
-    <div class="w3-col l4 w3-card-2 w3-white">
+    <div class="w3-col l4 w3-card-2 w3-white rounded-lg">
         <table class="w3-table w3-striped" cellpadding="10" cellspacing="1">
-            <tr>
-
-                <td><?php echo $total_quantity; ?> articles </td>
-                <td><?php echo "".number_format($total_price, 2)." CDF"; ?></td>
-
-            </tr>
+           
             <tr>
                 <td>Taxe </td><td>  0.00 CDF </td>
             </tr>
@@ -290,7 +331,7 @@ $allpos = $response->getAllPOs();
         </table>
             <p>
 
-                <button onclick="document.getElementById('product_imei').style.display='block'" class="w3-btn w3-green w3-rest w3-right">CONFIRMER</button>
+                <button onclick="document.getElementById('product_imei').style.display='block'" class="btn btn-success float-right" style="margin-top:0.5rem">CONFIRMER</button>
 
             </p>
 
@@ -302,6 +343,21 @@ $allpos = $response->getAllPOs();
 
 </div>
 <script>
+    function evccheck(val,id){
+    if(val.length > 8){
+        document.getElementById('nextBtn').disabled = false;
+    }else{
+        document.getElementById('nextBtn').disabled = true;
+    }
+}
+function setAmountQuantity(amt,id_qt,pr){
+    var id = "qt_"+id_qt;
+    var qt = amt/pr
+    qt = parseFloat(qt).toFixed(3);
+    qt = Math.floor(qt);
+   document.getElementById(id).value = qt;
+
+}
 
     $(document).ready(function(){
         //alert("hello");
@@ -326,7 +382,7 @@ $allpos = $response->getAllPOs();
                         }
                         else{
                             $("#checkname").html('');
-                            $("#cust_name").val(value);
+                           // $("#cust_name").val(value);
                         }
                     }
                 });
@@ -348,7 +404,7 @@ $allpos = $response->getAllPOs();
                         }
                         else{
                             $("#checkphone").html('');
-                            $("#cust_phone").val(value);
+                           // $("#cust_phone").val(value);
                         }
                     }
                 });

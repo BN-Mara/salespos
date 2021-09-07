@@ -14,6 +14,18 @@ class SaleImei
     private $msisdn;
     private $iccid;
     private $serial;
+    private $evcnumber;
+
+    public function getEvcnumber()
+    {
+        return $this->evcnumber;
+    }
+
+    public function setEvcnumber($evcnumber)
+    {
+        $this->evcnumber = $evcnumber;
+    }
+
 
     public function getIccid()
     {

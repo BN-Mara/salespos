@@ -31,7 +31,7 @@ $row=$response->salesPOS($pos);
                 </thead>
                 <tbody>
                 <?php
-                //var_dump($row);
+                //print_r($row);
                 if($row)
                 {
                     $count=0;
@@ -42,11 +42,12 @@ $row=$response->salesPOS($pos);
                         <tr>
                             <td><?php
                                 $cl = $response->getOneClientById($item['id_client']);
+                                $creationd = $response->getSaleReferenceById($item['id_ref']);
                                 echo $cl['firstname']." ".$cl['lastname']." ".$cl['middlename'];
                                 ?></td>
                             <td><?php echo $item['nbre_article']; ?></td>
                             <td><?php echo $item['total_price']; ?></td>
-                            <td><?php echo $item['reference']; ?></td>
+                            <td><?php echo $creationd['reference']; ?></td>
                             <td><?php echo $item['creation_date']; ?></td>
                             <td>
                             <button type="button" class="btn btn-primary" onclick="getdetails(<?php echo $item['id_ref'];?>)" data-toggle="modal" data-target="#exampleModal">
@@ -97,6 +98,7 @@ $row=$response->salesPOS($pos);
         <th>iccid</th>
         <th>msisdn</th>
         <th>serial</th>
+        <th>Evc number</th>
         </tr>
         </thead>
         <tfoot>
@@ -107,6 +109,7 @@ $row=$response->salesPOS($pos);
         <th>iccid</th>
         <th>msisdn</th>
         <th>serial</th>
+        <th>Evc number</th>
         </tr>
         </tfoot>
         <tbody>
@@ -139,7 +142,7 @@ $row=$response->salesPOS($pos);
                 //console.log(datas);
                 $('#ordersdataTable tbody').html('');
                 datas.forEach((data,index)=>{
-                    var tr  = '<tr><td>'+data['designation']+'</td><td>'+data['unit_price']+'</td><td>'+data['imei']+'</td><td>'+data['iccid']+'</td><td>'+data['msisdn']+'</td><td>'+data['serial']+'</td></tr>'
+                    var tr  = '<tr><td>'+data['designation']+'</td><td>'+data['unit_price']+'</td><td>'+data['imei']+'</td><td>'+data['iccid']+'</td><td>'+data['msisdn']+'</td><td>'+data['serial']+'</td><td>'+data['evcnumber']+'</td></tr>'
                     
                     $('#ordersdataTable tbody').append(tr);
 

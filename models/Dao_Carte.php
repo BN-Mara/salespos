@@ -319,8 +319,8 @@ class Dao_Carte extends Connexion
     public function addTransferExtra(TransferExtra $transferExtra){
         try
         {
-            $sql = "INSERT INTO bn_transfer_extra (id_transfer,imei,iccid,msisdn,serial,id_product)
-			VALUES (:id_transfer,:imei,:iccid,:msisdn,:serial,:id_product)";
+            $sql = "INSERT INTO bn_transfer_extra (id_transfer,imei,iccid,msisdn,serial,id_product,evcnumber)
+			VALUES (:id_transfer,:imei,:iccid,:msisdn,:serial,:id_product,:evcnumber)";
             $conn = $this->getConnexion();
             $query = $conn->prepare($sql);
             $query->execute(array(
@@ -329,7 +329,8 @@ class Dao_Carte extends Connexion
                 'iccid'=>$transferExtra->getIccid(),
                 'msisdn'=>$transferExtra->getMsisdn(),
                 'serial'=>$transferExtra->getSerial(),
-                'id_product'=>$transferExtra->getIdProduct()
+                'id_product'=>$transferExtra->getIdProduct(),
+                'evcnumber'=>$transferExtra->getEvcnumber()
             ));
             return $conn->lastInsertId();
 
@@ -1355,7 +1356,7 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
     public function detailSalesPOS($idRef){
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT br.reference,br.total_price,bl.firstname, bl.lastname,bp.designation,bse.imei,bse.iccid,bse.msisdn, bse.serial, 
+            $query = $this->getConnexion()->prepare("SELECT br.reference,br.total_price,bl.firstname, bl.lastname,bp.designation,bse.imei,bse.iccid,bse.msisdn, bse.serial, bse.evcnumber,
             bc.unit_price, br.creation_date, br.addedBy FROM bn_sales As bc
                         INNER JOIN bn_sale_extra As bse ON bc.id_sale = bse.id_sale
                         INNER JOIN bn_product As bp ON bc.id_product = bp.id_product
@@ -2738,15 +2739,16 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
     {
         try
         {
-            $query = $this->getConnexion()->prepare("INSERT INTO bn_sale_extra(id_sale,id_product,imei,msisdn,iccid,serial)
-			VALUES (:id_sale,:id_product,:imei,:msisdn,:iccid,:serial)");
+            $query = $this->getConnexion()->prepare("INSERT INTO bn_sale_extra(id_sale,id_product,imei,msisdn,iccid,serial,evcnumber)
+			VALUES (:id_sale,:id_product,:imei,:msisdn,:iccid,:serial,:evcnumber)");
             $query->execute(array(
                 'id_sale'=>$saleimei->getIdSale(),
                 'id_product'=>$saleimei->getIdProduct(),
                 'imei'=>$saleimei->getImei(),
                 'msisdn'=>$saleimei->getMsisdn(),
                 'iccid'=>$saleimei->getIccid(),
-                'serial'=>$saleimei->getSerial()
+                'serial'=>$saleimei->getSerial(),
+                'evcnumber'=>$saleimei->getEvcnumber()
 
             ));
 

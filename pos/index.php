@@ -11,6 +11,7 @@ if(!isset($_SESSION['user'])){
 
 include_once '../models/Dao_Carte.php';
 require_once("../models/Client.php");
+require_once("../helper/Format.php");
 
 
 $response=new Dao_Carte();

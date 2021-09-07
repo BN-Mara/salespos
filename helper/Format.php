@@ -33,4 +33,18 @@ class Format
          }
          return $title = ucfirst($title);
      }
+
+    public function roundAmount($item_price){
+        
+        $mod =  $item_price % 100;
+        if($mod > 0 && $mod < 50){
+            $item_price =  $item_price + 50-$mod;
+            $item_price =  floor($item_price);
+        }else if($mod > 50){
+            $item_price =  $item_price + 100-$mod;
+            $item_price =  floor($item_price);
+        }
+        return $item_price;
+
+    }
 }

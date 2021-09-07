@@ -219,11 +219,21 @@ if(isset($_POST['valider']) ){
         return;  
     }
                       
-    if($_SESSION['id_pos_to'] == ""){
+    if(!isset($_SESSION['id_pos_to']) || $_SESSION['id_pos_to'] == ""){
+        $info = "Choisissez le POS ";
+        $_SESSION['info'] = $info;
 
         header("location: index.php?page=stockTransfert");
         return;
     }else{
+        if($_SESSION['id_pos_to'] == $_SESSION['pos']){
+            $info = "Impossible de transferer a votre POS, choisissez un autre";
+            $_SESSION['info'] = $info;
+
+            header("location: index.php?page=stockTransfert");
+            return;
+
+        }
         if(!empty($_SESSION["transfer_item"])){
             //$order_id = addOrder($_POST['id_pos']);
             $total_price = 0;
@@ -248,7 +258,8 @@ if(isset($_POST['valider']) ){
                     }*/
                     $trans_ref_id = addTransferReference();
 
-                    validerTransfer($item["id_produit"],$item["quantity"],$item["price"],$item_price, $imeis,$trans_ref_id);
+                    validerTransfer($item["id_produit"],$item["quantity"],$item["price"],
+                    $item_price, $imeis,$trans_ref_id,$item["category"]);
 
                 //echo "$ " . number_format($item_price, 2);
                 $total_quantity += $item["quantity"];
@@ -293,6 +304,7 @@ function addImei($idTrans){
                 $index_ic  = "iccid_" . $item['id_produit'] . $i;
                 $index_srl = "serial_" . $item['id_produit'] . $i;
                 //$imeis = $imeis.",".$_POST[$index_i];
+                $index_evc = "evc_".$item['id_product'].$i;
 
                 $saleimeis->setMsisdn(issetValue($index_s));
                 $saleimeis->setIccid(issetValue($index_ic));
@@ -300,7 +312,11 @@ function addImei($idTrans){
                 $saleimeis->setIdTranfer($idTrans);
                 $saleimeis->setIdProduct($item['id_produit']);
                 $saleimeis->setImei(issetValue($index_i));
+                $saleimeis->setEvcnumber(issetValue($index_evc));
                 $response->addTransferExtra($saleimeis);
+                if($item['category'] == 4){
+                    break;
+                }
             }
         }
     }
@@ -316,7 +332,7 @@ function issetValue($index){
 }
 
 
-function addTransExtra($idTrans,$id_product,$qte){
+function addTransExtra($idTrans,$id_product,$qte,$category){
     $saleimeis = new TransferExtra();
     $response = new Dao_Carte();
  
@@ -331,18 +347,22 @@ function addTransExtra($idTrans,$id_product,$qte){
                 $index_ic  = "iccid_" . $id_product . $i;
                 $index_srl = "serial_" . $id_product . $i;
                 //$imeis = $imeis.",".$_POST[$index_i];
-
+                $index_evc = "evc_".$id_product.$i;
                 $saleimeis->setMsisdn(issetValue($index_s));
                 $saleimeis->setIccid(issetValue($index_ic));
                 $saleimeis->setSerial(issetValue($index_srl));
                 $saleimeis->setIdTranfer($idTrans);
                 $saleimeis->setIdProduct($id_product);
                 $saleimeis->setImei(issetValue($index_i));
+                $saleimeis->setEvcnumber(issetValue($index_evc));
                 $response->addTransferExtra($saleimeis);
+                if($category == 4){
+                    break;
+                }
             }
 }
 
-function validerTransfer($id_produit,$qt,$price,$total_price,$imeis,$id_trans_ref){
+function validerTransfer($id_produit,$qt,$price,$total_price,$imeis,$id_trans_ref,$category){
    //die($id_produit);
     $stockTransfer = new StockTransfer();
     $response = new Dao_Carte();
@@ -358,7 +378,7 @@ function validerTransfer($id_produit,$qt,$price,$total_price,$imeis,$id_trans_re
     $commande->setAddedBy($_SESSION['user']['username']);*/
     $id = $response->addStockTransfer($stockTransfer);
 
-    addTransExtra($id,$id_produit,$qt);
+    addTransExtra($id,$id_produit,$qt,$category);
     
     
     //$response->updateSaleImeiIdSale($id,$id_produit);

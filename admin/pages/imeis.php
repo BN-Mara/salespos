@@ -21,7 +21,7 @@ $row=$response->getAllImei();
     <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title">IMEI</h3>
-            <form method="post" action="../controllers/ImeiController.php" enctype="multipart/form-data">
+            <!--<form method="post" action="../controllers/ImeiController.php" enctype="multipart/form-data">
             <table class="pull-right">
                 <tr>
                     <td>
@@ -32,7 +32,7 @@ $row=$response->getAllImei();
                     </td>
                 </tr>
             </table>
-            </form>
+            </form>-->
             
         </div>
         <!-- /.box-header -->

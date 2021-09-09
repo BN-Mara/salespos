@@ -35,7 +35,7 @@ else{
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Taux</h3> <a href="layout.php?page=users"><button class="btn btn-primary pull-right" name="action" value="ajouter">retour à la liste</button></a>
+            <h3 class="box-title">Taux</h3> <a href="layout.php?page=rate"><button class="btn btn-primary pull-right" name="action" value="ajouter">retour à la liste</button></a>
         </div>
         <!-- /.box-header -->
         <?php

@@ -280,9 +280,10 @@ for($i=0; $i<12; $i++){
             <li><a href="layout.php?page=stock"><i class="fa fa-book"></i>Stock</a></li>
             <li><a href="layout.php?page=addStock"><i class="fa fa-book"></i> Ajouter Stock</a></li>
             <li><a href="layout.php?page=imeis"><i class="fa fa-book"></i>IMEI</a></li>
-            <li><a href="layout.php?page=addImei"><i class="fa fa-book"></i> Ajouter IMEI</a></li>
+            <!--<li><a href="layout.php?page=addImei"><i class="fa fa-book"></i> Ajouter IMEI</a></li>-->
             <li><a href="layout.php?page=iccids"><i class="fa fa-book"></i>ICCID</a></li>
-            <li><a href="layout.php?page=addIccid"><i class="fa fa-book"></i> Ajouter ICCID</a></li>
+            <li><a href="layout.php?page=serials"><i class="fa fa-book"></i>Serials</a></li>
+            <!--<li><a href="layout.php?page=addIccid"><i class="fa fa-book"></i> Ajouter ICCID</a></li>-->
             <li><a href="layout.php?page=stockTransfer"><i class="fa fa-book"></i>Stock Transfert</a></li>
 
           </ul>
@@ -507,6 +508,7 @@ for($i=0; $i<12; $i++){
 <script src="bower_components/select2/dist/js/select2.full.min.js"></script>
 <!-- SlimScroll -->
 <script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+
 <script>
  //$('#test').hide('fast');
  

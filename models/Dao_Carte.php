@@ -432,6 +432,7 @@ class Dao_Carte extends Connexion
 
 
 
+
     //modify by bn-mara
     public function editProduit(Product $product,$id)
     {
@@ -566,6 +567,7 @@ class Dao_Carte extends Connexion
         }
 
     }
+    
 
 
 
@@ -740,6 +742,19 @@ class Dao_Carte extends Connexion
             die('Erreur : ' . $e->getMessage());
         }
 
+    }
+    public function checkExistingProductsByCodes($productCodes){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_product WHERE code IN ($productCodes)");
+            $query->execute();
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
     }
 
     public function getProductCategoryById($id){
@@ -2448,6 +2463,32 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
             die('Erreur : ' . $e->getMessage());
         }
     }
+    public function checkExistingImei($imei){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_imei WHERE imei =:extra");
+            $query->execute(array('extra'=>$imei));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkExistingImeis($imei){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_imei WHERE imei IN ($imei)");
+            $query->execute();
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
 
     /************** Serial ************ */
 
@@ -2573,8 +2614,21 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
     public function checkProductSerialPOS($id_product,$id_pos,$serial){
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_serial WHERE id_product=:id AND id_pos=:id_pos AND imei =:imei");
-            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos, 'imei'=>$serial));
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_serial WHERE id_product=:id AND id_pos=:id_pos AND serial =:serial");
+            $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos, 'serial'=>$serial));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkExistingSaleExtra($field,$extra){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_sale_extra WHERE ".$field." =:extra");
+            $query->execute(array('extra'=>$extra));
 
             return $row = $query->fetchColumn();
 
@@ -2583,6 +2637,32 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         }
     }
 
+    public function checkExistingSerial($serial){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_serial WHERE serial =:extra");
+            $query->execute(array('extra'=>$serial));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkExistingSerials($serials){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_serial WHERE serial IN ($serials)");
+            $query->execute();
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
     /***************** ICCID **************************/
     public function addIccid(Iccid $iccid)
     {
@@ -2724,6 +2804,58 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
             $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_iccid WHERE id_product=:id AND id_pos=:id_pos AND msisdn =:msisdn");
             $query->execute(array('id'=>$id_product,'id_pos'=>$id_pos, 'msisdn'=>$msisdn));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkExistingIccid($iccid){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_iccid WHERE iccid =:extra");
+            $query->execute(array('extra'=>$iccid));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkExistingMsisdn($msisdn){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_iccid WHERE msisdn =:extra");
+            $query->execute(array('extra'=>$msisdn));
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkExistingIccids($iccids){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_iccid WHERE iccid IN ($iccids)");
+            $query->execute();
+
+            return $row = $query->fetchColumn();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    }
+    public function checkExistingMsisdns($msisdn){
+        try {
+            
+
+            $query = $this->getConnexion()->prepare("SELECT COUNT(*) FROM bn_iccid WHERE msisdn IN ($msisdn)");
+            $query->execute();
 
             return $row = $query->fetchColumn();
 

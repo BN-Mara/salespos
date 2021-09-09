@@ -1,14 +1,14 @@
 <?php
-session_start();
+/*session_start();
 include_once '../helper/Format.php';
 spl_autoload_register(function($classe){
     require "../models/".$classe.".php";
 });
 ?>
 <?php
-
+*/
 //echo $_POST['catId'];
-
+/*
 if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 {
     
@@ -23,25 +23,48 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
     
 
 }
+*/
 class ImeiController
 {
     public function __construct()
     {
     }
     public function uploadFromCSV(){
-        if ($_FILES["csv"]["error"] > 0) {
+        $ct = 0;
+        $ct_inserted  = 0;
+        if ($_FILES["imei_csv"]["error"] > 0) {
             echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
 
         }else{
-            $tmpName = $_FILES['csv']['tmp_name'];
+            $tmpName = $_FILES['imei_csv']['tmp_name'];
             $csvAsArray = array_map('str_getcsv', file($tmpName));
             //die(var_dump($csvAsArray));
-            $ct = 0;
+            
             //$hd = explode(",", $csvAsArray[0][0]);
             $hd[0] = trim($csvAsArray[0][0]);
             $hd[1]  = trim($csvAsArray[0][1]);
             $hd[2] = trim($csvAsArray[0][2]);
-            //die("this");
+
+            $imeisArray = [];
+            $mCount = 0;
+            if($hd[0] == "product_code" && $hd[1] == "imei" && $hd[2] == "pos" ){
+            foreach($csvAsArray as  $csv){
+                
+                    $imeisArray[$mCount] = $csv[1];
+                    $mCount += 1;
+                }
+
+            }else{
+                return -2; //bad format
+                exit;
+            }
+            $condition = implode(', ', $imeisArray);
+            $dao = new Dao_Carte();
+            $test = $dao->checkExistingImeis($condition);
+            if($test > 0){
+                return -1;
+                exit;
+            }
             foreach($csvAsArray as  $csv){
             
                 $newcsv = $csv;// explode(",", $csv[0]);
@@ -54,36 +77,40 @@ class ImeiController
                         $p = new Imei();
                         $idP = $dao->getProductByCode($newcsv[0]);
                         $chkPos = $dao->getOnePOSById($newcsv[2]);
-                        $chkExist = $dao->checkProductImeiPOS($idP,$newcsv[2],$newcsv[1]);
-                        if($idP && $chkPos){
-                        if($chkExist < 1){                          
-                                $p->setIdProduct($idP);
-                                $p->setImei($newcsv[1]);
-                                $p->setIdPos($newcsv[2]);
-                                $p->setAddedBy($_SESSION['current_user']);
-                                $this->createImei($p);
-                            }else{
-                                //die("product not found");
-                            }
-
-                        }else{
-                            //die("exist");
+                        $checkExistImei = $dao->checkExistingImei($newcsv[1]);
+                        //$chkExist = $dao->checkProductImeiPOS($idP,$newcsv[2],$newcsv[1]);
+                        if($checkExistImei == 0){
+                            if($idP && $chkPos){
+                                                      
+                                        $p->setIdProduct($idP);
+                                        $p->setImei($newcsv[1]);
+                                        $p->setIdPos($newcsv[2]);
+                                        $p->setAddedBy($_SESSION['current_user']);
+                                        $this->createImei($p);
+                                        $ct_inserted += 1;
+                                    
+                                }else{
+                                    //die("exist");
+                                }
                         }
+                        
                         
                         
                     }
                     $ct +=1;
                 }
                 else{
-                    header("location:../admin/layout.php?page=imeis");
-                    return false;
-                    exit;
+                    //header("location:../admin/layout.php?page=imeis");
+                    //return false;
+                    break;
+                    //exit;
                 }
             }
-            header("location:../admin/layout.php?page=imeis");
+            //header("location:../admin/layout.php?page=imeis");
 
 
         }
+        return $ct_inserted;
 
     }
     public function createImei(Imei $imei){

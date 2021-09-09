@@ -3,25 +3,25 @@
 
 $response=new Dao_Carte();
 
-$row=$response->getAllIccid();
+$row=$response->getAllSerial();
 ?>
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Tous les ICCID
+        Tous les Serials
 
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Tous les iccid</a></li>
+        <li><a href="#">Tous les Serials</a></li>
     </ol>
 </section>
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">ICCID</h3>
-            <!--<form method="post" action="../controllers/IccidController.php" enctype="multipart/form-data">
+            <h3 class="box-title">Scratch Serials</h3>
+            <!--<form method="post" action="../controllers/ImeiController.php" enctype="multipart/form-data">
             <table class="pull-right">
                 <tr>
                     <td>
@@ -32,7 +32,8 @@ $row=$response->getAllIccid();
                     </td>
                 </tr>
             </table>
-        </form>-->
+            </form>-->
+            
         </div>
         <!-- /.box-header -->
         <?php
@@ -56,10 +57,7 @@ $row=$response->getAllIccid();
                 <thead>
                 <tr>
                     <th>Produit</th>
-                    <th>ICCID</th>
-                    <th>MSISDN</th>
-                    <th>Type</th>
-                    <th>Profile</th>
+                    <th>Serial</th>
                     <th>POS</th>
                 </tr>
                 </thead>
@@ -78,10 +76,7 @@ $row=$response->getAllIccid();
                                 $p = $response->getOneProductById($item['id_product']);
                                 echo $p['designation'];
                                 ?></td>
-                            <td><?php echo $item['iccid']; ?></td>
-                            <td><?php echo $item['msisdn']; ?></td>
-                            <td><?php echo $item['type']; ?></td>
-                            <td><?php echo $item['profile']; ?></td>
+                            <td><?php echo $item['serial']; ?></td>
                             <td><?php
                                 $pos = $response->getOnePOSById($item['id_pos']);
                                 echo $pos['designation'];
@@ -94,11 +89,8 @@ $row=$response->getAllIccid();
                 </tbody>
                 <tfoot>
                 <tr>
-                <th>Produit</th>
-                    <th>ICCID</th>
-                    <th>MSISDN</th>
-                    <th>Type</th>
-                    <th>Profile</th>
+                    <th>Produit</th>
+                    <th>Serial</th>
                     <th>POS</th>
                 </tr>
                 </tfoot>

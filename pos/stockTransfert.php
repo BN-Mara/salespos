@@ -114,7 +114,8 @@ $allpos = $response->getAllPOs();
                                    placeholder="scratch serial"
                                    id="<?php echo "serial_" . $item['id_produit'] . $i; ?>"
                                    name="<?php echo "serial_" . $item['id_produit'] . $i; ?>" required
-                                   ?>)">
+                                   onclick="removeAfterSerial(this.id)"
+                                    onBlur="checkSerialPOS(this.value,this.id,<?php echo $item['id_produit'];?>)">
 
                             <?php
                             }
@@ -453,6 +454,7 @@ function setAmountQuantity(amt,id_qt,pr){
     }
 
     
+     
     function checkImeiPOS(value,fieldId,id){
         //alert(fieldId);
         var formData = {
@@ -462,7 +464,7 @@ function setAmountQuantity(amt,id_qt,pr){
         };
         $.ajax({
             type: "post",
-            url: "cart.php",
+            url: "transfer.php",
             data: formData,
             success: (data) =>{
                 data = $.parseJSON(data);
@@ -473,6 +475,13 @@ function setAmountQuantity(amt,id_qt,pr){
                    //$('#nextBtn').prop("disabled", true )
                    errorExtra[0] = false;
                    checkErrorExtra();
+               }else if(data.sold  > 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationImei' style='color:red; padding-bottom:10px'> IMEI a deja ete utilise.<br></span>");
+                   //$('#nextBtn').prop("disabled", true )
+                   errorExtra[0] = false;
+                   checkErrorExtra()
+
                }else{
                     errorExtra[0] = true;
                     checkErrorExtra();
@@ -490,7 +499,7 @@ function setAmountQuantity(amt,id_qt,pr){
         };
         $.ajax({
             type: "post",
-            url: "cart.php",
+            url: "transfer.php",
             data: formData,
             success: (data) =>{
                 data = $.parseJSON(data);
@@ -501,6 +510,13 @@ function setAmountQuantity(amt,id_qt,pr){
                    //$('#nextBtn').prop("disabled", true )
                    errorExtra[1] = false;
                    checkErrorExtra()
+               }else if(data.sold  > 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationIccid' style='color:red; padding-bottom:10px'> ICCID a deja ete utilise.<br></span>");
+                   //$('#nextBtn').prop("disabled", true )
+                   errorExtra[1] = false;
+                   checkErrorExtra()
+
                }else{
                      errorExtra[1] = true;
                      checkErrorExtra()
@@ -518,7 +534,7 @@ function setAmountQuantity(amt,id_qt,pr){
         };
         $.ajax({
             type: "post",
-            url: "cart.php",
+            url: "transfer.php",
             data: formData,
             success: (data) =>{
                 data = $.parseJSON(data);
@@ -529,14 +545,57 @@ function setAmountQuantity(amt,id_qt,pr){
                    //$('#nextBtn').prop("disabled", true )
                    errorExtra[2] = false;
                    checkErrorExtra();
-               }else{
-                    errorExtra[2] = true;
+               }else if(data.sold  > 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationMsisdn' style='color:red; padding-bottom:10px'> MSISDN a deja ete utilise.<br></span>");
+                   //$('#nextBtn').prop("disabled", true )
+                   errorExtra[2] = false;
                    checkErrorExtra();
+
+               }else{
+                     errorExtra[2] = true;
+                     checkErrorExtra();
+               }
+            }
+        });
+
+
+    }
+
+    function checkSerialPOS(value,fieldId,id){
+        //alert(value+id);
+        var formData = {
+            check_extra_serial:"check_extra_serial",
+            id_product: id,
+            serial:value
+        };
+        $.ajax({
+            type: "post",
+            url: "transfer.php",
+            data: formData,
+            success: (data) =>{
+                data = $.parseJSON(data);
+               //console.log(data);                              
+               if(data.serial == 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationSerial' style='color:red; padding-bottom:10px'> SERIAL n'est pas dans votre stock.<br></span>");
+                   $('#nextBtn').prop("disabled", true )
+                   
+               }else if(data.sold  > 0){
+                   //document.getElementById(fieldId). ="invalid";
+                   $('#'+fieldId).after("<span class='validationSerial' style='color:red; padding-bottom:10px'> SERIAL a deja ete utilise.<br></span>");
+                   $('#nextBtn').prop("disabled", true )
+                   
+
+               }else{
+                $('#nextBtn').prop("disabled", false)
                }
             }
         });
 
     }
+    
+
 
 
 </script>

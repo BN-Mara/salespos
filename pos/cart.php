@@ -12,6 +12,7 @@ require_once('../TCPDF-master/tcpdf.php');
 $response=new Dao_Carte();
 $produits = $response->getAll();
 
+
 if(isset($_POST['idRef'])){
 $data = $response->detailSalesPOS($_POST['idRef']);
 $arr = array();
@@ -54,8 +55,9 @@ if(isset($_POST['check_extra_imei'])){
     $pos_c = $response->getPOSByUsername($_SESSION['user']['username']);
     //die($pdt_id.$pos_c.$imei_c);
     $imei =  $response->checkProductImeiPOS($pdt_id,$pos_c,$imei_c);
-    
-        $dataR = ['imei'=>$imei];
+    $checkSold = $response->checkExistingSaleExtra("imei",$imei_c);
+    //die($checkSold);
+        $dataR = ['imei'=>$imei,"sold"=>$checkSold];
         echo json_encode($dataR);
     
    
@@ -66,7 +68,8 @@ if(isset($_POST['check_extra_iccid'])){
     //die($pdt_id.$pos_c.$iccid_c);
     $pos_c = $response->getPOSByUsername($_SESSION['user']['username']);
     $iccid = $response->checkProductIccidPOS($pdt_id,$pos_c,$iccid_c);
-    $dataR = ['iccid'=>$iccid];
+    $checkSold = $response->checkExistingSaleExtra("iccid",$iccid_c);
+    $dataR = ['iccid'=>$iccid,"sold"=>$checkSold];
     echo json_encode($dataR);
 }
 if(isset($_POST['check_extra_msisdn'])){
@@ -74,12 +77,24 @@ if(isset($_POST['check_extra_msisdn'])){
     $msisdn_c = $_POST['msisdn'];
     $pos_c = $response->getPOSByUsername($_SESSION['user']['username']);
     $msisdn = $response->checkProductMsisdnPOS($pdt_id,$pos_c,$msisdn_c);
-    $dataR = ['msisdn'=>$msisdn];
+    $checkSold = $response->checkExistingSaleExtra("msisdn",$msisdn_c);
+
+    $dataR = ['msisdn'=>$msisdn,"sold"=>$checkSold];
     echo json_encode($dataR);
     
 }
 
 if(isset($_POST['check_extra_serial'])){
+    $pdt_id =  $_POST['id_product'];
+    $serial_c = $_POST['serial'] ;
+    $pos_c = $response->getPOSByUsername($_SESSION['user']['username']);
+    //die($pdt_id.$pos_c.$imei_c);
+    $serial =  $response->checkProductSerialPOS($pdt_id,$pos_c,$serial_c);
+    $checkSold = $response->checkExistingSaleExtra("serial",$serial_c);
+    
+        $dataR = ['serial'=>$serial,"sold"=>$checkSold];
+
+        echo json_encode($dataR);
 
 }
 

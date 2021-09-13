@@ -1,4 +1,5 @@
 <?php
+require_once("FileError.php");
 /*session_start();
 include_once '../helper/Format.php';
 spl_autoload_register(function($classe){
@@ -26,8 +27,65 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 */
 class ImeiController
 {
+    private $dao;
     public function __construct()
     {
+        $this->dao = new Dao_Carte();
+    }
+    public function checkImeis(){
+        if ($_FILES["imei_csv"]["error"] > 0) {
+            $fileError = new FileError($_FILES["imei_csv"]["error"] );
+            $info =  "Imei file Return Code: " . $_FILES["imei_csv"]["error"] . " ".$fileError->getMessage();
+            $_SESSION['infoerror'] = $info;
+        
+            return -3;
+            exit;
+
+        }else{
+            $tmpName = $_FILES['imei_csv']['tmp_name'];
+            $csvAsArray = array_map('str_getcsv', file($tmpName));
+            //die(var_dump($csvAsArray));
+            
+            //$hd = explode(",", $csvAsArray[0][0]);
+            if(isset($csvAsArray[0][0]) && isset($csvAsArray[0][1]) && isset($csvAsArray[0][2])){
+                $hd[0] = trim($csvAsArray[0][0]);
+                $hd[1]  = trim($csvAsArray[0][1]);
+                $hd[2] = trim($csvAsArray[0][2]);
+            }else{
+                return -2; // bad format
+                exit;
+            }
+            $idP = $this->dao->getProductByCode($csvAsArray[1][0]);
+            $chkPos = $this->dao->getOnePOSById($csvAsArray[1][2]);
+            if(!$idP || !$chkPos){
+                return 0;
+                exit;
+            }
+           
+            $imeisArray = [];
+            $mCount = 0;
+            if($hd[0] == "product_code" && $hd[1] == "imei" && $hd[2] == "pos" ){
+            foreach($csvAsArray as  $csv){
+                    
+                    $imeisArray[$mCount] = "'".$csv[1]."'";
+                    $mCount += 1;
+                }
+
+            }else{
+                return -2; //bad format
+                exit;
+            }
+            $condition = implode(', ', $imeisArray);
+            
+            $test = $this->dao->checkExistingImeis($condition);
+            if($test > 0){
+                return -1;
+                exit;
+            }
+            else{
+                return 1;
+            }
+        }
     }
     public function uploadFromCSV(){
         $ct = 0;
@@ -40,14 +98,14 @@ class ImeiController
             $csvAsArray = array_map('str_getcsv', file($tmpName));
             //die(var_dump($csvAsArray));
             
-            //$hd = explode(",", $csvAsArray[0][0]);
+            $hd = explode(",", $csvAsArray[0][0]);
             $hd[0] = trim($csvAsArray[0][0]);
             $hd[1]  = trim($csvAsArray[0][1]);
             $hd[2] = trim($csvAsArray[0][2]);
 
-            $imeisArray = [];
-            $mCount = 0;
-            if($hd[0] == "product_code" && $hd[1] == "imei" && $hd[2] == "pos" ){
+            //$imeisArray = [];
+            //$mCount = 0;
+            /*if($hd[0] == "product_code" && $hd[1] == "imei" && $hd[2] == "pos" ){
             foreach($csvAsArray as  $csv){
                 
                     $imeisArray[$mCount] = $csv[1];
@@ -57,14 +115,14 @@ class ImeiController
             }else{
                 return -2; //bad format
                 exit;
-            }
-            $condition = implode(', ', $imeisArray);
-            $dao = new Dao_Carte();
-            $test = $dao->checkExistingImeis($condition);
+            }*/
+            //$condition = implode(', ', $imeisArray);
+            
+           /* $test = $this->dao->checkExistingImeis($condition);
             if($test > 0){
                 return -1;
                 exit;
-            }
+            }*/
             foreach($csvAsArray as  $csv){
             
                 $newcsv = $csv;// explode(",", $csv[0]);
@@ -73,14 +131,14 @@ class ImeiController
                 if($hd[0] == "product_code" && $hd[1] == "imei" && $hd[2] == "pos" ){
                     
                     if($ct > 0){
-                        $dao = new Dao_Carte();
+                        
                         $p = new Imei();
-                        $idP = $dao->getProductByCode($newcsv[0]);
-                        $chkPos = $dao->getOnePOSById($newcsv[2]);
-                        $checkExistImei = $dao->checkExistingImei($newcsv[1]);
+                        $idP = $this->dao->getProductByCode($newcsv[0]);
+                        //$chkPos = $this->dao->getOnePOSById($newcsv[2]);
+                        //$checkExistImei = $this->dao->checkExistingImei($newcsv[1]);
                         //$chkExist = $dao->checkProductImeiPOS($idP,$newcsv[2],$newcsv[1]);
-                        if($checkExistImei == 0){
-                            if($idP && $chkPos){
+                        //if($checkExistImei == 0){
+                            //if($idP && $chkPos){
                                                       
                                         $p->setIdProduct($idP);
                                         $p->setImei($newcsv[1]);
@@ -89,22 +147,22 @@ class ImeiController
                                         $this->createImei($p);
                                         $ct_inserted += 1;
                                     
-                                }else{
+                                //}else{
                                     //die("exist");
-                                }
-                        }
+                                //}
+                        //}
                         
                         
                         
                     }
                     $ct +=1;
                 }
-                else{
+                //else{
                     //header("location:../admin/layout.php?page=imeis");
                     //return false;
-                    break;
+                 //   break;
                     //exit;
-                }
+                //}
             }
             //header("location:../admin/layout.php?page=imeis");
 
@@ -122,7 +180,7 @@ class ImeiController
     {
         $iemi = new Imei();
         ///
-        $dao = new Dao_Carte();
+        //$dao = new Dao_Carte();
         //
         $fm = new Format();
 
@@ -168,7 +226,7 @@ class ImeiController
                 */
 
 
-                $response = $dao->addImei($iemi);
+                $response = $this->dao->addImei($iemi);
                 //$dao->addStockTransaction($stock, $addedBy);
                 $info = "Les Information ont été ajoutées avec succès";
                 $_SESSION['info'] = $info;
@@ -184,7 +242,7 @@ class ImeiController
         }
         if($action == "modifier"){
             $id = $fm->validation($_POST['bnid']);
-            $response = $dao->editImei($iemi);
+            $response = $this->dao->editImei($iemi);
             //$dao->addStockTransaction($stock, $addedBy);
             $info = "La Modification a été effectuée avec succès";
 

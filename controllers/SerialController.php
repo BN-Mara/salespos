@@ -1,4 +1,5 @@
 <?php
+require_once("FileError.php");
 /*session_start();
 include_once '../helper/Format.php';
 spl_autoload_register(function($classe){
@@ -25,9 +26,70 @@ spl_autoload_register(function($classe){
 }*/
 class SerialController
 {
+    private $dao;
     public function __construct()
     {
+        $this->dao  =  new Dao_Carte();
     }
+
+    public function checkSerials(){
+        if ($_FILES["serial_csv"]["error"] > 0) {
+            $fileError = new FileError($_FILES["serial_csv+"]["error"] );
+            $info =  "Serial file Return Code: " . $_FILES["serial_csv"]["error"] . " ".$fileError->getMessage();
+            $_SESSION['infoerror'] = $info;
+        
+            return -3;
+            exit;
+
+        }else{
+            $tmpName = $_FILES['serial_csv']['tmp_name'];
+            $csvAsArray = array_map('str_getcsv', file($tmpName));
+            //die(var_dump($csvAsArray));
+            
+            //$hd = explode(",", $csvAsArray[0][0]);
+            if(isset($csvAsArray[0][0]) && isset($csvAsArray[0][1]) && isset($csvAsArray[0][2])){
+                $hd[0] = trim($csvAsArray[0][0]);
+                $hd[1]  = trim($csvAsArray[0][1]);
+                $hd[2] = trim($csvAsArray[0][2]);
+            }else{
+                return -2; // bad format
+                exit;
+            }
+            $idP = $this->dao->getProductByCode($csvAsArray[1][0]);
+            $chkPos = $this->dao->getOnePOSById($csvAsArray[1][2]);
+            if(!$idP || !$chkPos){
+                return 0;
+                exit;
+            }
+           
+            $serialArray = [];
+            $mCount = 0;
+            if($hd[0] == "product_code" && $hd[1] == "serial" && $hd[2] == "pos" ){
+            foreach($csvAsArray as  $csv){
+                    
+                    $serialArray[$mCount] = "'".$csv[1]."'";
+                    $mCount += 1;
+                }
+
+            }else{
+                return -2; //bad format
+                exit;
+            }
+            $condition = implode(', ', $serialArray);
+            
+            $test = $this->dao->checkExistingSerials($condition);
+            if($test > 0){
+                return -1;
+                exit;
+            }
+            else{
+                return 1;
+            }
+        }
+    }
+
+
+
     public function uploadFromCSV(){
         $ct = 0;
         $ct_inserted = 0;
@@ -45,7 +107,7 @@ class SerialController
             $hd[2] = trim($csvAsArray[0][2]);
             //die("this");
 
-            $serialsArray = [];
+            /*$serialsArray = [];
             $mCount = 0;
             if($hd[0] == "product_code" && $hd[1] == "serial" && $hd[2] == "pos" ){
             foreach($csvAsArray as  $csv){
@@ -66,23 +128,24 @@ class SerialController
                 return -1;
                 exit;
             }
+            */
 
             foreach($csvAsArray as  $csv){
             
                 $newcsv = $csv;// explode(",", $csv[0]);
                 //die(var_dump($newcsv));
 
-                if($hd[0] == "product_code" && $hd[1] == "serial" && $hd[2] == "pos" ){
+               // if($hd[0] == "product_code" && $hd[1] == "serial" && $hd[2] == "pos" ){
                     
                     if($ct > 0){
-                        $dao = new Dao_Carte();
+                        //$dao = new Dao_Carte();
                         $p = new Serial();
-                        $idP = $dao->getProductByCode($newcsv[0]);
-                        $checExistSerial = $dao->checkExistingSerial($newcsv[1]);
+                        $idP = $this->dao->getProductByCode($newcsv[0]);
+                        //$checExistSerial = $dao->checkExistingSerial($newcsv[1]);
                         //$chkExist = $dao->checkProductSerialPOS($idP,$newcsv[2],$newcsv[1]);
-                        $chkPos = $dao->getOnePOSById($newcsv[2]);
-                        if($checExistSerial == 0){
-                            if($idP && $chkPos){
+                        //$chkPos = $dao->getOnePOSById($newcsv[2]);
+                        //if($checExistSerial == 0){
+                            //if($idP && $chkPos){
                                                   
                                 $p->setIdProduct($idP);
                                 $p->setSerial($newcsv[1]);
@@ -92,23 +155,23 @@ class SerialController
                                 $ct_inserted +=1;
                             
 
-                        }else{
+                        //}else{
                             //die("exist");
-                        }
+                        //}
 
-                        }
+                       // }
                         
                         
                         
                     }
                     $ct +=1;
-                }
-                else{
+               // }
+               // else{
                     //header("location:../admin/layout.php?page=imeis");
                     //return false;
                     //exit;
-                    break;
-                }
+                    //break;
+                //}
             }
             //header("location:../admin/layout.php?page=imeis");
 
@@ -119,14 +182,14 @@ class SerialController
     }
     public function createSerial(Serial $serial){
         //die(var_dump($imei));
-        $dao = new Dao_Carte();
-        $response = $dao->addSerial($serial);
+        //$dao = new Dao_Carte();
+        $response = $this->dao->addSerial($serial);
     }
     public function makeSerial()
     {
         $serial = new Serial();
         ///
-        $dao = new Dao_Carte();
+        //$dao = new Dao_Carte();
         //
         $fm = new Format();
 
@@ -172,7 +235,7 @@ class SerialController
                 */
 
 
-                $response = $dao->addSerial($serial);
+                $response = $this->dao->addSerial($serial);
                 //$dao->addStockTransaction($stock, $addedBy);
                 $info = "Les Information ont été ajoutées avec succès";
                 $_SESSION['info'] = $info;
@@ -188,7 +251,7 @@ class SerialController
         }
         if($action == "modifier"){
             $id = $fm->validation($_POST['bnid']);
-            $response = $dao->editSerial($serial);
+            $response = $this->dao->editSerial($serial);
             //$dao->addStockTransaction($stock, $addedBy);
             $info = "La Modification a été effectuée avec succès";
 

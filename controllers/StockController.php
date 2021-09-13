@@ -52,36 +52,66 @@ class StockController
         // $myuser->setMatricule($matricule);
         // $myuser->setFonction($fonction);
         // $myuser->setDirection($direction);
-        if($id_product2[1] != 4){
-            if($id_product2[1] != 3){
+        if($id_product2[1] != 4){ 
+            if($id_product2[1] != 3 && $id_product2[1] != 5){
             if(isset($_FILES["imei_csv"]) && isset($_FILES["iccid_csv"])){
                 //upload imeis
                 $imeiC = new ImeiController();
                 $iccidC = new IccidController();
-                $uploadImei = $imeiC->uploadFromCSV();
-                $uploadIccid = $iccidC->uploadFromCSV();
-                
-                if($uploadImei == -1){
+                $checkImei = $imeiC->checkImeis();
+                $checkIccid = $iccidC->checkIccids();
+                $uploadIccid =  0;
+                $uploadImei = 0;
+                if($checkImei == 1 && $checkIccid==1){
+                    $uploadImei = $imeiC->uploadFromCSV();
+                    $uploadIccid = $iccidC->uploadFromCSV();
+                    //if()
+                }                               
+                else if($checkImei == -1){
                     $info = "ce fichier contient des Imeis non valids ou deja importes!";
                     $_SESSION['infoerror'] = $info;
                      header("location:../admin/layout.php?page=addStock");
                     return;
                     exit;
-                }else if($uploadIccid == -1){
+                }else if($checkIccid == -1){
                     $info = "ce fichier contient des Iccids non valids ou deja importes!";
                     $_SESSION['infoerror'] = $info;
                      header("location:../admin/layout.php?page=addStock");
                     return;
                     exit;
-                }else if($uploadIccid == -2){
-                    $info = "le format du fichier n est pas valid!";
+                }else if($checkImei == -2){
+                    $info = "le format du fichier imeis n'est pas valid!";
                     $_SESSION['infoerror'] = $info;
                      header("location:../admin/layout.php?page=addStock");
                     return;
                     exit;
-                }else if($uploadIccid == 0){
-                    $info = "Ce fichier contient de  POS ou code produit non valid";
+
+                }else if($checkIccid == -2){
+                    $info = "le format du fichier iccid n'est pas valid!";
                     $_SESSION['infoerror'] = $info;
+                     header("location:../admin/layout.php?page=addStock");
+                    return;
+                    exit;
+                }else if($checkImei == 0){
+                    $info = "le fichier imeis contient de  POS ou code produit non valide";
+                    $_SESSION['infoerror'] = $info;
+                     header("location:../admin/layout.php?page=addStock");
+                    return;
+                    exit;
+                }
+                else if($checkIccid ==  0){
+                    $info = "le fichier iccid contient de  POS ou code produit non valide";
+                    $_SESSION['infoerror'] = $info;
+                     header("location:../admin/layout.php?page=addStock");
+                    return;
+                    exit;
+
+                }else if($checkImei == -3){
+                    header("location:../admin/layout.php?page=addStock");
+                    return;
+                    exit;
+                }
+                else if($checkIccid == -3){
                      header("location:../admin/layout.php?page=addStock");
                     return;
                     exit;
@@ -95,13 +125,60 @@ class StockController
                 return;
                 exit;
             }
+            }else if($id_product2[1] == 5){
+                if(isset($_FILES["iccid_csv"])){
+                    $iccidC = new IccidController();
+                    $checkIccids =  $iccidC->checkIccids();
+                    $uploadIccid = 0;
+                    if($checkIccids == 1){
+                        $uploadIccid = $iccidC->uploadFromCSV();
+                    }
+                   
+                    else if($checkIccids == -1){
+                            $info = "ce fichier contient des ICCIDs non valide ou deja importes!";
+                            $_SESSION['infoerror'] = $info;
+                            header("location:../admin/layout.php?page=addStock");
+                            return;
+                            exit;
+                    }else if($checkIccids == -2){
+                            $info = "le format du fichier n'est pas valid!";
+                            $_SESSION['infoerror'] = $info;
+                             header("location:../admin/layout.php?page=addStock");
+                            return;
+                            exit;
+                    }else if($checkIccids == 0){
+                            $info = "Ce fichier contient de  POS ou code produit non valide";
+                            $_SESSION['infoerror'] = $info;
+                             header("location:../admin/layout.php?page=addStock");
+                            return;
+                            exit;
+                    }
+                    else if($checkIccids == -3){
+                            header("location:../admin/layout.php?page=addStock");
+                            return;
+                            exit;
+                    }
+                        $stock->setQuantity($uploadIccid);
+                    
+                }
+                else{
+                        $info = "Importer les iccid des SIM, svp!";
+                        $_SESSION['infoerror'] = $info;
+                        header("location:../admin/layout.php?page=addStock");
+                        return;
+                        exit;
+                }
+
             }
-            else{
+            else if($id_product2[1] == 3){
                 if(isset($_FILES["serial_csv"])){
                 $serial = new SerialController();
-                $uploadSerial = $serial->uploadFromCSV();
-                
-                    if($uploadSerial == -1){
+                $checkSerial = $serial->checkSerials();
+                $uploadSerial = 0;
+                    if($checkSerial  ==  1){
+                        $uploadSerial = $serial->uploadFromCSV();
+                    }
+                   else if($uploadSerial == -1){
                         $info = "ce fichier contient des Serials non valids ou deja importes!";
                         $_SESSION['infoerror'] = $info;
                         header("location:../admin/layout.php?page=addStock");
@@ -117,6 +194,10 @@ class StockController
                         $info = "Ce fichier contient de  POS ou code produit non valid";
                         $_SESSION['infoerror'] = $info;
                          header("location:../admin/layout.php?page=addStock");
+                        return;
+                        exit;
+                    }else if($checkSerial == -3){
+                        header("location:../admin/layout.php?page=addStock");
                         return;
                         exit;
                     }
@@ -171,11 +252,16 @@ class StockController
         }
     }
 
+    }
 
-
-
-
-
+    public function redirecting($info,$page,$type){
+        if($type==0){
+            $_SESSION['infoerror'] = $info; 
+            header("location:../admin/layout.php?page=addStock");
+        }else{
+            $_SESSION['info'] = $info; 
+            header("location:../admin/layout.php?page=addStock");
+        }
     }
 
 }

@@ -60,7 +60,7 @@
                             if($rows){
                                 foreach ($rows as $row) {
                                     ?>
-                                    <option value="<?php echo $row['id_product'].",".$row['id_category']; ?>"><?php echo $row['designation']; ?> </option>
+                                    <option value="<?php echo $row['id_product'].",".$row['id_category'].",".$row['code']; ?>"><?php echo $row['designation']; ?> </option>
                                     <?php
                                 }
                             }
@@ -76,8 +76,8 @@
                     </div>
                     <div class="form-group" >
                         <label for="exampleInputEmail1">POS</label>
-                        <select class="form-control" name="id_pos" required>
-                            <option value="">--</option>
+                        <select class="form-control" name="id_pos" id="id_pos" required>
+                            <option value="0">--</option>
                             <?php
 
                             $response=new Dao_Carte();
@@ -135,6 +135,8 @@
     var imeisQt = 0;
     var iccidQt = 0;
     var  serialQt = 0;
+    var filePCode = "";
+    var filePos = "";
     var errorArray = [false,false,false];
     function productChanged(val){
         $("#imei_csv").val(null);
@@ -175,6 +177,15 @@
     }
     
 function validateAndUpload(){
+    if($( "#productId" ).val() == "" || $( "#productId" ).val()  == null){
+        alert("Selectionner le produit svp!");
+        return;
+    }
+    if($("#id_pos").val() == "0" || $("#id_pos").val() == null){
+        alert("Selectionner le POS svp!");
+        return;
+    }
+    //if(filePos )
     //var file = input.files[0];
    /* var nme = document.getElementById("iccid_csv");
     var nme2 = document.getElementById("imei_csv");
@@ -194,6 +205,10 @@ function validateAndUpload(){
     if(cat == 4){
         document.getElementById('stockForm').submit();
     }else if(cat == 3){
+        if(filePos != "" || filePCode !=""){
+            alert("Produits ou POS selectionnes ne corespondent pas avec celui du fichier");
+            return;
+        }
         if(qt.value == serialQt){
             if (confirm("Etes vous sure de valider ces informations")) {
                 //txt = "You pressed OK!";
@@ -205,7 +220,28 @@ function validateAndUpload(){
         }else{
             alert("QUANTITE SERIALS DOIT ETRE EGALE A LA QUANTITE MENTIONEE");
         }
+    }else if(cat == 5){
+        if(filePos != "" || filePCode !=""){
+            alert("Produits ou POS selectionnes ne corespondent pas avec celui du fichier");
+            return;
+        }
+        if(qt.value == iccidQt){
+            if (confirm("Etes vous sure de valider ces informations")) {
+                //txt = "You pressed OK!";
+                document.getElementById('stockForm').submit();
+            } else {
+                //txt = "You pressed Cancel!";
+            }
+            
+        }else{
+            alert("QUANTITE ICCIDs DOIT ETRE EGALE A LA QUANTITE MENTIONEE");
+        }
+
     }else{
+        if(filePos != "" || filePCode !=""){
+            alert("Produits ou POS selectionnes ne corespondent pas avec celui du fichier");
+            return;
+        }
         if(iccidQt == imeisQt && imeisQt == qt.value){
             if (confirm("Etes vous sure de valider ces informations")) {
                 //txt = "You pressed OK!";
@@ -225,29 +261,73 @@ function validateAndUpload(){
 }
 function validateAndUploadImei(input){
     var file = input.files[0];
+    filePCode = "";
+    filePos = "";
     //console.log(file);
     //var nme = document.getElementById("csv");
     const reader = new FileReader();
     reader.onload = (e) => {
         const text = e.target.result; // the CSV content as string
         const data = csvToArray(text);
+                
+       const chk = checkProductPosInData(data);
+       //console.log(chk);
+       if(chk == true){
+           alert("Produits ou POS selectionnes ne corespondent pas avec celui du fichier");
+           return;
+       }else{
         qt.value  = data.length;
         imeisQt = data.length;
+       }
+        
   console.log(data);
 
 };
 reader.readAsText(file);
 
 }
+function checkProductPosInData(data){
+        const pdts = $( "#productId" ).val();
+        const pos = $("#id_pos").val();
+        var code_p = pdts.split(",");
+        const code = code_p[2];
+        //console.log(code);
+        //console.log(pos);
+        var flag = false;
+        data.forEach((item)=>{
+            //console.log(item["product_code"]);
+            //console.log(item["pos"].trim());
+            if(item["product_code"].trim() != code || item["pos"].trim() != pos){
+                filePCode =  item["product_code"].trim();
+                filePos  = item["pos"].trim();
+                flag = true;
+                //alert("this");
+
+            }
+        });
+        return flag;
+}
 function validateAndUploadIccid(input){
     var file = input.files[0];
+    filePCode = "";
+    filePos = "";
     //console.log(file);
     //var nme = document.getElementById("csv");
     const reader = new FileReader();
     reader.onload = (e) => {
         const text = e.target.result; // the CSV content as string
         const data = csvToArray(text);
+        const chk = checkProductPosInData(data);
+       //console.log(chk);
+       if(chk == true){
+        alert("Produits ou POS selectionnes ne corespondent pas avec celui du fichier");
+        filePCode =  item["product_code"].trim();
+        filePos  = item["pos"].trim();
+           return;
+       }else{
         iccidQt  = data.length;
+        qt.value = data.length;
+       }
   console.log(data);
 
 };
@@ -256,14 +336,25 @@ reader.readAsText(file);
 
 function validateAndUploadSerial(input){
     var file = input.files[0];
+    filePCode = "";
+    filePos = "";
     //console.log(file);
     //var nme = document.getElementById("csv");
     const reader = new FileReader();
     reader.onload = (e) => {
         const text = e.target.result; // the CSV content as string
         const data = csvToArray(text);
+        const chk = checkProductPosInData(data);
+       //console.log(chk);
+       if(chk == true){
+        alert("Produits ou POS selectionnes ne corespondent pas avec celui du fichier");
+        filePCode =  item["product_code"].trim();
+                filePos  = item["pos"].trim();
+           return;
+       }else{
         qt.value  = data.length;
         serialQt = data.length;
+       }
   console.log(data);
 
 };
@@ -272,7 +363,10 @@ reader.readAsText(file);
 
 function csvToArray(str, delimiter = ",") {
 
-  const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+  var headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+  for(var i=0;i< headers.length ; i ++){
+    headers[i] = headers[i].trim();
+  }
 
   const rows = str.slice(str.indexOf("\n") + 1).split("\n");
 

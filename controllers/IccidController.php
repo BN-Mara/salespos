@@ -1,4 +1,5 @@
 <?php
+require_once("FileError.php");
 /*session_start();
 include_once '../helper/Format.php';
 spl_autoload_register(function($classe){
@@ -22,9 +23,92 @@ spl_autoload_register(function($classe){
 }*/
 class IccidController
 {
+    private $dao;
     public function __construct()
     {
+        $this->dao  = new Dao_Carte();
     }
+
+    public function checkIccids(){
+        if ($_FILES["iccid_csv"]["error"] > 0) {
+            $fileError = new FileError($_FILES["iccid_csv"]["error"] );
+            $info = "Iccid file Return Code: " . $_FILES["iccid_csv"]["error"] . " ".$fileError->getMessage();
+            $_SESSION['infoerror'] = $info;
+            return -3;
+            exit;
+
+        }else{
+            $tmpName = $_FILES['iccid_csv']['tmp_name'];
+            $csvAsArray = array_map('str_getcsv', file($tmpName));
+            //die(var_dump($csvAsArray));
+           
+            //$hd = explode(";", $csvAsArray[0][0]);
+            if(isset($csvAsArray[0][0]) && isset($csvAsArray[0][1]) && isset($csvAsArray[0][2])
+            && isset($csvAsArray[0][3]) && isset($csvAsArray[0][4]) && isset($csvAsArray[0][5])){
+                $hd[0] = trim($csvAsArray[0][0]);
+                $hd[1]  = trim($csvAsArray[0][1]);
+                $hd[2] = trim($csvAsArray[0][2]);
+                $hd[3] = trim($csvAsArray[0][3]);
+                $hd[4] = trim($csvAsArray[0][4]);
+                $hd[5] = trim($csvAsArray[0][5]);
+            }else{
+                return -2; // bad format
+                exit;
+            }
+
+            $idP = $this->dao->getProductByCode($csvAsArray[1][0]);
+            $chkPos = $this->dao->getOnePOSById($csvAsArray[1][5]);
+            if(!$idP || !$chkPos){
+                return 0;
+                exit;
+            }
+            //die("this");
+            $iccidsArray = [];
+            $mCount = 0;
+            $msisdnArray = [];
+            $prodArray = [];
+            $posArray = []; 
+            if($hd[0] == "product_code" && $hd[1] == "iccid" && $hd[2] == "msisdn"
+             && $hd[3] == "type" && $hd[4] == "profile" && $hd[5] == "pos" ){
+                 $ctHead =  0;
+            foreach($csvAsArray as  $csv){
+               if($ctHead > 0){
+             
+                    $iccidsArray[$mCount] = "'".$csv[1]."'";
+                    $msisdnArray[$mCount] = $csv[2] ;
+                    //$prodArray[$mCount] =  $csv[0];
+                    //$posArray[$mCount] = $csv[5] ;
+                    $mCount += 1;
+                }
+                $ctHead += 1;
+                    
+                }
+
+            }else{
+                return -2; //bad format
+                exit;
+            }
+            $condition = implode(', ', $iccidsArray);
+            //$condition2 = implode(', ', $msisdnArray);
+            //$condition3  = implode(', ', $prodArray);
+            //$condition4 = implode(', ', $posArray);
+            //die($condition);
+            $test = $this->dao->checkExistingIccids($condition);
+            //$test2 = $dao->checkExistingMsisdns($condition2);
+            //die($condition);
+            if($test > 0){
+                return -1;
+                exit;
+            }else{
+                return 1;
+                exit;
+            }
+        }
+       
+}
+
+
+
     public function uploadFromCSV(){
         $ct = 0;
         $ct_inserted = 0;
@@ -47,34 +131,35 @@ class IccidController
             $iccidsArray = [];
             $mCount = 0;
             $msisdnArray = [];
-            $prodArray = [];
-            $posArray = []; 
-            if($hd[0] == "product_code" && $hd[1] == "iccid" && $hd[2] == "msisdn"
+            //$prodArray = [];
+            //$posArray = []; 
+            /*if($hd[0] == "product_code" && $hd[1] == "iccid" && $hd[2] == "msisdn"
              && $hd[3] == "type" && $hd[4] == "profile" && $hd[5] == "pos" ){
-            foreach($csvAsArray as  $csv){
+            /*foreach($csvAsArray as  $csv){
                
                     $iccidsArray[$mCount] = $csv[1];
                     $msisdnArray[$mCount] = $csv[2] ;
                     //$prodArray[$mCount] =  $csv[0];
                     //$posArray[$mCount] = $csv[5] ;
                     $mCount += 1;
-                }
+                }*/
 
-            }else{
+            /*}else{
                 return -2; //bad format
                 exit;
             }
             $condition = implode(', ', $iccidsArray);
-            $condition2 = implode(', ', $msisdnArray);
+            //$condition2 = implode(', ', $msisdnArray);
             //$condition3  = implode(', ', $prodArray);
             //$condition4 = implode(', ', $posArray);
             $dao = new Dao_Carte();
             $test = $dao->checkExistingIccids($condition);
-            $test2 = $dao->checkExistingMsisdns($condition2);
-            if($test > 0 || $test2 > 0){
+            //$test2 = $dao->checkExistingMsisdns($condition2);
+            die($condition);
+            if($test > 0){
                 return -1;
                 exit;
-            }
+            }*/
 
 
 
@@ -85,18 +170,18 @@ class IccidController
                 $newcsv = $csv;//explode(",", $csv[0]);
                 //die(var_dump($newcsv));
 
-                if($hd[0] == "product_code" && $hd[1] == "iccid" && $hd[2] == "msisdn" && $hd[3] == "type" && $hd[4] == "profile" && $hd[5] == "pos" ){
+               // if($hd[0] == "product_code" && $hd[1] == "iccid" && $hd[2] == "msisdn" && $hd[3] == "type" && $hd[4] == "profile" && $hd[5] == "pos" ){
                     
                     if($ct > 0){
-                        $dao = new Dao_Carte();
+                        //$dao = new Dao_Carte();
                         $p = new Iccid();
-                        $idP = $dao->getProductByCode($newcsv[0]);
-                        $chkPos = $dao->getOnePOSById($newcsv[5]);
-                        $chkExistIccid = $dao->checkExistingIccid($newcsv[1]);
-                        $chkExist = $dao->checkProductIccidPOS($idP,$newcsv[5],$newcsv[1]);
-                        $chkExistMsisdn = $dao->checkProductMsisdnPOS($idP,$newcsv[5],$newcsv[2]);
-                        if($chkExistIccid == 0){
-                            if($idP && $chkPos){
+                        $idP = $this->dao->getProductByCode($newcsv[0]);
+                        //$chkPos = $dao->getOnePOSById($newcsv[5]);
+                        //$chkExistIccid = $dao->checkExistingIccid($newcsv[1]);
+                        //$chkExist = $dao->checkProductIccidPOS($idP,$newcsv[5],$newcsv[1]);
+                        //$chkExistMsisdn = $dao->checkProductMsisdnPOS($idP,$newcsv[5],$newcsv[2]);
+                        //($chkExistIccid == 0){
+                            //if($idP && $chkPos){
                                                        
                                     $p->setIdProduct($idP);
                                     $p->setIccid($newcsv[1]);
@@ -110,20 +195,20 @@ class IccidController
             
                                   
     
-                            }
+                            //}
 
-                        }
+                       // }
                         
                                               
                     }
                     $ct +=1;
-                }
-                else{
+               // }
+               // else{
                     //header("location:../admin/layout.php?page=iccids");
-                    break;
+                    //break;
                     //return 0;
                     //exit;
-                }
+                //}
             }
             //header("location:../admin/layout.php?page=iccids");
             //return false;
@@ -135,14 +220,14 @@ class IccidController
     }
     public function createImei(Iccid $iccid){
         //die(var_dump($imei));
-        $dao = new Dao_Carte();
-        $response = $dao->addIccid($iccid);
+        //$dao = new Dao_Carte();
+        $response = $this->dao->addIccid($iccid);
     }
     public function makeIccid()
     {
         $iccidEnt = new Iccid();
         ///
-        $dao = new Dao_Carte();
+       // $dao = new Dao_Carte();
         //
         $fm = new Format();
 
@@ -182,7 +267,7 @@ class IccidController
             if ($action == "modifier") {
 
                 //$id = $fm->validation($_POST['bnid']);
-                $response = $dao->editIccid($iccidEnt);
+                $response = $this->dao->editIccid($iccidEnt);
                 //$dao->addStockTransaction($stock, $addedBy);
                 $info = "La Modification a été effectuée avec succès";
 
@@ -198,7 +283,7 @@ class IccidController
             if($action == "ajouter"){
 
 
-                $response = $dao->addIccid($iccidEnt);
+                $response = $this->dao->addIccid($iccidEnt);
                 //$dao->addStockTransaction($stock, $addedBy);
                 $info = "Les Information ont été ajoutées avec succès";
                 $_SESSION['info'] = $info;

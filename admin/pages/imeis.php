@@ -3,7 +3,7 @@
 
 $response=new Dao_Carte();
 
-$row=$response->getAllImei();
+$row=$response->getAllImeiJoined();
 ?>
 
 <!-- Content Header (Page header) -->
@@ -21,18 +21,6 @@ $row=$response->getAllImei();
     <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title">IMEI</h3>
-            <!--<form method="post" action="../controllers/ImeiController.php" enctype="multipart/form-data">
-            <table class="pull-right">
-                <tr>
-                    <td>
-                    <input  type="file" name="csv" id="csv" accept=".csv" onChange="validateAndUpload(this);" >
-                    </td>
-                    <td>
-                    <button class="btn btn-secondary " type="submit" name="uploadcsv" id="uploadcsv" disabled>Import</button>
-                    </td>
-                </tr>
-            </table>
-            </form>-->
             
         </div>
         <!-- /.box-header -->
@@ -63,7 +51,7 @@ $row=$response->getAllImei();
                 </thead>
                 <tbody>
                 <?php
-                //var_dump($row);
+               // print_r($row);
                 if($row)
                 {
                     $count=0;
@@ -73,13 +61,13 @@ $row=$response->getAllImei();
                         ?>
                         <tr>
                             <td><?php
-                                $p = $response->getOneProductById($item['id_product']);
-                                echo $p['designation'];
+                                //$p = $response->getOneProductById($item['id_product']);
+                                echo $item[1];
                                 ?></td>
                             <td><?php echo $item['imei']; ?></td>
                             <td><?php
-                                $pos = $response->getOnePOSById($item['id_pos']);
-                                echo $pos['designation'];
+                                //$pos = $response->getOnePOSById($item['id_pos']);
+                                echo $item[2];
                                 ?>
                             </td>
 
@@ -104,16 +92,6 @@ $row=$response->getAllImei();
 </section>
 <script>
     
-function validateAndUpload(input){
-    var file = input.files[0];
-    var nme = document.getElementById("csv");
-    var impbtn = document.getElementById("uploadcsv");
-    
-    if(nme.value.length < 4){
-        impbtn.disabled = true;
-    }else{
-        impbtn.disabled = false;
-    }
-}
-    
+
+   
 </script>

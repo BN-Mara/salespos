@@ -3,36 +3,7 @@
 
 $response=new Dao_Carte();
 $vente_txt = "";
-if(isset($_GET['when'])){
-    $when = $_GET['when'];
-    if($when == 'today'){
-        $row=$response->todayCommande();
-        $vente_txt = "Ventes d'aujourd'hui";
-        $total = $response->todayTotalCommande();
-        $quantity = $response->todayProduitCommande();
-
-    }
-    if($when == 'thismonth'){
-        $row=$response->thisMonthCommande();
-        $vente_txt = "Ventes de ce Mois";
-        $total = $response->thisMonthTotalCommande();
-        $quantity = $response->thisMonthProduitCommande();
-
-    }
-    if($when == 'thisweek'){
-        $row=$response->thisWeekCommande();
-        $vente_txt = "Ventes de cette semaine";
-        $total = $response->thisWeekTotalCommande();
-        $quantity = $response->thisWeekTotalCommande();
-    }
-
-}else{
-    $row=$response->getAll();
-    $vente_txt = "Toutes les ventes";
-    $total = $response->thisYearTotalCommande();
-    $quantity = $response->thisYearProduitCommande();
-}
-
+$row=$response->getAll();
 
 ?>
 
@@ -50,37 +21,59 @@ if(isset($_GET['when'])){
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Motant Total: $ <?php echo $total; ?> </h3>  <h3 class="box-title"> | Quantité: <?php echo $quantity; ?> Articles commandés</h3>
+        <div class="row">
+                <div class="col-lg-4 form-group">
+                    <label>POS</label>
+                <select id="pos_filter" class="form-control">
+            <!--<option>--</option>-->
+                <?php
+                $poses = $response->getAllPOS();
+                foreach($poses as $pos){
+                    ?>
+                   <option value="<?php echo  $pos['id_pos']; ?>">
+                   <?php echo $pos['designation']; ?>
+                   </option>
+                    <?php
+                }
+
+                ?>
+
+            </select>
+                </div>
+                <div class="col-lg-4 ">
+                    <div class="row">
+                        <div class="col-sm-6 form-group-sm">
+                            <label>From</label>
+                            <input type="date" id="fromdate" name="fromdate" class="form-control">
+                        </div>
+                        <div class="col-sm-6 form-group-sm">
+                            <label>To</label>
+                            <input type="date" id="todate" name="todate" class="form-control">
+                        </div>
+                    </div>
+            </div>
+            <div class="col-lg-4"></div>
+            </div>
         </div>
         <!-- /.box-header -->
-        <?php
-        if(isset($_SESSION['info'])){
-            ?>
-            <div class="alert alert-success alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h4><i class="icon fa fa-check"></i> Alert!</h4>
-                <?php echo $_SESSION['info'];
-                unset( $_SESSION['info']);
-                ?> .
-            </div>
-
-            <?php
-        }
-        ?>
+    
         <!-- form start -->
 
-        <div class="box-body">
-            <table id="example2" class="table table-bordered table-striped">
+        <div class="box-body" id="boxbody">
+            <table id="example0" class="table table-bordered table-striped">
                 <thead>
+                    <tr><th colspan="3"><div class="text-center" style="position:relative" id="ttitle"> POS</div></th></tr>
                 <tr>
 
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>Total Price (CDF)</th>
+                    
+
 
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbody">
                 <?php
                 //var_dump($row);
                 if($row)
@@ -94,7 +87,7 @@ if(isset($_GET['when'])){
                             <td><?php echo $item['designation']; ?></td>
                             <td><?php
                                 
-                                $qte = $response->getProductSaleQteById($item['id_product']);
+                                $qte = $response-> getPOSProductSaleQteById($item['id_product'],1);
                                 if($qte){
                                     echo $qte;
 
@@ -104,7 +97,7 @@ if(isset($_GET['when'])){
                                 ?></td>
                             <td><?php
                                 
-                                $t = $response->getTotalPriceProductSaleById($item['id_product']);
+                                $t = $response->getPOSTotalPriceProductSaleById($item['id_product'],1);
                                 if($t){
                                     echo $t;
 
@@ -131,3 +124,71 @@ if(isset($_GET['when'])){
 
     </div>
 </section>
+<script>
+    var t = "";
+    $(document).ready(function(){ 
+        $('#ttitle').html($('#pos_filter option:selected').text()); 
+    t = $('#example0').DataTable({
+      dom: 'Blfrtip',
+    buttons: [
+    'copy', 'csv', 'excel', 'pdf', 'print'
+    ]
+    });
+    $('#pos_filter, #fromdate, #todate').change(function() {
+       // alert("hello");
+        /*var form = this.closest("form");
+        $.post("search.php", form.serialize(), function(data) {
+            $('#show_data').html(data);
+        });  */
+        findReport();
+    });  
+});
+ function findReport(){
+        //alert(client);
+        $('#ttitle').html($('#pos_filter option:selected').text());
+        $('#tbody').html('<tr><td colspan="3"><div class="text-center" style="position:relative"><p align="center"><i class="fa fa-refresh fa-spin"></i></p></div></td></tr>');
+        var pos = $('#pos_filter').val();
+        var fromDate = $('#fromdate').val();
+        var toDate = $('#todate').val();
+        
+        var formData = {
+            'pos_id':pos,
+            'fromdate':fromDate,
+            'todate':toDate,
+            'action':"report_sales"
+        }
+        $.ajax({
+            type: "post",
+            url: "../controllers/CommonController.php",
+            data: formData,
+            success: function (data) {
+                //console.log(data);
+                
+                data = $.parseJSON(data);
+                //console.log(data);
+               //$('#tbody').html('');
+               //$('#example2').children('tr').remove();
+               t.clear().draw();
+
+                data.forEach((v,i)=>{
+                    //console.log($('#example2'));
+                    
+                    //t.row.add("<tr><td>"+v.designation+"</td><td>"+v.qte+"</td><td>"+v.total+"</td></tr>");
+                    t.row.add([
+                        v.designation,
+                        v.qte < 1?"0":v.qte,
+                        v.total < 1?"0":v.total
+                    ]).draw(true);
+                });
+               // $('#boxbody table').remove();
+                //$('#boxbody').html(data);
+                //$('#boxbody table').attr('id',"example2");
+
+
+
+                
+                
+            }
+        });
+    }
+</script>

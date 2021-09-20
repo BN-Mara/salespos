@@ -83,7 +83,8 @@ $row=$response->getAllPOS();
 
                         </tr>
 
-                    <?php }}?>
+                    <?php }
+                }?>
                 </tbody>
                 <tfoot>
                 <tr>

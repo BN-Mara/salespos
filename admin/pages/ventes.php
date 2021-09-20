@@ -50,7 +50,21 @@ if(isset($_GET['when'])){
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">Motant Total: $ <?php echo $total; ?> </h3>  <h3 class="box-title"> | Quantité: <?php echo $quantity; ?> Articles commandés</h3>
+            <select id="pos_filter">
+            <option>--</option>
+                <?php
+                $poses = $response->getAllPOS();
+                foreach($poses as $pos){
+                    ?>
+                   <option value="<?php echo $item['id_pos']; ?>">
+                   <?php echo $item['designation']; ?>
+                   </option>
+                    <?php
+                }
+
+                ?>
+
+            </select>
         </div>
         <!-- /.box-header -->
         <?php

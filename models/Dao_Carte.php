@@ -932,6 +932,56 @@ class Dao_Carte extends Connexion
         }
 
     }
+    public function getPOSProductSaleQteById($id,$pos)
+    {
+        try {
+
+
+            $query = $this->getConnexion()->prepare("SELECT SUM(quantity) FROM bn_sales 
+            WHERE id_product = :id_product AND addedBy IN (SELECT username FROM bn_user WHERE id_pos =:id_pos)");
+            $query->execute(array('id_product'=>$id,'id_pos'=>$pos));
+            return $row = $query->fetchColumn();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function getPOSProductSaleQteByIdDate($id,$pos,$fromDate,$toDate)
+    {
+        try {
+
+
+            $query = $this->getConnexion()->prepare("SELECT SUM(quantity) FROM bn_sales 
+            WHERE id_product = :id_product AND addedBy IN (SELECT username FROM bn_user WHERE id_pos =:id_pos) 
+            AND  CAST(creation_date AS DATE) >= CAST(:fromDate AS DATE) AND CAST(creation_date AS DATE) <= CAST(:toDate AS DATE)");
+            $query->execute(array('id_product'=>$id,'id_pos'=>$pos,'fromDate'=>$fromDate,'toDate'=>$toDate));
+            return $row = $query->fetchColumn();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function getPOSTotalPriceProductSaleByIdDate($id,$pos,$fromDate,$toDate)
+    {
+        try {
+
+
+            $query = $this->getConnexion()->prepare("SELECT SUM(total_price) FROM bn_sales 
+            WHERE id_product = :id_product AND addedBy IN (SELECT username FROM bn_user WHERE id_pos =:id_pos) 
+            AND  CAST(creation_date AS DATE) >= CAST(:fromDate AS DATE) AND CAST(creation_date AS DATE) <= CAST(:toDate AS DATE)");
+            $query->execute(array('id_product'=>$id,'id_pos'=>$pos,'fromDate'=>$fromDate,'toDate'=>$toDate));
+            return $row = $query->fetchColumn();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
     public function getTotalPriceProductSaleById($id)
     {
 
@@ -939,6 +989,22 @@ class Dao_Carte extends Connexion
 
             $query = $this->getConnexion()->prepare("SELECT SUM(total_price) FROM bn_sales WHERE id_product = :id_product");
             $query->execute(array('id_product'=>$id));
+            return $row = $query->fetchColumn();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function getPOSTotalPriceProductSaleById($id,$pos)
+    {
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT SUM(total_price) FROM bn_sales WHERE 
+            id_product = :id_product AND addedBy IN (SELECT username FROM bn_user WHERE id_pos =:id_pos)");
+            $query->execute(array('id_product'=>$id,'id_pos'=>$pos));
             return $row = $query->fetchColumn();
 
 
@@ -2358,13 +2424,30 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
 
     }
-
     public function getAllImei()
     {
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_imei");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_imei ");
+            $query->execute();
+            return $row = $query->fetchAll();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+
+    public function getAllImeiJoined()
+    {
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT i.imei, pr.designation, po.designation FROM
+             bn_imei i INNER  JOIN bn_pos po ON i.id_pos = po.id_pos 
+             INNER JOIN bn_product pr ON i.id_product = pr.id_product ");
             $query->execute();
             return $row = $query->fetchAll();
 
@@ -2548,13 +2631,30 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
 
     }
-
     public function getAllSerial()
     {
 
         try {
 
-            $query = $this->getConnexion()->prepare("SELECT * FROM bn_serial");
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_serial ");
+            $query->execute();
+            return $row = $query->fetchAll();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+
+    public function getAllSerialJoined()
+    {
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT s.serial, pr.designation, po.designation FROM 
+            bn_serial s INNER JOIN bn_pos po ON s.id_pos = po.id_pos 
+            INNER JOIN bn_product pr ON s.id_product = pr.id_product");
             $query->execute();
             return $row = $query->fetchAll();
 
@@ -2730,6 +2830,23 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
         try {
 
             $query = $this->getConnexion()->prepare("SELECT * FROM bn_iccid");
+            $query->execute();
+            return $row = $query->fetchAll();
+
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+    }
+    public function getAllIccidJoined()
+    {
+
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT i.iccid, i.msisdn, i.type, i.profile
+            , pr.designation, po.designation FROM bn_iccid i INNER JOIN bn_pos po ON i.id_pos = po.id_pos 
+            INNER JOIN bn_product pr ON i.id_product = pr.id_product");
             $query->execute();
             return $row = $query->fetchAll();
 

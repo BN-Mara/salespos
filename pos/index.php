@@ -1,6 +1,8 @@
 <?php
 
 session_start();
+ini_set("log_errors", 1);
+ini_set("error_log", "/helper/php_error.log");
 
 if(!isset($_SESSION['user'])){
     //check username and password then set to session

@@ -3,7 +3,7 @@
 
 $response=new Dao_Carte();
 
-$row=$response->getAllIccid();
+$row=$response->getAllIccidJoined();
 ?>
 
 <!-- Content Header (Page header) -->
@@ -75,16 +75,16 @@ $row=$response->getAllIccid();
                         ?>
                         <tr>
                             <td><?php
-                                $p = $response->getOneProductById($item['id_product']);
-                                echo $p['designation'];
+                                //$p = $response->getOneProductById($item['id_product']);
+                                echo $item[4];
                                 ?></td>
                             <td><?php echo $item['iccid']; ?></td>
                             <td><?php echo $item['msisdn']; ?></td>
                             <td><?php echo $item['type']; ?></td>
                             <td><?php echo $item['profile']; ?></td>
                             <td><?php
-                                $pos = $response->getOnePOSById($item['id_pos']);
-                                echo $pos['designation'];
+                                //$pos = $response->getOnePOSById($item['id_pos']);
+                                echo $item[5];
                                 ?>
                             </td>
 
@@ -112,16 +112,5 @@ $row=$response->getAllIccid();
 </section>
 <script>
     
-function validateAndUpload(input){
-    var file = input.files[0];
-    var nme = document.getElementById("csv");
-    var impbtn = document.getElementById("uploadcsv");
-    
-    if(nme.value.length < 4){
-        impbtn.disabled = true;
-    }else{
-        impbtn.disabled = false;
-    }
-}
     
 </script>

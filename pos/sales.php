@@ -115,7 +115,7 @@
                                        placeholder="IMEI de produit"
                                        id="<?php echo "imei_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "imei_" . $item['id_produit'] . $i; ?>" required 
-                                       onKeyDown="if(this.value.length==15) return false;"
+                                       
                                        onclick="removeAfterImei(this.id)"
                                        onBlur="checkImeiPOS(this.value,this.id,<?php echo $item['id_produit'];?>)">
                                 <label><b>Numero SIM </b></label>
@@ -131,7 +131,7 @@
                                        placeholder="Numero de la SIM remise au client"
                                        id="<?php echo "num_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "num_" . $item['id_produit'] . $i; ?>" required 
-                                       onKeyDown="if(this.value.length==9) return false;"
+                                       
                                        onclick="removeAfterMsisdn(this.id)"
                                        onBlur="checkMsisdnPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
                                 <label><b>ICCID </b></label>
@@ -139,7 +139,7 @@
                                        placeholder="Numero de la SIM remise au client"
                                        id="<?php echo "iccid_" . $item['id_produit'] . $i; ?>"
                                        name="<?php echo "iccid_" . $item['id_produit'] . $i; ?>" required 
-                                       onKeyDown="if(this.value.length==10) return false;"
+                                       
                                        onclick="removeAfterIccid(this.id)"
                                        onBlur="checkIccidPOS(this.value,this.id,<?php echo $item['id_produit']; ?>)">
 

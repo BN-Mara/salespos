@@ -98,6 +98,9 @@ for($i=0; $i<12; $i++){
 <style>
 
 </style>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -331,10 +334,10 @@ for($i=0; $i<12; $i++){
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="layout.php?page=orders"><i class="fa fa-book"></i> VENTES</a></li>
-            <li><a href="layout.php?page=orders&when=today"><i class="fa fa-book"></i> AUJOURD'HUI</a></li>
+            <li><a href="layout.php?page=productSale"><i class="fa fa-book"></i> VENTES POS</a></li>
+            <!--<li><a href="layout.php?page=orders&when=today"><i class="fa fa-book"></i> AUJOURD'HUI</a></li>
             <li><a href="layout.php?page=orders&when=thisweek"><i class="fa fa-book"></i> CETTE SEMAINE</a></li>
-            <li><a href="layout.php?page=orders&when=thismonth"><i class="fa fa-book"></i> CE MOIS</a></li>
+            <li><a href="layout.php?page=orders&when=thismonth"><i class="fa fa-book"></i> CE MOIS</a></li>-->
             <li><a href="layout.php?page=productSale"><i class="fa fa-book"></i> PRODUITS VENDUS </a></li>
 
           </ul>
@@ -446,9 +449,7 @@ for($i=0; $i<12; $i++){
 <!-- ./wrapper -->
 
 <!-- jQuery 3 -->
-<script src="bower_components/jquery/dist/jquery.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
   $.widget.bridge('uibutton', $.ui.button);

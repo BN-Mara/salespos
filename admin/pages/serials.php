@@ -3,7 +3,7 @@
 
 $response=new Dao_Carte();
 
-$row=$response->getAllSerial();
+$row=$response->getAllSerialJoined();
 ?>
 
 <!-- Content Header (Page header) -->
@@ -73,13 +73,13 @@ $row=$response->getAllSerial();
                         ?>
                         <tr>
                             <td><?php
-                                $p = $response->getOneProductById($item['id_product']);
-                                echo $p['designation'];
+                                //$p = $response->getOneProductById($item['id_product']);
+                                echo $item[1];
                                 ?></td>
                             <td><?php echo $item['serial']; ?></td>
                             <td><?php
-                                $pos = $response->getOnePOSById($item['id_pos']);
-                                echo $pos['designation'];
+                                //$pos = $response->getOnePOSById($item['id_pos']);
+                                echo $item[2];
                                 ?>
                             </td>
 
@@ -103,17 +103,5 @@ $row=$response->getAllSerial();
     </div>
 </section>
 <script>
-    
-function validateAndUpload(input){
-    var file = input.files[0];
-    var nme = document.getElementById("csv");
-    var impbtn = document.getElementById("uploadcsv");
-    
-    if(nme.value.length < 4){
-        impbtn.disabled = true;
-    }else{
-        impbtn.disabled = false;
-    }
-}
-    
+
 </script>

@@ -63,10 +63,10 @@ $products=$response->getAll();
                               $p = $response->getOneProductById($item['id_product']);
                               echo $p['designation'];
                               ?></td>
-                            <td><?php echo $p = $response->getQuantityProduitCommandePOS($item['id_product'],$pos); ?></td>
+                            <td><?php echo $p = $response->getQuantityProduitCommande($item['id_product']); ?></td>
                             <td><?php
                               $rate = $response->getRate();
-                              $t = $response->totalPriceSalesByProductPOS($item['id_product'],$pos);
+                              $t = $response->totalPriceSalesByProduct($item['id_product']);
                               echo $t;
                               ?></td>
                           </tr>

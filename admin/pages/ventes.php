@@ -2,69 +2,26 @@
 <?php
 
 $response=new Dao_Carte();
-$vente_txt = "";
-if(isset($_GET['when'])){
-    $when = $_GET['when'];
-    if($when == 'today'){
-        $row=$response->todayCommande();
-        $vente_txt = "Ventes d'aujourd'hui";
-        $total = $response->todayTotalCommande();
-        $quantity = $response->todayProduitCommande();
 
-    }
-    if($when == 'thismonth'){
-        $row=$response->thisMonthCommande();
-        $vente_txt = "Ventes de ce Mois";
-        $total = $response->thisMonthTotalCommande();
-        $quantity = $response->thisMonthProduitCommande();
-
-    }
-    if($when == 'thisweek'){
-        $row=$response->thisWeekCommande();
-        $vente_txt = "Ventes de cette semaine";
-        $total = $response->thisWeekTotalCommande();
-        $quantity = $response->thisWeekTotalCommande();
-    }
-
-}else{
-    $row=$response->getAllOrder();
-    $vente_txt = "Toutes les ventes";
-    $total = $response->thisYearTotalCommande();
-    $quantity = $response->thisYearProduitCommande();
-}
-
-
+ 
+$products=$response->getAll();
 ?>
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        <?php echo $vente_txt; ?>
+        Ventes
 
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Tous les produits</a></li>
+        <li><a href="#">Tous les POS</a></li>
     </ol>
 </section>
 <section class="content">
     <div class="box box-primary">
         <div class="box-header with-border">
-            <select id="pos_filter">
-            <option>--</option>
-                <?php
-                $poses = $response->getAllPOS();
-                foreach($poses as $pos){
-                    ?>
-                   <option value="<?php echo $item['id_pos']; ?>">
-                   <?php echo $item['designation']; ?>
-                   </option>
-                    <?php
-                }
-
-                ?>
-
-            </select>
+            <h3 class="box-title">Ventes par produit</h3>
         </div>
         <!-- /.box-header -->
         <?php
@@ -84,63 +41,50 @@ if(isset($_GET['when'])){
         <!-- form start -->
 
         <div class="box-body">
-            <table id="example2" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>ID Client</th>
-                    <th>ID Produit</th>
-                    <th>Quantité</th>
-                    <th>Prix</th>
-                    <th>Prix Total</th>
-                    <th>Date de vente</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php
-                //var_dump($row);
-                if($row)
-                {
-                    $count=0;
-                    foreach($row as $item)
-                    {
-                        $count++;
-                        ?>
-                        <tr>
-                            <td><?php echo $item['id_ref']; ?></td>
+            <table id="example2" class="table table-bordered table-striped"><thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix total</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <?php
+                      //var_dump($row);
+                      if($products)
+                      {
+                        $count=0;
+                        foreach($products as $item)
+                        {
+                          $count++;
+                          ?>
+                          <tr>
                             <td><?php
-                                $c = $response->getOneClientById($item['id_client']);
-                                echo $c['firstname'];
-                                ?></td>
+                              $p = $response->getOneProductById($item['id_product']);
+                              echo $p['designation'];
+                              ?></td>
+                            <td><?php echo $p = $response->getQuantityProduitCommande($item['id_product']); ?></td>
                             <td><?php
-                                $p = $response->getOneProduitById($item['id_product']);
-                                echo $p[0]['designation'];
-                                ?></td>
-                            <td><?php echo $item['quantity']; ?></td>
-                            <td>$ <?php echo $item['unit_price']; ?></td>
-                            <td>$ <?php echo $item['total_price']; ?></td>
-                            <td><?php echo $item['creation_date']; ?></td>
+                              $rate = $response->getRate();
+                              $t = $response->totalPriceSalesByProduct($item['id_product']);
+                              echo $t;
+                              ?></td>
+                          </tr>
 
-                        </tr>
-
-                    <?php }}?>
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th>ID</th>
-                    <th>ID Client</th>
-                    <th>ID Produit</th>
-                    <th>Quantité</th>
-                    <th>Prix</th>
-                    <th>Prix Total</th>
-                    <th>Date de vente</th>
-                </tr>
-                </tfoot>
-            </table>
-        </div>
-
-        <!-- /.box-body -->
+                        <?php }}?>
+                      </tbody>
+                      <tfoot>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix total</th>
+                      </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+  
+<!-- /.box-body -->
 
 
-    </div>
+</div>
 </section>

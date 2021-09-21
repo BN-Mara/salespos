@@ -122,18 +122,44 @@ $row=$response->getAll();
         <!-- /.box-body -->
 
 
+
     </div>
+
+      <!-- Bar chart -->
+      <div class="box box-primary">
+            <div class="box-header with-border">
+              <i class="fa fa-bar-chart-o"></i>
+
+              <h3 class="box-title" id="chart-title"></b></h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div id="prod-bar-chart" style="height: 300px;"></div>
+            </div>
+            <!-- /.box-body -->
+          </div>
 </section>
 <script>
     var t = "";
+    
     $(document).ready(function(){ 
-        $('#ttitle').html($('#pos_filter option:selected').text()); 
+        $('#ttitle').html($('#pos_filter option:selected').text());
+        $('#chart-title').html($('#pos_filter option:selected').text());
+        
+         
     t = $('#example0').DataTable({
       dom: 'Blfrtip',
     buttons: [
     'copy', 'csv', 'excel', 'pdf', 'print'
     ]
     });
+
+    findReport();
     $('#pos_filter, #fromdate, #todate').change(function() {
        // alert("hello");
         /*var form = this.closest("form");
@@ -146,6 +172,7 @@ $row=$response->getAll();
  function findReport(){
         //alert(client);
         $('#ttitle').html($('#pos_filter option:selected').text());
+        $('#chart-title').html($('#pos_filter option:selected').text());
         $('#tbody').html('<tr><td colspan="3"><div class="text-center" style="position:relative"><p align="center"><i class="fa fa-refresh fa-spin"></i></p></div></td></tr>');
         var pos = $('#pos_filter').val();
         var fromDate = $('#fromdate').val();
@@ -168,11 +195,12 @@ $row=$response->getAll();
                 //console.log(data);
                //$('#tbody').html('');
                //$('#example2').children('tr').remove();
+               var datas = [];
                t.clear().draw();
 
                 data.forEach((v,i)=>{
                     //console.log($('#example2'));
-                    
+                    datas.push([v.designation,v.qte < 1?"0":v.qte])
                     //t.row.add("<tr><td>"+v.designation+"</td><td>"+v.qte+"</td><td>"+v.total+"</td></tr>");
                     t.row.add([
                         v.designation,
@@ -180,15 +208,51 @@ $row=$response->getAll();
                         v.total < 1?"0":v.total
                     ]).draw(true);
                 });
+                myChart(datas);
                // $('#boxbody table').remove();
                 //$('#boxbody').html(data);
-                //$('#boxbody table').attr('id',"example2");
-
-
-
-                
+                //$('#boxbody table').attr('id',"example2");             
                 
             }
         });
     }
+    
+function myChart(mdata){
+    var datas = mdata;
+    /*for(var i=1;i<31;i++){
+        datas.push([i,i*2]);
+    }
+    console.log(datas);
+    */
+
+
+    var bar_data = {
+      data : datas,
+      color: '#3c8dbc'
+    }
+    $.plot('#prod-bar-chart', [bar_data], {
+      grid  : {
+        borderWidth: 1,
+        borderColor: '#f3f3f3',
+        tickColor  : '#f3f3f3'
+      },
+      series: {
+        bars: {
+          show    : true,
+          barWidth: 0.5,
+          align   : 'center'
+        }
+      },
+      xaxis : {
+        mode      : 'categories',
+        tickLength: 0
+      }
+    })
+    /* END BAR CHART */
+
+}
+    
+
+
+
 </script>

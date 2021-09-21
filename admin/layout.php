@@ -101,6 +101,60 @@ for($i=0; $i<12; $i++){
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- Morris.js charts -->
+<script src="bower_components/raphael/raphael.min.js"></script>
+<script src="bower_components/morris.js/morris.min.js"></script>
+<!-- Sparkline -->
+<script src="bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+<!-- jvectormap -->
+<script src="plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="bower_components/moment/min/moment.min.js"></script>
+<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- datepicker -->
+<script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- Slimscroll -->
+<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.min.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="dist/js/pages/dashboard.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="dist/js/demo.js"></script>
+<!-- DataTables -->
+<script src="bower_components/datatables.net-bs/js/jquery.dataTables.min.js"></script>
+
+
+  <!-- Page level custom scripts -->
+  <script type="text/javascript" charset="utf8" src="bower_components/datatables.net-bs/js/dataTables.buttons.min.js"></script>
+
+  <script src="bower_components/datatables.net-bs/js/jszip.min.js"></script>
+  <script src="bower_components/datatables.net-bs/js/pdfmake.min.js"></script>
+  <script src="bower_components/datatables.net-bs/js/vfs_fonts.js"></script>
+  <script src="bower_components/datatables.net-bs/js/buttons.html5.min.js"></script>
+  <script src="bower_components/datatables.net-bs/js/buttons.print.min.js"></script>
+<!-- ChartJS -->
+<script src="bower_components/chart.js/Chart.js"></script>
+<!-- FLOT CHARTS -->
+<script src="bower_components/Flot/jquery.flot.js"></script>
+<!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+<script src="bower_components/Flot/jquery.flot.resize.js"></script>
+<!-- FLOT PIE PLUGIN - also used to draw donut charts -->
+<script src="bower_components/Flot/jquery.flot.pie.js"></script>
+<!-- FLOT CATEGORIES PLUGIN - Used to draw bar charts -->
+<script src="bower_components/Flot/jquery.flot.categories.js"></script>
+<script src="plugins/iCheck/icheck.min.js"></script>
+<script src="bower_components/select2/dist/js/select2.full.min.js"></script>
+<!-- SlimScroll -->
+<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -338,7 +392,7 @@ for($i=0; $i<12; $i++){
             <!--<li><a href="layout.php?page=orders&when=today"><i class="fa fa-book"></i> AUJOURD'HUI</a></li>
             <li><a href="layout.php?page=orders&when=thisweek"><i class="fa fa-book"></i> CETTE SEMAINE</a></li>
             <li><a href="layout.php?page=orders&when=thismonth"><i class="fa fa-book"></i> CE MOIS</a></li>-->
-            <li><a href="layout.php?page=productSale"><i class="fa fa-book"></i> PRODUITS VENDUS </a></li>
+            <li><a href="layout.php?page=productSold"><i class="fa fa-book"></i> PRODUITS VENDUS </a></li>
 
           </ul>
         </li>
@@ -455,60 +509,7 @@ for($i=0; $i<12; $i++){
   $.widget.bridge('uibutton', $.ui.button);
 </script>
 <!-- Bootstrap 3.3.7 -->
-<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- Morris.js charts -->
-<script src="bower_components/raphael/raphael.min.js"></script>
-<script src="bower_components/morris.js/morris.min.js"></script>
-<!-- Sparkline -->
-<script src="bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
-<!-- jvectormap -->
-<script src="plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
-<!-- daterangepicker -->
-<script src="bower_components/moment/min/moment.min.js"></script>
-<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
-<!-- datepicker -->
-<script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<!-- Bootstrap WYSIHTML5 -->
-<script src="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-<!-- Slimscroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="bower_components/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="dist/js/adminlte.min.js"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="dist/js/pages/dashboard.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="dist/js/demo.js"></script>
-<!-- DataTables -->
-<script src="bower_components/datatables.net-bs/js/jquery.dataTables.min.js"></script>
 
-
-  <!-- Page level custom scripts -->
-  <script type="text/javascript" charset="utf8" src="bower_components/datatables.net-bs/js/dataTables.buttons.min.js"></script>
-
-  <script src="bower_components/datatables.net-bs/js/jszip.min.js"></script>
-  <script src="bower_components/datatables.net-bs/js/pdfmake.min.js"></script>
-  <script src="bower_components/datatables.net-bs/js/vfs_fonts.js"></script>
-  <script src="bower_components/datatables.net-bs/js/buttons.html5.min.js"></script>
-  <script src="bower_components/datatables.net-bs/js/buttons.print.min.js"></script>
-<!-- ChartJS -->
-<script src="bower_components/chart.js/Chart.js"></script>
-<!-- FLOT CHARTS -->
-<script src="bower_components/Flot/jquery.flot.js"></script>
-<!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
-<script src="bower_components/Flot/jquery.flot.resize.js"></script>
-<!-- FLOT PIE PLUGIN - also used to draw donut charts -->
-<script src="bower_components/Flot/jquery.flot.pie.js"></script>
-<!-- FLOT CATEGORIES PLUGIN - Used to draw bar charts -->
-<script src="bower_components/Flot/jquery.flot.categories.js"></script>
-<script src="plugins/iCheck/icheck.min.js"></script>
-<script src="bower_components/select2/dist/js/select2.full.min.js"></script>
-<!-- SlimScroll -->
-<script src="bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 
 <script>
  //$('#test').hide('fast');
@@ -547,7 +548,7 @@ for($i=0; $i<12; $i++){
      */
     // We use an inline data source in the example, usually data would
     // be fetched from a server
-    /* var data = [], totalPoints = 100
+     var data = [], totalPoints = 100
 
     function getRandomData() {
 
@@ -627,7 +628,7 @@ for($i=0; $i<12; $i++){
         realtime = 'off'
       }
       update()
-    }) */
+    }) 
     /*
      * END INTERACTIVE CHART
      */
@@ -638,7 +639,7 @@ for($i=0; $i<12; $i++){
      */
     //LINE randomly generated data
 
-   /*  var sin = [], cos = []
+    var sin = [], cos = []
     for (var i = 0; i < 14; i += 0.5) {
       sin.push([i, Math.sin(i)])
       cos.push([i, Math.cos(i)])
@@ -697,14 +698,14 @@ for($i=0; $i<12; $i++){
         $('#line-chart-tooltip').hide()
       }
 
-    }) */
+    }) 
     /* END LINE CHART */
 
     /*
      * FULL WIDTH STATIC AREA CHART
      * -----------------
      */
-    /* var areaData = [[2, 88.0], [3, 93.3], [4, 102.0], [5, 108.5], [6, 115.7], [7, 115.6],
+     var areaData = [[2, 88.0], [3, 93.3], [4, 102.0], [5, 108.5], [6, 115.7], [7, 115.6],
       [8, 124.6], [9, 130.3], [10, 134.3], [11, 141.4], [12, 146.5], [13, 151.7], [14, 159.9],
       [15, 165.4], [16, 167.8], [17, 168.7], [18, 169.5], [19, 168.0]]
     $.plot('#area-chart', [areaData], {
@@ -725,7 +726,7 @@ for($i=0; $i<12; $i++){
         show: true
       }
     })
- */
+ 
     /* END AREA CHART */
 
     /*

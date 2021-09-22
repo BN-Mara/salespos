@@ -392,7 +392,7 @@ for($i=0; $i<12; $i++){
             <!--<li><a href="layout.php?page=orders&when=today"><i class="fa fa-book"></i> AUJOURD'HUI</a></li>
             <li><a href="layout.php?page=orders&when=thisweek"><i class="fa fa-book"></i> CETTE SEMAINE</a></li>
             <li><a href="layout.php?page=orders&when=thismonth"><i class="fa fa-book"></i> CE MOIS</a></li>-->
-            <li><a href="layout.php?page=productSold"><i class="fa fa-book"></i> PRODUITS VENDUS </a></li>
+            <li><a href="layout.php?page=ventes"><i class="fa fa-book"></i> PRODUITS VENDUS </a></li>
 
           </ul>
         </li>
@@ -705,7 +705,7 @@ for($i=0; $i<12; $i++){
      * FULL WIDTH STATIC AREA CHART
      * -----------------
      */
-     var areaData = [[2, 88.0], [3, 93.3], [4, 102.0], [5, 108.5], [6, 115.7], [7, 115.6],
+    /* var areaData = [[2, 88.0], [3, 93.3], [4, 102.0], [5, 108.5], [6, 115.7], [7, 115.6],
       [8, 124.6], [9, 130.3], [10, 134.3], [11, 141.4], [12, 146.5], [13, 151.7], [14, 159.9],
       [15, 165.4], [16, 167.8], [17, 168.7], [18, 169.5], [19, 168.0]]
     $.plot('#area-chart', [areaData], {
@@ -725,7 +725,7 @@ for($i=0; $i<12; $i++){
       xaxis : {
         show: true
       }
-    })
+    })*/
  
     /* END AREA CHART */
 

@@ -126,11 +126,10 @@ $row=$response->getAll();
     </div>
 
       <!-- Bar chart -->
-      <div class="box box-primary">
+      <!-- BAR CHART -->
+      <div class="box box-success">
             <div class="box-header with-border">
-              <i class="fa fa-bar-chart-o"></i>
-
-              <h3 class="box-title" id="chart-title"></b></h3>
+              <h3 class="box-title">Bar Chart</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -139,10 +138,14 @@ $row=$response->getAll();
               </div>
             </div>
             <div class="box-body">
-              <div id="prod-bar-chart" style="height: 300px;"></div>
+              <div class="chart">
+                <canvas id="barChart" style="height:230px"></canvas>
+              </div>
             </div>
             <!-- /.box-body -->
           </div>
+          <!-- /.box -->
+          <!-- /.nav-tabs-custom -->
 </section>
 <script>
     var t = "";
@@ -218,41 +221,85 @@ $row=$response->getAll();
     }
     
 function myChart(mdata){
-    var datas = mdata;
-    /*for(var i=1;i<31;i++){
-        datas.push([i,i*2]);
+    var datas = [];//mdata;
+    var mlabel = [];
+    var colors = "";
+    for(var i=0;i<30;i++){
+       colors = random_rgba();
+        datas.push({
+            label: 'product '+i,
+            fillColor           : ''+colors,
+          strokeColor         : ''+colors,
+          pointColor          : ''+colors,
+          pointStrokeColor    : ''+colors,
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: ''+colors,
+          data                : [65+i, 59+i, 80+i, 81+i, 56+i, 55+i, 40+i,7+i,8+i,9+i,
+          9+i,8+i,9+i,8+i,7+i,8+i,9+i,5+i,4+i,78+i,4,5+i,8+i,42+i,47,88+i,77+i,99+i,44,55,44]
+
+        });
+        mlabel[i] = ''+i;
     }
     console.log(datas);
-    */
-
-
-    var bar_data = {
-      data : datas,
-      color: '#3c8dbc'
+    var areaChartData = {
+      labels  : mlabel,
+      datasets: datas
     }
-    $.plot('#prod-bar-chart', [bar_data], {
-      grid  : {
-        borderWidth: 1,
-        borderColor: '#f3f3f3',
-        tickColor  : '#f3f3f3'
-      },
-      series: {
-        bars: {
-          show    : true,
-          barWidth: 0.5,
-          align   : 'center'
-        }
-      },
-      xaxis : {
-        mode      : 'categories',
-        tickLength: 0
-      }
-    })
-    /* END BAR CHART */
+
+
+       //-------------
+    //- BAR CHART -
+    //-------------
+    var barChartCanvas                   = $('#barChart').get(0).getContext('2d')
+    var barChart                         = new Chart(barChartCanvas)
+    var barChartData                     = areaChartData
+    barChartData.datasets[1].fillColor   = '#00a65a'
+    barChartData.datasets[1].strokeColor = '#00a65a'
+    barChartData.datasets[1].pointColor  = '#00a65a'
+    var barChartOptions                  = {
+      //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+      scaleBeginAtZero        : true,
+      //Boolean - Whether grid lines are shown across the chart
+      scaleShowGridLines      : true,
+      //String - Colour of the grid lines
+      scaleGridLineColor      : 'rgba(0,0,0,.05)',
+      //Number - Width of the grid lines
+      scaleGridLineWidth      : 1,
+      //Boolean - Whether to show horizontal lines (except X axis)
+      scaleShowHorizontalLines: true,
+      //Boolean - Whether to show vertical lines (except Y axis)
+      scaleShowVerticalLines  : true,
+      //Boolean - If there is a stroke on each bar
+      barShowStroke           : true,
+      //Number - Pixel width of the bar stroke
+      barStrokeWidth          : 2,
+      //Number - Spacing between each of the X value sets
+      barValueSpacing         : 5,
+      //Number - Spacing between data sets within X values
+      barDatasetSpacing       : 1,
+      //String - A legend template
+      legendTemplate          : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+      //Boolean - whether to make the chart responsive
+      responsive              : true,
+      maintainAspectRatio     : true
+    };
+
+    barChartOptions.datasetFill = false;
+    barChart.Bar(barChartData, barChartOptions);
 
 }
-    
-
+var arrColors = [];   
+function random_rgba() {
+    var o = Math.round, r = Math.random, s = 255;
+    var cl = 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+    for(var k = 0; k < arrColors.length; k++){
+        if(cl == arrColors[k]){
+            random_rgba();
+        }
+    }
+    arrColors.push(cl);
+    return cl;
+}
 
 
 </script>

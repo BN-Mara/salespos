@@ -1426,13 +1426,63 @@ bn_sales.addedBy = bn_user.username WHERE bn_sales.id_product = :id_product AND 
 
             return $row = $query->fetchAll();
 
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }        
+    }
+    public function salesPOSToday($pos){
+        try {
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales_reference 
+            INNER JOIN bn_user ON bn_sales_reference.addedBy = bn_user.username
+            INNER JOIN bn_client ON bn_sales_reference.id_client = bn_client.id_client WHERE bn_user.id_pos=:id 
+            AND CAST(bn_sales_reference.creation_date AS DATE) = CAST(GETDATE() AS DATE) ");
+            $query->execute(array('id'=>$pos));
+
+            return $row = $query->fetchAll();
+
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }       
+    }
+    public function salesPOSThisMonth($pos){
+        try {
+
+            // $pos = $this->get;
+ 
+             $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales_reference
+             INNER JOIN bn_user ON bn_sales_reference.addedBy = bn_user.username 
+             INNER JOIN bn_client ON bn_sales_reference.id_client = bn_client.id_client WHERE bn_user.id_pos=:id
+             AND YEAR(bn_sales_reference.creation_date) = YEAR(GETDATE()) AND MONTH(bn_sales_reference.creation_date) = MONTH(GETDATE()) ");
+             $query->execute(array('id'=>$pos));
+ 
+             return $row = $query->fetchAll();
+ 
+ 
+ 
+         } catch (Exception $e) {
+             die('Erreur : ' . $e->getMessage());
+         }
+ 
+    }
+    public function salesPOSThisWeek($pos){
+        try {
+
+            //$pos = $this->get;
+
+            $query = $this->getConnexion()->prepare("SELECT * FROM bn_sales_reference
+            INNER JOIN bn_user ON bn_sales_reference.addedBy = bn_user.username
+            INNER JOIN bn_client ON bn_sales_reference.id_client = bn_client.id_client WHERE bn_user.id_pos=:id
+            AND DATEPART(day,bn_sales_reference.creation_date) = DATEPART(day,GETDATE()) ");
+            $query->execute(array('id'=>$pos));
+
+            return $row = $query->fetchAll();
+
 
 
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
-
-        
     }
     public function detailSalesPOS($idRef){
         try {

@@ -97,7 +97,11 @@ if(isset($_SESSION["cart_item"])){
     <link href="vendor/datatables/jquery.dataTables.min.css" rel="stylesheet">
     <link href="vendor/datatables/buttons.dataTables.min.css" rel="stylesheet">
     <script type="text/javascript" charset="utf8" src="js/jquery-3.5.1.min.js"></script>
-    
+    <script src="js/jquery.dataTables.min.js"></script>
+
+
+<!-- Page level custom scripts -->
+<script type="text/javascript" charset="utf8" src="vendor/datatables/dataTables.buttons.min.js"></script> 
     <style>
 
         /* Mark input boxes that gets an error on validation: */
@@ -467,11 +471,7 @@ if(isset($_SESSION["cart_item"])){
   <script src="js/demo/chart-area-demo.js"></script>
   <script src="js/demo/chart-pie-demo.js"></script>
   <!-- Page level plugins -->
-  <script src="js/jquery.dataTables.min.js"></script>
 
-
-  <!-- Page level custom scripts -->
-  <script type="text/javascript" charset="utf8" src="vendor/datatables/dataTables.buttons.min.js"></script>
   <script src="js/demo/datatables-demo.js"></script>
   <script src="js/jszip.min.js"></script>
   <script src="js/pdfmake.min.js"></script>
@@ -480,7 +480,10 @@ if(isset($_SESSION["cart_item"])){
   <script src="js/buttons.print.min.js"></script>
   <script>
 
+$('#dataTable').DataTable({
 
+    
+});
     </script>
   
 

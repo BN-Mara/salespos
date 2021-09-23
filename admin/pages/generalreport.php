@@ -247,7 +247,7 @@ function myChart(mdata){
     }
 
 
-       //-------------
+    //-------------
     //- BAR CHART -
     //-------------
     var barChartCanvas                   = $('#barChart').get(0).getContext('2d')
@@ -300,6 +300,5 @@ function random_rgba() {
     arrColors.push(cl);
     return cl;
 }
-
 
 </script>

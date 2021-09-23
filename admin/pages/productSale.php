@@ -60,7 +60,12 @@ $row=$response->getAll();
         <!-- form start -->
 
         <div class="box-body" id="boxbody">
+        <p>
+        <button class="btn btn-secondary" id="today">Today</button>&nbsp; <button class="btn btn-secondary" id="this_week">this week</button>&nbsp;
+        <button class="btn btn-secondary" id="this_month">this month</button>
+          </p>
             <table id="example0" class="table table-bordered table-striped">
+
                 <thead>
                     <tr><th colspan="3"><div class="text-center" style="position:relative" id="ttitle"> POS</div></th></tr>
                 <tr>
@@ -69,7 +74,6 @@ $row=$response->getAll();
                     <th>Quantity</th>
                     <th>Total Price (CDF)</th>
                     
-
 
                 </tr>
                 </thead>
@@ -177,7 +181,67 @@ $row=$response->getAll();
         var pos = $('#pos_filter').val();
         var fromDate = $('#fromdate').val();
         var toDate = $('#todate').val();
+        ajaxCall(pos,fromDate,toDate);
         
+       
+    }
+
+
+    $("#today").on("click",()=>{
+      ////console.log(localStorage);
+      //alert("hello");
+      tableLoading();
+      var fromD = $.datepicker.formatDate('yy-mm-dd', new Date());
+      var toD = $.datepicker.formatDate('yy-mm-dd', new Date());
+        //alert(d);
+      ajaxCall(getPOS(),fromD,toD);
+    });
+
+    $("#this_week").on("click",()=>{
+      tableLoading();
+      //alert(moment('yy-mm-dd').day(1));
+      //const d = new Date();
+      var formatted_date = (date)=>{
+                var m = ("0"+ (date.getMonth()+1)).slice(-2); // in javascript month start from 0.
+                var d = ("0"+ date.getDate()).slice(-2); // add leading zero 
+                var y = date.getFullYear();
+                return  y +'-'+m+'-'+d; 
+        }
+ 
+        var curr_date =new Date();                
+        var day = curr_date.getDay();                
+        var diff = curr_date.getDate() - day + (day == 0 ? -6:1); // 0 for sunday                
+        var week_start_tstmp = curr_date.setDate(diff);                            
+        var week_start = new Date(week_start_tstmp);                 
+        var week_start_date =formatted_date(week_start);                 
+        var week_end  = new Date(week_start_tstmp);  // first day of week                  
+        week_end = new Date (week_end.setDate(week_end.getDate() + 6));                 
+        var week_end_date =formatted_date(week_end);     
+        //alert(date=week_start_date + ' to '+week_end_date);    // date range for current week 
+       /*
+         var week_end_date =formatted_date(new Date()); // limit current week date range upto current day.
+       */
+      ajaxCall(getPOS(),week_start_date,week_end_date);
+    });
+
+    $("#this_month").on("click",()=>{
+      tableLoading();
+      var formatted_date = (date)=>{
+                var m = ("0"+ (date.getMonth()+1)).slice(-2); // in javascript month start from 0.
+                var d = ("0"+ date.getDate()).slice(-2); // add leading zero 
+                var y = date.getFullYear();
+                return  y +'-'+m+'-'+d; 
+        }
+      var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay = new Date(y, m, 1);
+        var lastDay = new Date(y, m + 1, 0);
+        formated_firstDay = formatted_date(firstDay);
+        formated_lastDay = formatted_date(lastDay);
+        //alert(formated_firstDay);
+      ajaxCall(getPOS(),formated_firstDay,formated_lastDay);
+    });
+
+    function ajaxCall(pos,fromDate,toDate){
         var formData = {
             'pos_id':pos,
             'fromdate':fromDate,
@@ -216,6 +280,9 @@ $row=$response->getAll();
             }
         });
     }
+
+
+    
     
 function myChart(mdata){
     var datas = mdata;
@@ -251,8 +318,13 @@ function myChart(mdata){
     /* END BAR CHART */
 
 }
-    
+function tableLoading(){
+    $('#tbody').html('<tr><td colspan="3"><div class="text-center" style="position:relative"><p align="center"><i class="fa fa-refresh fa-spin"></i></p></div></td></tr>');
+    return 1;
+}
 
-
-
+function getPOS(){
+    var pos = $('#pos_filter').val();
+    return pos;
+}
 </script>

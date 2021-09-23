@@ -8,6 +8,7 @@ spl_autoload_register(function($classe){
 if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
 {  
     $dao = new Dao_Carte();
+    
     if(isset($_POST['idRef'])){
         
         $common = new CommonController($dao);
@@ -18,15 +19,21 @@ if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST) && !empty($_POST) )
         $common = new CommonController($dao);
         $common->getSalesReport();
     }
+    if(isset($_POST['action']) && $_POST['action'] == "report_sales_pos"){
+        $common = new CommonController($dao);
+        $common->getSalesReportPOS();
+    }
 
 }
 
 class CommonController{
     private $dao;
+    private $format;
 
     public function __construct(Dao_Carte $dao)
     {
         $this->dao = $dao;
+        $this->format = new Format();
     }
     public function getSalesDetails($idRef){
         $data = $this->dao->detailSalesPOS($idRef);
@@ -59,6 +66,36 @@ class CommonController{
         //$mtable = $this->makeHtmlTable($arrayData);
         //echo $mtable;
     }
+
+    public function getSalesReportPOS(){
+        $when = $this->format->validation($_POST["mtime"]);
+        $pos = $this->format->validation($_POST["pos"]);
+        $data =  null;
+        //die($when." ".$pos);
+        switch($when){
+            case "today":
+                $data = $this->dao->salesPOSToday($pos);
+                break;
+            case "this_week":
+                $data = $this->dao->salesPOSThisWeek($pos);
+                break;
+            case "this_month":
+                $data = $this->dao->salesPOSThisMonth($pos);
+                break;
+            default:
+                break;
+
+        }
+        echo json_encode($data);
+
+
+    }
+
+
+
+
+
+
     public function makeHtmlTable($data){
         $rows = $this->tableRow($data);
         $html = '<table id="example2" class="table table-bordered table-striped">';

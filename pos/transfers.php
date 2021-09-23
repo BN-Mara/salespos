@@ -75,7 +75,6 @@ $row=$response->getTransferRefByIdPOSFrom($pos);
                             echo '<span class="label label-warning">'.$item['status'].'</span>';
                             ?></td>                           
                              
-
                         </tr>
 
                     <?php }}?>
@@ -99,3 +98,9 @@ $row=$response->getTransferRefByIdPOSFrom($pos);
     </div>
 </div>
 </div>
+<script>
+    $('#dataTable').DataTable({
+
+    
+});
+</script>

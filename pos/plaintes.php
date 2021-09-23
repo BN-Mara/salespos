@@ -73,3 +73,9 @@ $row=$response->getAllPlainte();
 </div>
 </div>
 </div>
+<script>
+    $('#dataTable').DataTable({
+
+    
+});
+</script>

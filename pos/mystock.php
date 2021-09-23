@@ -69,3 +69,9 @@ $row=$response->getAllStockPOS($pos);
 </div>
 </div>
 </div>
+<script>
+    $('#dataTable').DataTable({
+
+    
+});
+</script>
